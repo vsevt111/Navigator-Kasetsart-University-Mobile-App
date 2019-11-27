@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 
 const connection = mysql.createPool({
-    host :'127.0.0.1',
+    host :'localhost',
     user : 'root',
     password : '',
     database : 'final_project'
@@ -30,5 +30,5 @@ app.get('/root', function (req, res) {
 
 // Starting our server.
 app.listen(3000, () => {
- console.log('http://127.0.0.1:3306/root');
+ console.log('http://localhost:99/phpmyadmin');
 });
