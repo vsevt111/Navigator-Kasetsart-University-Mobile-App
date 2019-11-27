@@ -32,3 +32,9 @@ app.get('/root', function (req, res) {
 app.listen(3000, () => {
  console.log('http://localhost:99/phpmyadmin');
 });
+
+test(){
+  fetch('http://192.168.202.1:3000/users')
+    .then(response => response.json())
+    .then(users => console.warn(users))
+}
