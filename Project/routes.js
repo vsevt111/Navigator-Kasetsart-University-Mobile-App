@@ -7,13 +7,14 @@ const connection = mysql.createPool({
     user : 'root',
     password : '',
     database : 'final_project'
+    
 });
 
 // Starting our app.
 const app = express();
 
 // Creating a GET route that returns data from the 'users' table.
-app.get('/root', function (req, res) {
+app.get('/building', function (req, res) {
     // Connecting to the database.
     connection.getConnection(function (err, connection) {
 
@@ -30,11 +31,5 @@ app.get('/root', function (req, res) {
 
 // Starting our server.
 app.listen(3000, () => {
- console.log('http://localhost:99/phpmyadmin');
+ console.log('http://localhost:3000/building');
 });
-
-test(){
-  fetch('http://192.168.202.1:3000/users')
-    .then(response => response.json())
-    .then(users => console.warn(users))
-}
