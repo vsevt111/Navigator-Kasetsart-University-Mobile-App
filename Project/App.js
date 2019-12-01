@@ -1,50 +1,73 @@
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View,FlatList} from 'react-native';
-export default class App extends Component<Props> {
+import * as React from 'react';
+import { Button, View, Text,TextInput } from 'react-native';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import Friends from './profile';
+import Home from './Home';
 
-  state ={
-    data:[]
-  }
-
-  // fetchData= async()=>{
-  //   const response = await fetch('https://192.168.202.1:3000/building');
-  //   const users = await response.json();
-  //   this.setState({data:users});
-  // }
-  
-componentDidMount(){
-  fetch('http://192.168.202.1:3000/building')
-  .then(response => response.json())
-  .then(users => console.warn(users))
-}
+class HomeScreen extends React.Component {
   render() {
     return (
-      <View >
-       <Text>Welcome</Text>
-
-       <FlatList
-       data={this.state.data}
-      //  keyExtractor={(item,index) => index.toString()}
-       renderItem={({ item }) =>
-
-       <View style={{backgroundColor:'#abc123',padding:10,margin:10}}>
-          <Text style={{color:'#fff', fontWeight:'bold'}}>{ item.location }</Text>
-          
-         </View>
-
-       }
-
-       />
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Home Screen</Text>
+        <Button
+          title="Go to Details"
+          onPress={() => this.props.navigation.navigate('Details')}
+        />
+        <Text style={{fontSize:128}}>MAP</Text>
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+class DetailsScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {text: ''};
+  }
+  render() {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Details Screen</Text>
+        <Button
+          title="Go to Details... again"
+          onPress={() => this.props.navigation.navigate('Details')}
+        />
+        <Text>Origin</Text>
+        <TextInput
+          style={{height: 40}}
+          placeholder="Type here to translate!"
+          onChangeText={(text) => this.setState({text})}
+          value={this.state.text}
+        />
+        <Text>Destination</Text>
+        <TextInput
+          style={{height: 40}}
+          placeholder="Type here to translate!"
+          onChangeText={(text) => this.setState({text})}
+          value={this.state.text}
+        />
+      </View>
+      
+    );
+  }
+}
+
+const RootStack = createStackNavigator(
+  {
+    Home: HomeScreen,
+    Details: DetailsScreen,
+   
   },
-});
+  {
+    initialRouteName: 'Home',
+  }
+);
+
+const AppContainer = createAppContainer(RootStack);
+
+export default class App extends React.Component {
+  render() {
+    return <AppContainer />;
+  }
+}
