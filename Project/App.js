@@ -1,73 +1,138 @@
-import * as React from 'react';
-import { Button, View, Text,TextInput } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-import Friends from './profile';
-import Home from './Home';
+//This is an example of React Native Tab
+import React from 'react';
+//import react in our code.
+ 
+//For React Navigation 3+
+//import {
+//  createStackNavigator,
+//  createMaterialTopTabNavigator,
+//  createAppContainer,
+//} from 'react-navigation';
+ 
+//For React Navigation 4+
+import { View, Image, TouchableOpacity } from 'react-native';
+import {createAppContainer} from 'react-navigation';
+import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
+import {createStackNavigator} from 'react-navigation-stack';
+import {createDrawerNavigator} from 'react-navigation-drawer';
+import HomeScreen from './Pages/Home';
+import Search from './Pages/Direction';
+//Making TabNavigator which will be called in App StackNavigator
+//we can directly export the TabNavigator also but header will not be visible
+//as header comes only when we put anything into StackNavigator and then export
+ 
+// const TabScreen = createMaterialTopTabNavigator(
+//   {
+//     Home:  HomeScreen ,
+//     Direction: Search ,
+//   },
+//   {
+//     tabBarPosition: 'top',
+//     swipeEnabled: true,
+//     animationEnabled: true,
+//     tabBarOptions: {
+//       activeTintColor: '#FFFFFF',
+//       inactiveTintColor: '#F8F8F8',
+//       style: {
+//         backgroundColor: '#633689',
+//       },
+//       labelStyle: {
+//         textAlign: 'center',
+//       },
+//       indicatorStyle: {
+//         borderBottomColor: '#87B56A',
+//         borderBottomWidth: 2,
+//       },
+//     },
+//   }
+// );
+ 
+//making a StackNavigator to export as default
+// const App = createStackNavigator({
+//   TabScreen: {
+//     screen: TabScreen,
+//     navigationOptions: {
+//       headerStyle: {
+//         backgroundColor: '#633689',
+//       },
+//       headerTintColor: '#FFFFFF',
+//       title: 'Kasetsart University Map',
+//     },
+//   },
+// });
 
-class HomeScreen extends React.Component {
+// -------------------------------------------------
+// Drawer Navigation
+class NavigationDrawerStructure extends React.Component {
+  //Structure for the navigatin Drawer
+  toggleDrawer = () => {
+    //Props to open/close the drawer
+    this.props.navigationProps.toggleDrawer();
+  };
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-        <Button
-          title="Go to Details"
-          onPress={() => this.props.navigation.navigate('Details')}
-        />
-        <Text style={{fontSize:128}}>MAP</Text>
+      <View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity onPress={this.toggleDrawer.bind(this)}>
+          {/*Donute Button Image */}
+          <Image
+            source={require('./image/drawer.png')}
+            style={{ width: 25, height: 25, marginLeft: 5 }}
+          />
+        </TouchableOpacity>
       </View>
     );
   }
 }
-
-class DetailsScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {text: ''};
-  }
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Details Screen</Text>
-        <Button
-          title="Go to Details... again"
-          onPress={() => this.props.navigation.navigate('Details')}
-        />
-        <Text>Origin</Text>
-        <TextInput
-          style={{height: 40}}
-          placeholder="Type here to translate!"
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-        />
-        <Text>Destination</Text>
-        <TextInput
-          style={{height: 40}}
-          placeholder="Type here to translate!"
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-        />
-      </View>
-      
-    );
-  }
-}
-
-const RootStack = createStackNavigator(
-  {
-    Home: HomeScreen,
-    Details: DetailsScreen,
-   
+ 
+const FirstActivity_StackNavigator = createStackNavigator({
+  //All the screen from the Screen1 will be indexed here
+  First: {
+    screen: HomeScreen,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Home',
+      headerLeft: <NavigationDrawerStructure navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: '#FF9800',
+      },
+      headerTintColor: '#fff',
+    }),
   },
-  {
-    initialRouteName: 'Home',
-  }
-);
+});
+ 
+const Screen2_StackNavigator = createStackNavigator({
+  //All the screen from the Screen2 will be indexed here
+  Second: {
+    screen: Search,
+    navigationOptions: ({ navigation }) => ({
+      title: 'Direction',
+      headerLeft: <NavigationDrawerStructure navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: '#FF9800',
+      },
+      headerTintColor: '#fff',
+    }),
+  },
+});
+ 
 
-const AppContainer = createAppContainer(RootStack);
+ 
+const DrawerNavigatorExample = createDrawerNavigator({
+  //Drawer Optons and indexing
+  Screen1: {
+    //Title
+    screen: FirstActivity_StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'Home',
+    },
+  },
+  Screen2: {
+    //Title
+    screen: Screen2_StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'Direction',
+    },
+  },
+});
+ 
 
-export default class App extends React.Component {
-  render() {
-    return <AppContainer />;
-  }
-}
+export default createAppContainer(DrawerNavigatorExample);
