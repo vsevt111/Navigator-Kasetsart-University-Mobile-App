@@ -3,6 +3,7 @@ import { Button, View, Text,TextInput,StyleSheet,PermissionsAndroid } from 'reac
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import MapboxGL from "@react-native-mapbox-gl/maps";
+import { MARK_DRAWER_ACTIVE } from 'react-navigation-drawer/lib/typescript/src/routers/DrawerActions';
 
 
 
@@ -15,10 +16,10 @@ async function requestLocationPermission() {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: 'Cool Photo App Camera Permission',
+        title: 'KUTravel App location Permission',
         message:
-          'Cool Photo App needs access to your camera ' +
-          'so you can take awesome pictures.',
+          'KUTravel App needs access to your location ' +
+          'so you can travel at university.',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
         buttonPositive: 'OK',
@@ -33,6 +34,15 @@ async function requestLocationPermission() {
     console.warn(err);
   }
 }
+
+// const feature = {
+//   type: 'feature',
+//   id: marker.id,
+//   geometry:{
+//     type: 'Point',
+//     coordinates: [marker.lat,marker.lng],
+//   },
+// };
 export default class HomeScreen extends React.Component {
 
 
@@ -48,9 +58,15 @@ export default class HomeScreen extends React.Component {
         <Text style={{ alignItems: 'flex-start', justifyContent:'flex-start'}}>Kasetsart university</Text>
     
         <Text style={{alignSelf:'center'}}>MAP</Text>
-        <MapboxGL.MapView style={{flex: 1}}
+        <MapboxGL.MapView style={{flex: 1}}  showUserLocation={true}>
+       
+        <MapboxGL.UserLocation></MapboxGL.UserLocation>
+        {/* <MapboxGL.ShapeSource>
+          <MapboxGL.SymbolLayer></MapboxGL.SymbolLayer>
+        </MapboxGL.ShapeSource> */}
+        </MapboxGL.MapView>
+        
       
-        />  
        
         <MapboxGL.UserLocation/>
       </View>
