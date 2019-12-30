@@ -47,32 +47,32 @@
                 "longitude":100.570769
             },
             {
-                // line 1,3
+                
                 "latitude":13.842580,
                 "longitude":100.572246
             },
             {
-                // line1,3
+                
                 "latitude":13.842315,
                 "longitude":100.573632
             },
             {
-                // line 1,3
+                
                 "latitude":13.842476,
                 "longitude":100.573948
             },
             {
-                // line 1,3
+                
                 "latitude":13.842050,
                 "longitude":100.576089
             },
             {
-                // line 1,3
+                
                 "latitude":13.843036,
                 "longitude":100.572037
             },
             {
-                //line 1,3
+                
                 "latitude":13.844583,
                 "longitude":100.572578
             },
@@ -97,7 +97,7 @@
                 "longitude":100.566823
             }
         ]
-    }
+    },
     {
         "line":2,
         "coordination":[
@@ -205,7 +205,6 @@
         ]
     },
     {
-        "line":3,
         "coordination":[
             {
                 "latitude":13.855000 ,
@@ -252,32 +251,32 @@
                 "longitude":100.570769
             },
             {
-                // line1,3
+                
                 "latitude":13.842580,
                 "longitude":100.572246
-            }
+            },
             {
-                // line1,3
+                
                 "latitude":13.842315,
                 "longitude":100.573632
             },
             {
-                // line 1,3
+                
                 "latitude":13.842476,
                 "longitude":100.573948
             },
             {
-                // line 1,3
+                
                 "latitude":13.842050,
                 "longitude":100.576089
             },
             {
-                // line 1,3
+                
                 "latitude":13.843036,
                 "longitude":100.572037
             },
             {
-                // line1,3
+                
                 "latitude":13.844583,
                 "longitude":100.572578
             },
