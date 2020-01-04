@@ -2,16 +2,64 @@
         "Faculty":"คณะวิทยาศาสตร์",
         "building":[
         {
-            "name":"",
-            "description":"",
-            "latitude":,
-            "longitude":
+            "name":"อาคารปฎิบัติการวิทยาศาสตร์(SCL)/อาคารทวีญานสุคนธ์",
+            "description":"ไว้เรียนวิชาที่ทำการทดลอง",
+            "latitude":13.844928,
+            "longitude":100.572280
         },
         {
-            "name":"",
+            "name":"อาคารวิทยาศาสตร์ 25 ปี",
+            "description":"กำลังสร้าง",
+            "latitude":13.845101,
+            "longitude":100.571578
+        },
+        {
+            "name":"ภาควิชาวัสดุศาสตร์",
             "description":"",
-            "latitude":,
-            "longitude":
+            "latitude":13.844730,
+            "longitude":100.571664
+        },
+        {
+            "name":"SC45",
+            "description":"",
+            "latitude":13.845850,
+            "longitude":100.571260
+        },
+        {
+            "name":"โรงเพาะชำ1-2",
+            "description":"",
+            "latitude":13.844604,
+            "longitude":100.570584
+        },
+        {
+            "name":"ตึกชีวเคมี",
+            "description":"",
+            "latitude":13.844758,
+            "longitude":100.570560
+        },
+        {
+            "name":"อาคารกฤษณา ชุติมา(ภาควิชาเคมี)",
+            "description":"",
+            "latitude":13.845537,
+            "longitude":100.570717
+        },
+        {
+            "name":"ตึกฟิสิกส์",
+            "description":"",
+            "latitude":13.845922,
+            "longitude":100.570855
+        },
+        {
+            "name":"อาคารภาควิชาสัตววิทยา",
+            "description":"",
+            "latitude":13.846153,
+            "longitude":100.571320
+        },
+        {
+            "name":"อาคารภาควิชาสัตววิทยา",
+            "description":"zoology",
+            "latitude":13.846153,
+            "longitude":100.571320
         }
     ]
 }
