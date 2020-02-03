@@ -3,11 +3,12 @@ import { Button, View, Text,TextInput,StyleSheet,PermissionsAndroid } from 'reac
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import MapboxGL from "@react-native-mapbox-gl/maps";
-import { MARK_DRAWER_ACTIVE } from 'react-navigation-drawer/lib/typescript/src/routers/DrawerActions';
+import MapView,{Polyline, PROVIDER_GOOGLE} from 'react-native-maps';
+import Bus4 from '../database/bus/bus4.json'
 
 
 
-MapboxGL.setAccessToken("pk.eyJ1IjoidnNldnQxMTEiLCJhIjoiY2szZm1mMnlkMDZkYTNjbzI0MWRjNmRyayJ9.e74axs2q_OlWBATdIq7Hrg");
+// MapboxGL.setAccessToken("pk.eyJ1IjoidnNldnQxMTEiLCJhIjoiY2szZm1mMnlkMDZkYTNjbzI0MWRjNmRyayJ9.e74axs2q_OlWBATdIq7Hrg");
 
 
 async function requestLocationPermission() {
@@ -44,10 +45,8 @@ async function requestLocationPermission() {
 //   },
 // };
 export default class HomeScreen extends React.Component {
-
-
   componentDidMount(){
-    MapboxGL.setTelemetryEnabled(false);
+    // MapboxGL.setTelemetryEnabled(false);
     requestLocationPermission();
   }
 
@@ -55,25 +54,40 @@ export default class HomeScreen extends React.Component {
     return (
      
       <View style={{ flex: 1,justifyContent:'center',}}>
-        <Text style={{ alignItems: 'flex-start', justifyContent:'flex-start'}}>Kasetsart university</Text>
-    
-        <Text style={{alignSelf:'center'}}>MAP</Text>
-        <MapboxGL.MapView style={{flex: 1}}  showUserLocation={true}>
-       
-        <MapboxGL.UserLocation></MapboxGL.UserLocation>
-        {/* <MapboxGL.ShapeSource>
-          <MapboxGL.SymbolLayer></MapboxGL.SymbolLayer>
-        </MapboxGL.ShapeSource> */}
-        </MapboxGL.MapView>
+        <MapView style={{flex : 1}}
+        initialRegion={{
+          latitude: 13.847639,
+          longitude: 100.569584,
+          latitudeDelta: 0.0122,
+          longitudeDelta: 0.0021
+        }}
+        showsUserLocation={true}>
+          <Polyline
+          coordinates={Bus4.path}
+          strokeColor="#000"
+          strokeColors={COLORS}
+          strokeWidth={4}
+        />
         
-      
+        </MapView>
+        
+        
        
-        <MapboxGL.UserLocation/>
       </View>
   
     );
   }
 }
+
+const COLORS = [
+  '#7F0000',
+  '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+  '#B24112',
+  '#E5845C',
+  '#238C23',
+  '#7F0000',
+];
+
 const styles = StyleSheet.create({
   page: {
     flex: 1,
