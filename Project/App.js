@@ -10,13 +10,14 @@ import React from 'react';
 //} from 'react-navigation';
  
 //For React Navigation 4+
-import { View, Image, TouchableOpacity } from 'react-native';
+import { View, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import {createAppContainer} from 'react-navigation';
-import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
+import {createMaterialTopTabNavigator,createMaterialBottomTabNavigator } from 'react-navigation-tabs';
 import {createStackNavigator} from 'react-navigation-stack';
-import {createDrawerNavigator} from 'react-navigation-drawer';
+import {createDrawerNavigator, DrawerItems} from 'react-navigation-drawer';
 import HomeScreen from './Pages/Home';
 import Search from './Pages/Direction';
+import { ScrollView } from 'react-native-gesture-handler';
 //Making TabNavigator which will be called in App StackNavigator
 //we can directly export the TabNavigator also but header will not be visible
 //as header comes only when we put anything into StackNavigator and then export
@@ -76,7 +77,7 @@ class NavigationDrawerStructure extends React.Component {
           {/*Donute Button Image */}
           <Image
             source={require('./image/drawer.png')}
-            style={{ width: 25, height: 25, marginLeft: 5 }}
+            style={{ width: 35, height: 35, marginLeft: 10 }}
           />
         </TouchableOpacity>
       </View>
@@ -89,10 +90,11 @@ const FirstActivity_StackNavigator = createStackNavigator({
   First: {
     screen: HomeScreen,
     navigationOptions: ({ navigation }) => ({
-      title: 'Home',
+      title: 'KU Travel',
       headerLeft: <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
-        backgroundColor: '#FF9800',
+        height:60,
+        backgroundColor: '#3d3c37',
       },
       headerTintColor: '#fff',
     }),
@@ -107,32 +109,46 @@ const Screen2_StackNavigator = createStackNavigator({
       title: 'Direction',
       headerLeft: <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
-        backgroundColor: '#FF9800',
+        backgroundColor: '#3d3c37',
       },
       headerTintColor: '#fff',
     }),
   },
 });
- 
 
- 
 const DrawerNavigatorExample = createDrawerNavigator({
-  //Drawer Optons and indexing
+  //Drawer Options and indexing |||RouteConfigs|||
   Screen1: {
-    //Title
     screen: FirstActivity_StackNavigator,
     navigationOptions: {
       drawerLabel: 'Home',
     },
   },
   Screen2: {
-    //Title
     screen: Screen2_StackNavigator,
     navigationOptions: {
       drawerLabel: 'Direction',
     },
   },
-});
+},
+//|||DrawerNavigatorConfig|||
+  {
+    contentComponent: props => <CustomDrawerContentComponent {...props}/>
+  }
+);
+
+const CustomDrawerContentComponent = props => (
+ <SafeAreaView style={{flex: 1}}>
+   <View style={{ height: 60, backgroundColor: '#3d3c37', alignItems: 'center',justifyContent:'center'}}>
+     <Image source={require('./image/logo.png')} style= {{height:35, width: 120, borderRadius: 60}}/>
+   </View>
+   <ScrollView>
+     <DrawerItems {...props}/>
+   </ScrollView>
+ </SafeAreaView> 
+)
+
+
  
 
 export default createAppContainer(DrawerNavigatorExample);
