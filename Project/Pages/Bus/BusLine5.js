@@ -4,9 +4,9 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import MapboxGL from "@react-native-mapbox-gl/maps";
 import MapView,{Polyline, PROVIDER_GOOGLE} from 'react-native-maps';
-import Bus2 from '../../database/bus/bus2.json'
+import Bus5 from '../../database/bus/bus5.json'
 
-export default class BusLine2Screen extends React.Component {
+export default class BusLine5Screen extends React.Component {
  
 
   render() {
@@ -22,8 +22,8 @@ export default class BusLine2Screen extends React.Component {
         }}
         showsUserLocation={true}>
           <Polyline
-          coordinates={Bus2.path}
-          strokeColor="#0eecf0"
+          coordinates={Bus5.path}
+          strokeColor="#f58f0a"
           strokeColors={COLORS}
           strokeWidth={4}
         />
@@ -43,6 +43,8 @@ const COLORS = [
   '#238C23',
   '#7F0000',
   '#0eecf0',
+  '#d91fed',
+  '#f58f0a',
 ];
 
 const styles = StyleSheet.create({

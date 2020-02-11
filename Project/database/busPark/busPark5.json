@@ -1,85 +1,85 @@
 {
     "line":5,
-    "coordination":[
+    "markers":[
         {
             "name":"จุดหอพักนิสิตหญิงสุพรรณนิการ์",
-            "latitude":13.852376,
-            "longitude":100.580682
+            "coordinate":{"latitude":13.852376,
+            "longitude":100.580682}
         },
         {
             "name":"จุดหอแสงจันทร์",
-            "latitude":13.852957,
-            "longitude":100.580623
+            "coordinate":{"latitude":13.852957,
+            "longitude":100.580623}
         },
         {
             "name":"จุดหอพักหญิงขจีนุช",
-            "latitude":13.853321,
-            "longitude":100.580520
+            "coordinate":{"latitude":13.853321,
+            "longitude":100.580520}
         },
         {
             "name":"จุดหอพักKritsana",
-            "latitude":13.853609,
-            "longitude":100.580420
+            "coordinate":{"latitude":13.853609,
+            "longitude":100.580420}
         },
         {
             "name":"จุดToo Fast To Sleep@KU",
-            "latitude":13.853504,
-            "longitude":100.578993
+            "coordinate":{"latitude":13.853504,
+            "longitude":100.578993}
         },
         {
             "name":"จุดอาคารสวัสดิการ มก.",
-            "latitude":13.853138,
-            "longitude":100.578402
+            "coordinate":{"latitude":13.853138,
+            "longitude":100.578402}
         },
         {
             "name":"จุดคลังยาเกษตร",
-            "latitude":13.852481,
-            "longitude":100.576723
+            "coordinate":{"latitude":13.852481,
+            "longitude":100.576723}
         },
         {
             "name":"จุดคณะอุตสาหกรรมเกษตร",
-            "latitude":13.851977,
-            "longitude":100.572463
+            "coordinate":{"latitude":13.851977,
+            "longitude":100.572463}
         },
         {
             "name":"จุดอาคารพุทธเกษตร",
-            "latitude":13.850572,
-            "longitude":100.572437
+            "coordinate":{"latitude":13.850572,
+            "longitude":100.572437}
         },
         {
             "name":"จุดอาคารพืชไร่",
-            "latitude":13.850112,
-            "longitude":100.572404
+            "coordinate":{"latitude":13.850112,
+            "longitude":100.572404}
         },
         {
             "name":"จุดสำนักหอสมุด",
-            "latitude":13.848146,
-            "longitude":100.572430
+            "coordinate":{"latitude":13.848146,
+            "longitude":100.572430}
         },
         {
             "name":"จุดคณะวนศาสตร์",
-            "latitude":13.846444,
-            "longitude":100.572593
+            "coordinate":{"latitude":13.846444,
+            "longitude":100.572593}
         },
         {
             "name":"จุดสำนักหอสมุด",
-            "latitude":13.847830,
-            "longitude":100.572590
+            "coordinate":{"latitude":13.847830,
+            "longitude":100.572590}
         },
         {
             "name":"จุดคณะเกษตร",
-            "latitude":13.848775,
-            "longitude":100.572608
+            "coordinate":{"latitude":13.848775,
+            "longitude":100.572608}
         },
         {
             "name":"จุดอาคารพุทธเกษตรฝั่งตรงข้าม",
-            "latitude":13.850542,
-            "longitude":100.572627
+            "coordinate":{"latitude":13.850542,
+            "longitude":100.572627}
         },
         {
             "name":"จุดคณะอุตสาหกรรมเกษตร",
-            "latitude":13.851908,
-            "longitude":100.572638
+            "coordinate":{"latitude":13.851908,
+            "longitude":100.572638}
         }
     ]
 }

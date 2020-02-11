@@ -3,17 +3,35 @@ import { Button, View, Text,TextInput,StyleSheet,PermissionsAndroid } from 'reac
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import MapboxGL from "@react-native-mapbox-gl/maps";
-import MapView,{Polyline, PROVIDER_GOOGLE} from 'react-native-maps';
-import Bus2 from '../../database/bus/bus2.json'
+import MapView,{Marker} from 'react-native-maps';
+import BusStop1 from '../../database/busPark/busPark1.json';
+import Bus1 from '../../database/bus/bus1.json';
 
-export default class BusLine2Screen extends React.Component {
- 
-
+export default class BusStopLine1Screen extends React.Component {
+  constructor(props){
+    super(props)
+    this.state={
+      markers: [{
+        title:'name',
+        coordinate:{
+          latitude:13.851845,
+          longitude:100.565390
+        }
+      },
+        {
+          title: 'name2',
+          coordinate :{
+            latitude:13.851384,
+            longitude:100.565614
+          }
+        }
+      ]
+    }
+  }
   render() {
     return (
-     
       <View style={{ flex: 1,justifyContent:'center',}}>
-        <MapView style={{flex : 1}}
+        <MapView  style={{flex : 1}}
         initialRegion={{
           latitude: 13.847639,
           longitude: 100.569584,
@@ -21,13 +39,11 @@ export default class BusLine2Screen extends React.Component {
           longitudeDelta: 0.0021
         }}
         showsUserLocation={true}>
-          <Polyline
-          coordinates={Bus2.path}
-          strokeColor="#0eecf0"
-          strokeColors={COLORS}
-          strokeWidth={4}
-        />
-        
+            {this.state.markers.map(marker => (
+              <Marker coordinate={marker.coordinate}>
+                
+              </Marker>
+            ))}
         </MapView> 
       </View>
   
@@ -42,7 +58,6 @@ const COLORS = [
   '#E5845C',
   '#238C23',
   '#7F0000',
-  '#0eecf0',
 ];
 
 const styles = StyleSheet.create({

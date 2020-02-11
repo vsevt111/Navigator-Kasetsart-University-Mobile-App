@@ -19,6 +19,7 @@ import HomeScreen from './Pages/Home';
 import Search from './Pages/Direction';
 import { ScrollView } from 'react-native-gesture-handler';
 import HomeBus from './Pages/HomeBus';
+import HomeBusStop from './Pages/HomeBusStop';
 //Making TabNavigator which will be called in App StackNavigator
 //we can directly export the TabNavigator also but header will not be visible
 //as header comes only when we put anything into StackNavigator and then export
@@ -118,6 +119,21 @@ const Screen2_StackNavigator = createStackNavigator({
   },
 });
 
+const Screen3_StackNavigator = createStackNavigator({
+  //All the screen from the Screen2 will be indexed here
+  Third: {
+    screen: HomeBusStop,
+    navigationOptions: ({ navigation }) => ({
+      title: 'ป้ายจอดรถตะลัย',
+      headerRight: <NavigationDrawerStructure navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: '#3d3c37',
+      },
+      headerTintColor: '#fff',
+    }),
+  },
+});
+
 
 const DrawerNavigatorExample = createDrawerNavigator({
   //Drawer Options and indexing |||RouteConfigs|||
@@ -130,7 +146,13 @@ const DrawerNavigatorExample = createDrawerNavigator({
   Screen2: {
     screen: Screen2_StackNavigator,
     navigationOptions: {
-      drawerLabel: 'รถตะลัย',
+      drawerLabel: 'ทางเดินรถรถตะลัย',
+    },
+  },
+  Screen3: {
+    screen: Screen3_StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'ป้ายจอดรถตะลัย',
     },
   },
 },

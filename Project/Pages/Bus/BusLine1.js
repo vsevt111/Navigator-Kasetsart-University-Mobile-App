@@ -13,7 +13,7 @@ export default class BusLine1Screen extends React.Component {
     return (
      
       <View style={{ flex: 1,justifyContent:'center',}}>
-        <MapView style={{flex : 1}}
+        <MapView  style={{flex : 1}}
         initialRegion={{
           latitude: 13.847639,
           longitude: 100.569584,

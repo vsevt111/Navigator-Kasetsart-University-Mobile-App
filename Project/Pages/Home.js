@@ -62,13 +62,6 @@ export default class HomeScreen extends React.Component {
           longitudeDelta: 0.0021
         }}
         showsUserLocation={true}>
-          <Polyline
-          coordinates={Bus3.path}
-          strokeColor="#000"
-          strokeColors={COLORS}
-          strokeWidth={4}
-        />
-        
         </MapView>
         
         
