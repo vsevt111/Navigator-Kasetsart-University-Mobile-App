@@ -4,13 +4,16 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import MapboxGL from "@react-native-mapbox-gl/maps";
 import MapView,{Polyline, PROVIDER_GOOGLE} from 'react-native-maps';
-import DisplayBus from './DisplayBus';
-import BusStopLine1Screen from './BusStop/BusStopLine1'
+import BusStopLine1Screen from './BusStop/BusStopLine1';
+import BusStopLine2Screen from './BusStop/BusStopLine2';
+import BusStopLine3Screen from './BusStop/BusStopLine3';
 import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
 
-const TabScreen = createMaterialTopTabNavigator(
+const TabBusStopScreen = createMaterialTopTabNavigator(
   {
-    สาย1: BusStopLine1Screen,
+    ป้ายสาย1: BusStopLine1Screen,
+    ป้ายสาย2: BusStopLine2Screen,
+    ป้ายสาย3: BusStopLine3Screen
   },
   {
     tabBarPosition: 'top',
@@ -37,7 +40,6 @@ class HomeBusStopScreen extends React.Component {
       let line =[{value:'สาย 1'},{value:'สาย 2'},{value:'สาย3'},
     {value:'สาย 4'},{value:'สาย 5'}]
     return (
-     
       <View style={{ flex: 1,justifyContent:'center',}}>
         <MapView style={{flex : 1}}
         initialRegion={{
@@ -80,4 +82,4 @@ const styles = StyleSheet.create({
     flex: 3
   }
 });
-export default createAppContainer(TabScreen);
+export default createAppContainer(TabBusStopScreen);

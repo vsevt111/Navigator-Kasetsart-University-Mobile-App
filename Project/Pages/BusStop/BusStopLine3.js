@@ -4,13 +4,12 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import MapboxGL from "@react-native-mapbox-gl/maps";
 import MapView,{Marker} from 'react-native-maps';
-import BusStop1 from '../../database/busPark/busPark1.json';
-import symbol from '../../image/busstopLine1.png'
+import BusStop3 from '../../database/busPark/busPark3.json';
+import symbol from '../../image/busstopLine3.png'
 
-export default class BusStopLine1Screen extends React.Component {
+export default class BusStopLine3Screen extends React.Component {
   constructor(props){
     super(props)
-    
   }
   render() {
     return (
@@ -23,8 +22,8 @@ export default class BusStopLine1Screen extends React.Component {
           longitudeDelta: 0.0021
         }}
         showsUserLocation={true}>
-            {BusStop1.markers.map(marker => (
-              <Marker coordinate={marker.coordinate} Color={'#fae20a'}>
+            {BusStop3.markers.map(marker => (
+              <Marker coordinate={marker.coordinate}  Color={'#fae20a'}>
                 <Image source={symbol} style={{width:20,height:20}}/>
               </Marker>
             ))}
