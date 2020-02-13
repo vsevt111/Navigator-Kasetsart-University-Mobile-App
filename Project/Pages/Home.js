@@ -4,7 +4,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import MapboxGL from "@react-native-mapbox-gl/maps";
 import MapView,{Polyline, PROVIDER_GOOGLE} from 'react-native-maps';
-import Bus4 from '../database/bus/bus4.json'
+import Bus3 from '../database/bus/bus3.json'
 
 
 
@@ -62,13 +62,6 @@ export default class HomeScreen extends React.Component {
           longitudeDelta: 0.0021
         }}
         showsUserLocation={true}>
-          <Polyline
-          coordinates={Bus4.path}
-          strokeColor="#000"
-          strokeColors={COLORS}
-          strokeWidth={4}
-        />
-        
         </MapView>
         
         
