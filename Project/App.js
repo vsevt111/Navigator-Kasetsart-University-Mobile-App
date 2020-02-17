@@ -149,12 +149,12 @@ const DrawerNavigatorExample = createDrawerNavigator({
       drawerLabel: 'ทางเดินรถรถตะลัย',
     },
   },
-  Screen3: {
-    screen: Screen3_StackNavigator,
-    navigationOptions: {
-      drawerLabel: 'ป้ายจอดรถตะลัย',
-    },
-  },
+  // Screen3: {
+  //   screen: Screen3_StackNavigator,
+  //   navigationOptions: {
+  //     drawerLabel: 'ป้ายจอดรถตะลัย',
+  //   },
+  // },
 },
 //|||DrawerNavigatorConfig|||
   {

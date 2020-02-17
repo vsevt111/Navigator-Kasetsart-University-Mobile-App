@@ -5,9 +5,8 @@ import { createStackNavigator } from 'react-navigation-stack';
 import MapboxGL from "@react-native-mapbox-gl/maps";
 import MapView,{Polyline, PROVIDER_GOOGLE} from 'react-native-maps';
 import Bus3 from '../database/bus/bus3.json'
-
-
-
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import Sci from '../database/building/buildingSci.json';
 // MapboxGL.setAccessToken("pk.eyJ1IjoidnNldnQxMTEiLCJhIjoiY2szZm1mMnlkMDZkYTNjbzI0MWRjNmRyayJ9.e74axs2q_OlWBATdIq7Hrg");
 
 
@@ -49,12 +48,47 @@ export default class HomeScreen extends React.Component {
     // MapboxGL.setTelemetryEnabled(false);
     requestLocationPermission();
   }
+  constructor(props){
+    super(props);
+    this.state={
+      Origin:"",
+      Destination:"",
+      latitude:null,
+      longitude:null,
+      coordinate:[]
+    };
+    this.DisplayOrigin=this.DisplayOrigin.bind(this);
+    this.DisplayDestination=this.DisplayDestination.bind(this);
+  }
+  DisplayOrigin(){
+    if(this.state.Origin === Sci.name){
+      this.setState({latitude:Sci.latitude})
+      this.setState({longitude:Sci.longitude})
+    }
+  }
+  DisplayDestination(){
+
+  }
 
   render() {
     return (
-     
-      <View style={{ flex: 1,justifyContent:'center',}}>
-        <MapView style={{flex : 1}}
+      <View style={{ flex: 1}}>
+        <View style={{position:'absolute',backgroundColor:'#05c3fc',zIndex:1}}>
+        <TextInput
+        onChangeText={Origin => this.setState({Origin})}
+        value={this.state.Origin}
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+        placeholder="Type Origin"
+      />
+      <TextInput
+        onChangeText={Destination => this.setState({Destination})}
+        value={this.state.Destination}
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+        placeholder="Type Destination"
+      />
+      
+        </View>
+        <MapView style={{flex : 1,zIndex:-1}}
         initialRegion={{
           latitude: 13.847639,
           longitude: 100.569584,
@@ -63,11 +97,7 @@ export default class HomeScreen extends React.Component {
         }}
         showsUserLocation={true}>
         </MapView>
-        
-        
-       
       </View>
-  
     );
   }
 }
