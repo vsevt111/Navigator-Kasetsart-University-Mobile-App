@@ -54,15 +54,17 @@ export default class HomeScreen extends React.Component {
       TextOrigin:"",
       TextDestination:"",
       coordinateOrigin : {"latitude":13.847639,"longitude":100.569584},
-      coordinateDestination:{"latitude":13.847639,"longitude":100.569584},
+      coordinateDestination : {"latitude":13.847639,"longitude":100.569584},
       Origin:"",
       Destination:"",
-   
+      arrayOfPlace:[],
+      setOrigin:true
     };
-    this.arrayholder=[];
+    
     this.DisplayOrigin=this.DisplayOrigin.bind(this);
     this.DisplayDestination=this.DisplayDestination.bind(this);
-    this.Search = this.Search.bind(this);
+    this.SearchOrigin = this.SearchOrigin.bind(this);
+    this.SearchDesti = this.SearchDesti.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
   }
   DisplayOrigin(){
@@ -75,21 +77,21 @@ export default class HomeScreen extends React.Component {
   }
 
   DisplayAll(){
+    
     this.setState({Origin:this.state.TextOrigin})
-    this.Search(this.state.Origin)
+    this.SearchOrigin(this.state.Origin)
     this.setState({Destination:this.state.TextDestination})
-    this.Search(this.state.Destination)
+    this.SearchDesti(this.state.Destination)
   }
-  Search(text){
-    const NameArray = Sci.building.map(function(item){
-      return item.name
-    })
-    const test = 'sc45'
+  SearchOrigin(text){
+    // const NameArray = Sci.building.map(function(item){
+    //   return item.name
+    // })
+    // const test = 'sc45'
     const texts = text.toUpperCase()
     const Filter = Sci.building.filter(item => {
       if(item.name === texts){
-        this.setState({coordinateOrigin:item.coordinate})
-        this.setState({coordinateDestination:item.coordinate})
+      this.setState({coordinateOrigin:item.coordinate})
         return item
       }
       else{
@@ -97,8 +99,26 @@ export default class HomeScreen extends React.Component {
       }
     })
   }
- 
+
+  SearchDesti(text){
+    // const NameArray = Sci.building.map(function(item){
+    //   return item.name
+    // })
+    // const test = 'sc45'
+    const texts = text.toUpperCase()
+    const Filter = Sci.building.filter(item => {
+      if(item.name === texts){
+      this.setState({coordinateDestination:item.coordinate})
+        return item
+      }
+      else{
+        return null
+      }
+    })
+  }
+  
   render() {
+    const arrayCoor=[]
     return (
       <View style={{ flex: 1}}>
         <View style={{position:'absolute',backgroundColor:'#05c3fc',zIndex:1}}>
@@ -107,12 +127,14 @@ export default class HomeScreen extends React.Component {
         value={this.state.TextOrigin}
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         placeholder="Type Origin"
+      
       />
       <TextInput
         onChangeText={TextDestination => this.setState({TextDestination})}
         value={this.state.TextDestination}
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         placeholder="Type Destination"
+      
       />
       <Button onPress={this.DisplayAll
       } title="ค้นหา"/>
@@ -126,6 +148,9 @@ export default class HomeScreen extends React.Component {
           longitudeDelta: 0.0021
         }}
         showsUserLocation={true}>
+          <Marker coordinate={this.state.coordinateDestination} 
+          Color={'#fae20a'}>
+          </Marker>
           <Marker coordinate={this.state.coordinateOrigin} 
           Color={'#fae20a'}>
           </Marker>
