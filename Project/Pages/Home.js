@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Button, View, Text,TextInput,StyleSheet,PermissionsAndroid } from 'react-native';
+import { Button, View, Text,TextInput,StyleSheet,PermissionsAndroid, TouchableHighlightBase } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import MapboxGL from "@react-native-mapbox-gl/maps";
-import MapView,{Polyline, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView,{Polyline, PROVIDER_GOOGLE,Marker} from 'react-native-maps';
 import Bus3 from '../database/bus/bus3.json'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Sci from '../database/building/buildingSci.json';
@@ -51,42 +51,72 @@ export default class HomeScreen extends React.Component {
   constructor(props){
     super(props);
     this.state={
+      TextOrigin:"",
+      TextDestination:"",
+      coordinateOrigin : {"latitude":13.847639,"longitude":100.569584},
+      coordinateDestination:{"latitude":13.847639,"longitude":100.569584},
       Origin:"",
       Destination:"",
-      latitude:null,
-      longitude:null,
-      coordinate:[]
+   
     };
+    this.arrayholder=[];
     this.DisplayOrigin=this.DisplayOrigin.bind(this);
     this.DisplayDestination=this.DisplayDestination.bind(this);
+    this.Search = this.Search.bind(this);
+    this.DisplayAll = this.DisplayAll.bind(this);
   }
   DisplayOrigin(){
-    if(this.state.Origin === Sci.name){
-      this.setState({latitude:Sci.latitude})
-      this.setState({longitude:Sci.longitude})
-    }
+    this.setState({Origin:this.state.TextOrigin})
+    this.Search(this.state.Origin)
   }
   DisplayDestination(){
-
+    this.setState({Destination:this.state.TextDestination})
+    this.Search(this.state.Destination)
   }
 
+  DisplayAll(){
+    this.setState({Origin:this.state.TextOrigin})
+    this.Search(this.state.Origin)
+    this.setState({Destination:this.state.TextDestination})
+    this.Search(this.state.Destination)
+  }
+  Search(text){
+    const NameArray = Sci.building.map(function(item){
+      return item.name
+    })
+    const test = 'sc45'
+    const texts = text.toUpperCase()
+    const Filter = Sci.building.filter(item => {
+      if(item.name === texts){
+        this.setState({coordinateOrigin:item.coordinate})
+        this.setState({coordinateDestination:item.coordinate})
+        return item
+      }
+      else{
+        return null
+      }
+    })
+  }
+ 
   render() {
     return (
       <View style={{ flex: 1}}>
         <View style={{position:'absolute',backgroundColor:'#05c3fc',zIndex:1}}>
         <TextInput
-        onChangeText={Origin => this.setState({Origin})}
-        value={this.state.Origin}
+        onChangeText={TextOrigin => this.setState({TextOrigin})}
+        value={this.state.TextOrigin}
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         placeholder="Type Origin"
       />
       <TextInput
-        onChangeText={Destination => this.setState({Destination})}
-        value={this.state.Destination}
+        onChangeText={TextDestination => this.setState({TextDestination})}
+        value={this.state.TextDestination}
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         placeholder="Type Destination"
       />
-      
+      <Button onPress={this.DisplayAll
+      } title="ค้นหา"/>
+
         </View>
         <MapView style={{flex : 1,zIndex:-1}}
         initialRegion={{
@@ -96,6 +126,11 @@ export default class HomeScreen extends React.Component {
           longitudeDelta: 0.0021
         }}
         showsUserLocation={true}>
+          <Marker coordinate={this.state.coordinateOrigin} 
+          Color={'#fae20a'}>
+          </Marker>
+          {console.log(this.state.coordinateOrigin)}
+          {console.log(this.state.coordinateDestination)}
         </MapView>
       </View>
     );
