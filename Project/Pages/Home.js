@@ -43,10 +43,20 @@ async function requestLocationPermission() {
 //     coordinates: [marker.lat,marker.lng],
 //   },
 // };
+
 export default class HomeScreen extends React.Component {
   componentDidMount(){
     // MapboxGL.setTelemetryEnabled(false);
     requestLocationPermission();
+  }
+  componentDidUpdate(prevProp,prevState){
+    if(prevState.coordinateOrigin !== this.state.coordinateOrigin){
+     
+      this.DisplayAll
+    }
+    else if(prevState.coordinateDestination !== this.state.coordinateDestination){
+      this.DisplayAll
+    }
   }
   constructor(props){
     super(props);
@@ -57,14 +67,13 @@ export default class HomeScreen extends React.Component {
       coordinateDestination : {"latitude":13.847639,"longitude":100.569584},
       Origin:"",
       Destination:"",
-      arrayOfPlace:[],
+      coordinate:[],
       setOrigin:true
     };
     
     this.DisplayOrigin=this.DisplayOrigin.bind(this);
     this.DisplayDestination=this.DisplayDestination.bind(this);
-    this.SearchOrigin = this.SearchOrigin.bind(this);
-    this.SearchDesti = this.SearchDesti.bind(this);
+    this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
   }
   DisplayOrigin(){
@@ -77,48 +86,34 @@ export default class HomeScreen extends React.Component {
   }
 
   DisplayAll(){
-    
+    const array = []
+    console.log('tab this button')
     this.setState({Origin:this.state.TextOrigin})
-    this.SearchOrigin(this.state.Origin)
+    this.Search(this.state.Origin,array)
     this.setState({Destination:this.state.TextDestination})
-    this.SearchDesti(this.state.Destination)
+    this.Search(this.state.Destination,array)
   }
-  SearchOrigin(text){
-    // const NameArray = Sci.building.map(function(item){
-    //   return item.name
-    // })
-    // const test = 'sc45'
+  Search(text,array){
     const texts = text.toUpperCase()
-    const Filter = Sci.building.filter(item => {
+    Sci.building.filter(item => {
       if(item.name === texts){
       this.setState({coordinateOrigin:item.coordinate})
+      array.push(item.coordinate)
+      this.setState({coordinate:array})
+      console.log(array)
         return item
       }
       else{
         return null
       }
     })
+    
   }
 
-  SearchDesti(text){
-    // const NameArray = Sci.building.map(function(item){
-    //   return item.name
-    // })
-    // const test = 'sc45'
-    const texts = text.toUpperCase()
-    const Filter = Sci.building.filter(item => {
-      if(item.name === texts){
-      this.setState({coordinateDestination:item.coordinate})
-        return item
-      }
-      else{
-        return null
-      }
-    })
-  }
+  
   
   render() {
-    const arrayCoor=[]
+    
     return (
       <View style={{ flex: 1}}>
         <View style={{position:'absolute',backgroundColor:'#05c3fc',zIndex:1}}>
@@ -148,14 +143,13 @@ export default class HomeScreen extends React.Component {
           longitudeDelta: 0.0021
         }}
         showsUserLocation={true}>
-          <Marker coordinate={this.state.coordinateDestination} 
-          Color={'#fae20a'}>
-          </Marker>
-          <Marker coordinate={this.state.coordinateOrigin} 
-          Color={'#fae20a'}>
-          </Marker>
-          {console.log(this.state.coordinateOrigin)}
-          {console.log(this.state.coordinateDestination)}
+       
+          {this.state.coordinate.map(coor=>(
+            <Marker coordinate={coor}/>
+          ))}
+          {console.log(this.state.coordinate)}
+          
+     
         </MapView>
       </View>
     );

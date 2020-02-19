@@ -4,26 +4,26 @@
         {
             "name":"ศูนย์เรียนรวม 3(ศร.3)",
             "description":"",
-            "latitude":13.849203,
-            "longitude":100.569403
+            "coordinate":{"latitude":13.849203,
+            "longitude":100.569403}
         },
         {
             "name":"ศูนย์เรียนรวม 2(ศร.2)",
             "description":"",
-            "latitude":13.849736,
-            "longitude":100.569370
+            "coordinate":{"latitude":13.849736,
+            "longitude":100.569370}
         },
         {
             "name":"ศูนย์เรียนรวม 4(ศร.4)",
             "description":"",
-            "latitude":13.849953,
-            "longitude":100.569409
+            "coordinate":{"latitude":13.849953,
+            "longitude":100.569409}
         },
         {
             "name":"ศูนย์เรียนรวม 1(ศร.1)",
             "description":"",
-            "latitude":13.847207,
-            "longitude":100.571010
+            "coordinate":{"latitude":13.847207,
+            "longitude":100.571010}
         }
     ]
 }

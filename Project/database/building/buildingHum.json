@@ -4,26 +4,26 @@
         {
             "name":"อาคารคณะมนุษยศาสตร์(อาคาร 3)",
             "description":"",
-            "latitude":13.848947,
-            "longitude":100.570023
+            "coordinate":{"latitude":13.848947,
+            "longitude":100.570023}
         },
         {
             "name":"อาคารคณะมนุษยศาสตร์(อาคาร 1)",
             "description":"",
-            "latitude":13.848732,
-            "longitude":100.569357
+            "coordinate":{"latitude":13.848732,
+            "longitude":100.569357}
         },
         {
             "name":"อาคารคณะมนุษยศาสตร์(อาคาร 2)",
             "description":"",
-            "latitude":13.848744,
-            "longitude":100.570211
+            "coordinate":{"latitude":13.848744,
+            "longitude":100.570211}
         },
         {
             "name":"อาคารจุฬาภรณ์พิศาลศิลป์(อาคาร 4)",
             "description":"",
-            "latitude":13.848253,
-            "longitude":100.569682
+            "coordinate":{"latitude":13.848253,
+            "longitude":100.569682}
         }
     ]
 }

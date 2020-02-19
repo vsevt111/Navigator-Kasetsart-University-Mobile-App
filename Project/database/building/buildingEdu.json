@@ -4,20 +4,20 @@
         {
             "name":"อาคาร 1",
             "description":"",
-            "latitude":13.850973,
-            "longitude":100.569974
+            "coordinate":{"latitude":13.850973,
+            "longitude":100.569974}
         },
         {
             "name":"ภาควิชาเทคโนโลยีการศึกษา(อาคาร 2)",
             "description":"",
-            "latitude":13.851710,
-            "longitude":100.570046
+            "coordinate":{"latitude":13.851710,
+            "longitude":100.570046}
         },
         {
             "name":"อาคารคณะศึกษาศาสตร์(อาคาร 3)",
             "description":"",
-            "latitude":13.851712,
-            "longitude":100.570062
+            "coordinate":{"latitude":13.851712,
+            "longitude":100.570062}
         }
     ]
 }

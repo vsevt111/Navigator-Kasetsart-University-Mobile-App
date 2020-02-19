@@ -4,26 +4,26 @@
         {
             "name":"อาคาร 1",
             "description":"",
-            "latitude":13.849710,
-            "longitude":100.570125
+            "coordinate":{"latitude":13.849710,
+            "longitude":100.570125}
         },
         {
             "name":"อาคาร 2",
             "description":"",
-            "latitude":13.850102,
-            "longitude":100.570109
+            "coordinate":{"latitude":13.850102,
+            "longitude":100.570109}
         },
         {
             "name":"อาคาร 3",
             "description":"",
-            "latitude":13.849891,
-            "longitude":100.569932
+            "coordinate":{"latitude":13.849891,
+            "longitude":100.569932}
         },
         {
             "name":"อาคารศรีรัศมิ์(อาคาร 4)",
             "description":"",
-            "latitude":13.849381,
-            "longitude":100.570063
+            "coordinate":{"latitude":13.849381,
+            "longitude":100.570063}
         }
     ]
 }
