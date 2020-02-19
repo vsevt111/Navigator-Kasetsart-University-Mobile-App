@@ -4,38 +4,38 @@
         {
             "name":"อาคารเรียนและปฎิบัติการ",
             "description":"",
-            "latitude":13.845043,
-            "longitude":100.577341
+            "coordinate":{"latitude":13.845043,
+            "longitude":100.577341}
         },
         {
             "name":"อาคารเฉลิมพระเกียรติ 6 รอบ พระชนมพรรษา",
             "description":"",
-            "latitude":13.844658,
-            "longitude":100.5773479
+            "coordinate":{"latitude":13.844658,
+            "longitude":100.5773479}
         },
         {
             "name":"อาคารเรียนและปฎิบัติการกายวิภาคศาสตร์",
             "description":"",
-            "latitude":13.845057,
-            "longitude":100.576489
+            "coordinate":{"latitude":13.845057,
+            "longitude":100.576489}
         },
         {
             "name":"อาคารจักรพิชัยรณรงค์สงคราม",
             "description":"",
-            "latitude":13.844649,
-            "longitude":100.576726
+            "coordinate":{"latitude":13.844649,
+            "longitude":100.576726}
         },
         {
             "name":"สระสุวรรณชาติ",
             "description":"",
-            "latitude":13.844102,
-            "longitude":100.576814
+            "coordinate":{"latitude":13.844102,
+            "longitude":100.576814}
         },
         {
             "name":"โรงพยาบาลสัตว์เล็ก",
             "description":"",
-            "latitude":13.844368,
-            "longitude":100.577691
+            "coordinate":{"latitude":13.844368,
+            "longitude":100.577691}
         }
 
     ]

@@ -4,8 +4,8 @@
         {
             "name":"อาคารปฎิบัติการ",
             "description":"",
-            "latitude":13.855694,
-            "longitude":100.569911
+            "coordinate":{"latitude":13.855694,
+            "longitude":100.569911}
         }
     ]
 }

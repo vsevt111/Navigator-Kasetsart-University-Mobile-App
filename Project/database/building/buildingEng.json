@@ -4,98 +4,98 @@
     {
         "name":"อาคารเรียนและบริการ(อาคาร 1)",
         "description":"ภาควิชาวิศวกรรมเคมี",
-        "latitude":13.846539,
-        "longitude":100.569063
+        "coordinate":{"latitude":13.846539,
+        "longitude":100.569063}
     },
     {
         "name":"อาคารปฎิบัติการวิศวกรรมศาสตร์(อาคาร 15)",
         "description":"",
-        "latitude":13.846207,
-        "longitude":100.568638
+        "coordinate":{"latitude":13.846207,
+        "longitude":100.568638}
     },
     {
         "name":"อาคารวิศวกรรมไฟฟ้า(อาคาร 2)",
         "description":"วิศวกรรมไฟฟ้า",
-        "latitude":13.846140,
-        "longitude":100.568952
+        "coordinate":{"latitude":13.846140,
+        "longitude":100.568952}
     },
     {
         "name":"อาคารเรียนคณะ(อาคาร 3)",
         "description":"",
-        "latitude":13.846134,
-        "longitude":100.569288
+        "coordinate":{"latitude":13.846134,
+        "longitude":100.569288}
     },
     {
         "name":"อาคารศูนย์คอมพิวเตอร์วิศวกรรม(อาคาร 4)",
         "description":"",
-        "latitude":13.846337,
-        "longitude":100.570106
+        "coordinate":{"latitude":13.846337,
+        "longitude":100.570106}
     },
     {
         "name":"บาร์วิศวะ",
         "description":"โรงอาหาร",
-        "latitude":13.846450,
-        "longitude":100.569717
+        "coordinate":{"latitude":13.846450,
+        "longitude":100.569717}
     },
     {
         "name":"ตึกชูชาติ กำภู(อาคาร 14)",
         "description":"ภาควิชาวิศวกรรมการบินและอวกาศ",
-        "latitude":13.845564,
-        "longitude":100.570081
+        "coordinate":{"latitude":13.845564,
+        "longitude":100.570081}
     },
     {
         "name":"อาคารปฎิบัติการทรัพยากรน้ำ(อาคาร 13)",
         "description":"ภาควิชาวิศวกรรมทรัพยากรน้ำ",
-        "latitude":13.844835,
-        "longitude":100.569523
+        "coordinate":{"latitude":13.844835,
+        "longitude":100.569523}
     },
     {
         "name":"ภาควิชาวิศวกรรมทรัพยากรน้ำ(อาคาร 8)",
         "description":"ภาควิชาวิศวกรรมทรัพยากรน้ำ",
-        "latitude":13.844934,
-        "longitude":100.569136
+        "coordinate":{"latitude":13.844934,
+        "longitude":100.569136}
     },
     {
         "name":"อาคารบุญสมสุวชิรัตน์(อาคาร 9)",
         "description":"ภาควิชาวิศวกรรมโยธา",
-        "latitude":13.845721,
-        "longitude":100.569589
+        "coordinate":{"latitude":13.845721,
+        "longitude":100.569589}
     },
     {
         "name":"อาคารปฎิบัติการวิศวกรรมเครื่องกล(อาคาร 5)",
         "description":"ภาควิชาวิศวกรรมเครื่องกล",
-        "latitude":13.845494,
-        "longitude":100.568793
+        "coordinate":{"latitude":13.845494,
+        "longitude":100.568793}
     },
     {
         "name":"อาคารปฎิบัติการยานยนต์(อาคาร 6)",
         "description":"ภาควิชาวิศวกรรมยานยนต์",
-        "latitude":13.844731,
-        "longitude":100.568460
+        "coordinate":{"latitude":13.844731,
+        "longitude":100.568460}
     },
     {
         "name":"อาคารวิศวกรรมสำรวจ(อาคาร 12)",
         "description":"ภาควิชาวิศวกรรมสำรวจ",
-        "latitude":13.845114,
-        "longitude":100.569586
+        "coordinate":{"latitude":13.845114,
+        "longitude":100.569586}
     },
     {
         "name":"อาคารวิศวกรรมสิ่งแวดล้อม/ชำนาญเพ็ญชาติ(อาคาร 11)",
         "description":"ภาควิชาวิศวกรรมสิ่งแวดล้อม",
-        "latitude":13.845225,
-        "longitude":100.569535
+        "coordinate":{"latitude":13.845225,
+        "longitude":100.569535}
     },
     {
         "name":"อาคารปฎิบัติการวิศวกรรมอุตสาหการ(อาคาร 7)",
         "description":"ภาควิชาวิศวกรรมอุตสาหการ",
-        "latitude":13.844724,
-        "longitude":100.568452
+        "coordinate":{"latitude":13.844724,
+        "longitude":100.568452}
     },
     {
         "name":"อาคารวัสดุธานี(อาคาร 10)",
         "description":"",
-        "latitude":13.845885,
-        "longitude":100.568963
+        "coordinate":{"latitude":13.845885,
+        "longitude":100.568963}
     }
 ]
 }

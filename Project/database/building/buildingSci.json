@@ -54,12 +54,7 @@
             "description":"",
             "coordinate":{"latitude":13.846153,
             "longitude":100.571320}
-        },
-        {
-            "name":"อาคารภาควิชาสัตววิทยา",
-            "description":"zoology",
-            "coordinate":{"latitude":13.846153,
-            "longitude":100.571320}
         }
+      
     ]
 }

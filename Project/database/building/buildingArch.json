@@ -4,14 +4,14 @@
         {
             "name":"อาคารสถาปัตยกรรมศาสตร์",
             "description":"",
-            "latitude":13.853110,
-            "longitude":100.568528
+            "coordinate":{"latitude":13.853110,
+            "longitude":100.568528}
         },
         {
             "name":"อาคารปฎิบัติการเทคโนโลยีทางอาคารสถาปัตยกรรมศาสตร์",
             "description":"",
-            "latitude":13.853724,
-            "longitude":100.568593
+            "coordinate":{"latitude":13.853724,
+            "longitude":100.568593}
         }
     ]
 }
