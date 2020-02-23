@@ -19,6 +19,7 @@ import HomeScreen from './Pages/Home';
 import Search from './Pages/Direction';
 import { ScrollView } from 'react-native-gesture-handler';
 import HomeBus from './Pages/HomeBus';
+import HomeMotor from './Pages/HomeMotorcycle';
 
 //Making TabNavigator which will be called in App StackNavigator
 //we can directly export the TabNavigator also but header will not be visible
@@ -119,6 +120,21 @@ const Screen2_StackNavigator = createStackNavigator({
   },
 });
 
+const Screen3_StackNavigator = createStackNavigator({
+  //All the screen from the Screen2 will be indexed here
+  Third: {
+    screen: HomeMotor,
+    navigationOptions: ({ navigation }) => ({
+      title: 'วินมอเตอร์ไซค์',
+      headerRight: <NavigationDrawerStructure navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: '#3d3c37',
+      },
+      headerTintColor: '#fff',
+    }),
+  },
+});
+
 const DrawerNavigatorExample = createDrawerNavigator({
   //Drawer Options and indexing |||RouteConfigs|||
   Screen1: {
@@ -133,6 +149,12 @@ const DrawerNavigatorExample = createDrawerNavigator({
       drawerLabel: 'รถตะลัย',
     },
   },
+  Screen3: {
+    screen: Screen3_StackNavigator,
+    navigationOptions: {
+      drawerLabel: 'วินมอเตอร์ไซค์',
+    },
+  }
 },
 //|||DrawerNavigatorConfig|||
   {

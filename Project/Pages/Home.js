@@ -1,14 +1,23 @@
 import * as React from 'react';
-import { Button, View, Text,TextInput,StyleSheet,PermissionsAndroid, TouchableHighlightBase } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-import MapboxGL from "@react-native-mapbox-gl/maps";
-import MapView,{Polyline, PROVIDER_GOOGLE,Marker} from 'react-native-maps';
-import Bus3 from '../database/bus/bus3.json'
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import Sci from '../database/building/buildingSci.json';
-// MapboxGL.setAccessToken("pk.eyJ1IjoidnNldnQxMTEiLCJhIjoiY2szZm1mMnlkMDZkYTNjbzI0MWRjNmRyayJ9.e74axs2q_OlWBATdIq7Hrg");
+import { Button, View, Text,TextInput,StyleSheet,PermissionsAndroid, TouchableHighlightBase,Picker} from 'react-native';
 
+import MapView,{Polyline, PROVIDER_GOOGLE,Marker} from 'react-native-maps';
+import Sci from '../database/building/buildingSci.json';
+import Agro from '../database/building/buildingAgro.json';
+import Arch from '../database/building/buildingArch.json';
+import Bus from '../database/building/buildingBus.json';
+import Eco from '../database/building/buildingEco.json';
+import Edu from '../database/building/buildingEdu.json';
+import Eng from '../database/building/buildingEng.json';
+import Env from '../database/building/buildingEnv.json';
+import Fish from '../database/building/buildingFish.json';
+import Forest from '../database/building/buildingForest.json';
+import Hum from '../database/building/buildingHum.json';
+import Soc from '../database/building/buildingSoc.json';
+import Vet from '../database/building/buildingVet.json';
+import VetTech from '../database/building/buildingVetTech.json';
+import Agr from '../database/building/buildingAgr';
+import All from '../database/building/buildingAll';
 
 async function requestLocationPermission() {
   
@@ -51,13 +60,99 @@ export default class HomeScreen extends React.Component {
   }
   componentDidUpdate(prevProp,prevState){
     if(prevState.coordinateOrigin !== this.state.coordinateOrigin){
-     
       this.DisplayAll
     }
     else if(prevState.coordinateDestination !== this.state.coordinateDestination){
       this.DisplayAll
     }
+    else if(prevState.FacultyOrigin !== this.state.FacultyOrigin || 
+      prevState!== this.state.FacultyDestination){
+      if(prevState.change){
+        if(this.state.FacultyOrigin === "คณะเกษตร" 
+        || this.state.FacultyDestination === "คณะเกษตร"){
+          this.setState({FacultyValue:Agr})
+          console.log('คณะเกษตร')
+        }
+        else if(this.state.FacultyOrigin === "คณะอุตสาหกรรมเกษตร" ||
+        this.state.FacultyDestination === "คณะอุตสาหกรรมเกษตร"){
+          this.setState({FacultyValue:Agro})
+          console.log('คณะอุตสาหกรรมเกษตร')
+        }
+        else if(this.state.FacultyOrigin === "รวม" ||
+        this.state.FacultyDestination === "รวม"){
+          this.setState({FacultyValue:All})
+          console.log('รวม')
+        }
+        else if(this.state.FacultyOrigin === "คณะสถาปัตยกรรมศาสตร์" ||
+        this.state.FacultyDestination === "คณะสถาปัตยกรรมศาสตร์"){
+          this.setState({FacultyValue:Arch})
+          console.log('คณะสถาปัตยกรรมศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะบริหารธุรกิจ" ||
+        this.state.FacultyDestination === "คณะบริหารธุรกิจ"){
+          this.setState({FacultyValue:Bus})
+          console.log('คณะบริหารธุรกิจ')
+        }
+        else if(this.state.FacultyOrigin === "คณะเศรษฐศาสตร์" ||
+        this.state.FacultyDestination === "คณะเศรษฐศาสตร์"){
+          this.setState({FacultyValue:Eco})
+          console.log('คณะเศรษฐศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะศึกษาศาสตร์" ||
+        this.state.FacultyDestination === "คณะศึกษาศาสตร์"){
+          this.setState({FacultyValue:Edu})
+          console.log('คณะศึกษาศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะวิศวกรรมศาสตร์" ||
+        this.state.FacultyDestination === "คณะวิศวกรรมศาสตร์"){
+          this.setState({FacultyValue:Eng})
+          console.log('คณะวิศวกรรมศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะสิ่งแวดล้อม" ||
+        this.state.FacultyDestination === "คณะสิ่งแวดล้อม"){
+          this.setState({FacultyValue:Env})
+          console.log('คณะสิ่งแวดล้อม')
+        }
+        else if(this.state.FacultyOrigin === "คณะประมง" ||
+        this.state.FacultyDestination === "คณะประมง"){
+          this.setState({FacultyValue:Fish})
+          console.log('คณะประมง')
+        }
+        else if(this.state.FacultyOrigin === "คณะวนศาสตร์" ||
+        this.state.FacultyDestination === "คณะวนศาสตร์"){
+          this.setState({FacultyValue:Forest})
+          console.log('คณะวนศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะมนุษยศาสตร์" ||
+        this.state.FacultyDestination === "คณะมนุษยศาสตร์"){
+          this.setState({FacultyValue:Hum})
+          console.log('คณะมนุษยศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะวิทยาศาสตร์" ||
+        this.state.FacultyDestination === "คณะวิทยาศาสตร์"){
+          this.setState({FacultyValue:Sci})
+          console.log('คณะวิทยาศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะสังคมศาสตร์" ||
+        this.state.FacultyDestination === "คณะสังคมศาสตร์"){
+          this.setState({FacultyValue:Soc})
+          console.log('คณะสังคมศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะสัตวแพทยศาสตร์" ||
+        this.state.FacultyDestination === "คณะสัตวแพทยศาสตร์"){
+          this.setState({FacultyValue:Vet})
+          console.log('คณะสัตวแพทยศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะเทคนิคการสัตวแพทย์" ||
+        this.state.FacultyDestination === "คณเทคนิคการสัตวแพทย์"){
+          this.setState({FacultyValue:VetTech})
+          console.log('คณะเทคนิคการสัตวแพทย์')
+        }
+        this.setState({change:false}) 
+      }
+      
   }
+}
   constructor(props){
     super(props);
     this.state={
@@ -68,7 +163,11 @@ export default class HomeScreen extends React.Component {
       Origin:"",
       Destination:"",
       coordinate:[],
-      setOrigin:true
+      setOrigin:true,
+      FacultyOrigin:"",
+      FacultyDestination:"",
+      FacultyValue:null,
+      change:false
     };
     
     this.DisplayOrigin=this.DisplayOrigin.bind(this);
@@ -93,6 +192,7 @@ export default class HomeScreen extends React.Component {
     this.setState({Destination:this.state.TextDestination})
     this.Search(this.state.Destination,array)
   }
+
   Search(text,array){
     const texts = text.toUpperCase()
     Sci.building.filter(item => {
@@ -107,30 +207,59 @@ export default class HomeScreen extends React.Component {
         return null
       }
     })
-    
   }
-
+  
   
   
   render() {
-    
+    const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
+  ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
+"คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
+if(!this.state.change){
+  this.setState({change:true})
+}
     return (
       <View style={{ flex: 1}}>
-        <View style={{position:'absolute',backgroundColor:'#05c3fc',zIndex:1}}>
+        <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1}}>
+        <Picker
+        selectedValue={this.state.FacultyOrigin}
+       
+        style={{height: 50, width: 100}}
+        onValueChange={(itemValue, itemIndex) =>
+          this.setState({FacultyOrigin:itemValue})
+        }>
+        {faculty.map(fac =>(
+          <Picker.Item label={fac} value={fac}/>
+        ))}
+</Picker>
+{console.log(this.state.change)}
+<Picker
+        selectedValue={this.state.FacultyDestination}
+       
+        style={{height: 50, width: 100}}
+        onValueChange={(itemValue, itemIndex) =>
+          this.setState({FacultyDestination:itemValue})
+        }>
+        {faculty.map(fac =>(
+          <Picker.Item label={fac} value={fac}/>
+        ))}
+</Picker>
+
         <TextInput
+    
         onChangeText={TextOrigin => this.setState({TextOrigin})}
         value={this.state.TextOrigin}
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1
+        }}
         placeholder="Type Origin"
-      
       />
       <TextInput
         onChangeText={TextDestination => this.setState({TextDestination})}
         value={this.state.TextDestination}
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         placeholder="Type Destination"
-      
       />
+      
       <Button onPress={this.DisplayAll
       } title="ค้นหา"/>
 
@@ -145,7 +274,9 @@ export default class HomeScreen extends React.Component {
         showsUserLocation={true}>
        
           {this.state.coordinate.map(coor=>(
-            <Marker coordinate={coor}/>
+            <Marker coordinate={coor}>
+
+            </Marker>
           ))}
           {console.log(this.state.coordinate)}
           

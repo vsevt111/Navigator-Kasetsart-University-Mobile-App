@@ -27,36 +27,96 @@ import symbol3 from '../image/busstopLine3.png';
 import symbol4 from '../image/busstopLine4.png';
 import symbol5 from '../image/busstopLine5.png';
 
-
-// const TabScreen = createMaterialTopTabNavigator(
-//   {
-//     สาย1: BusLine1Screen,
-//     สาย2: BusLine2Screen,
-//     สาย3: BusLine3Screen,
-//     สาย4: BusLine4Screen,
-//     สาย5: BusLine5Screen
-//   },
-//   {
-//     tabBarPosition: 'top',
-//     swipeEnabled: true,
-//     animationEnabled: true,
-//     tabBarOptions: {
-//       activeTintColor: '#FFFFFF',
-//       inactiveTintColor: '#F8F8F8',
-//       style: {
-//         backgroundColor: '#3d3c37',
-//       },
-//       labelStyle: {
-//         textAlign: 'center',
-//       },
-//       indicatorStyle: {
-//         borderBottomColor: '#87B56A',
-//         borderBottomWidth: 2,
-//       },
-//     },
-//   }
-// );
 export default class HomeBusScreen extends React.Component {
+  componentDidUpdate(prevProp,prevState){
+     if(prevState.FacultyOrigin !== this.state.FacultyOrigin || 
+      prevState!== this.state.FacultyDestination){
+      if(prevState.change){
+        if(this.state.FacultyOrigin === "คณะเกษตร" 
+        || this.state.FacultyDestination === "คณะเกษตร"){
+          this.setState({FacultyValue:Agr})
+          console.log('คณะเกษตร')
+        }
+        else if(this.state.FacultyOrigin === "คณะอุตสาหกรรมเกษตร" ||
+        this.state.FacultyDestination === "คณะอุตสาหกรรมเกษตร"){
+          this.setState({FacultyValue:Agro})
+          console.log('คณะอุตสาหกรรมเกษตร')
+        }
+        else if(this.state.FacultyOrigin === "รวม" ||
+        this.state.FacultyDestination === "รวม"){
+          this.setState({FacultyValue:All})
+          console.log('รวม')
+        }
+        else if(this.state.FacultyOrigin === "คณะสถาปัตยกรรมศาสตร์" ||
+        this.state.FacultyDestination === "คณะสถาปัตยกรรมศาสตร์"){
+          this.setState({FacultyValue:Arch})
+          console.log('คณะสถาปัตยกรรมศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะบริหารธุรกิจ" ||
+        this.state.FacultyDestination === "คณะบริหารธุรกิจ"){
+          this.setState({FacultyValue:Bus})
+          console.log('คณะบริหารธุรกิจ')
+        }
+        else if(this.state.FacultyOrigin === "คณะเศรษฐศาสตร์" ||
+        this.state.FacultyDestination === "คณะเศรษฐศาสตร์"){
+          this.setState({FacultyValue:Eco})
+          console.log('คณะเศรษฐศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะศึกษาศาสตร์" ||
+        this.state.FacultyDestination === "คณะศึกษาศาสตร์"){
+          this.setState({FacultyValue:Edu})
+          console.log('คณะศึกษาศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะวิศวกรรมศาสตร์" ||
+        this.state.FacultyDestination === "คณะวิศวกรรมศาสตร์"){
+          this.setState({FacultyValue:Eng})
+          console.log('คณะวิศวกรรมศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะสิ่งแวดล้อม" ||
+        this.state.FacultyDestination === "คณะสิ่งแวดล้อม"){
+          this.setState({FacultyValue:Env})
+          console.log('คณะสิ่งแวดล้อม')
+        }
+        else if(this.state.FacultyOrigin === "คณะประมง" ||
+        this.state.FacultyDestination === "คณะประมง"){
+          this.setState({FacultyValue:Fish})
+          console.log('คณะประมง')
+        }
+        else if(this.state.FacultyOrigin === "คณะวนศาสตร์" ||
+        this.state.FacultyDestination === "คณะวนศาสตร์"){
+          this.setState({FacultyValue:Forest})
+          console.log('คณะวนศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะมนุษยศาสตร์" ||
+        this.state.FacultyDestination === "คณะมนุษยศาสตร์"){
+          this.setState({FacultyValue:Hum})
+          console.log('คณะมนุษยศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะวิทยาศาสตร์" ||
+        this.state.FacultyDestination === "คณะวิทยาศาสตร์"){
+          this.setState({FacultyValue:Sci})
+          console.log('คณะวิทยาศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะสังคมศาสตร์" ||
+        this.state.FacultyDestination === "คณะสังคมศาสตร์"){
+          this.setState({FacultyValue:Soc})
+          console.log('คณะสังคมศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะสัตวแพทยศาสตร์" ||
+        this.state.FacultyDestination === "คณะสัตวแพทยศาสตร์"){
+          this.setState({FacultyValue:Vet})
+          console.log('คณะสัตวแพทยศาสตร์')
+        }
+        else if(this.state.FacultyOrigin === "คณะเทคนิคการสัตวแพทย์" ||
+        this.state.FacultyDestination === "คณเทคนิคการสัตวแพทย์"){
+          this.setState({FacultyValue:VetTech})
+          console.log('คณะเทคนิคการสัตวแพทย์')
+        }
+        this.setState({change:false}) 
+      }
+      
+  }
+}
   
   constructor(props){
     super(props);
@@ -65,8 +125,10 @@ export default class HomeBusScreen extends React.Component {
       Color:"#000",
       Value: null,
       BusStop:BusStop1,
-      symbol:symbol1
-      // temp:this.state.Line1
+      symbol:symbol1,
+      FacultyOrigin:'',
+      FacultyDestination:'',
+      change:false
     };
     this.handleOnPressLine1= this.handleOnPressLine1.bind(this);
     this.handleOnPressLine2= this.handleOnPressLine2.bind(this);
@@ -120,7 +182,9 @@ export default class HomeBusScreen extends React.Component {
   render() {
       let line =[{value:'สาย 1'},{value:'สาย 2'},{value:'สาย3'},
     {value:'สาย 4'},{value:'สาย 5'}]
-    
+    if(!this.state.change){
+      this.setState({change:true})
+    }
     return (
       <View style={{ flex: 1}}>
         <View style={{zIndex:1,position:'absolute',height:200,width:60,alignSelf:'center'}}>
@@ -156,7 +220,6 @@ export default class HomeBusScreen extends React.Component {
               </Marker>
             ))} 
         </MapView>
-        {/* <Dropdown label="กรุณาเลือกสาย" data={line}/> */}
         
       </View>
     );
@@ -191,4 +254,3 @@ const styles = StyleSheet.create({
     flex: 3
   }
 });
-// export default createAppContainer(TabScreen);

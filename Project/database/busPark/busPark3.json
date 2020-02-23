@@ -3,126 +3,151 @@
     "markers":[
         {
             "name":"จุดคณะสิ่งแวดล้อม",
+            "Faculty":["คณะประมง"],
             "coordinate":{"latitude":13.855000 ,
             "longitude":100.568951}
         },
         {
             "name":"จุดคณะประมง",
+            "Faculty":["คณะประมง"],
             "coordinate":{"latitude":13.854829,
             "longitude":100.567337}
         },
         {
             "name":"จุดอาคารเรือนองุ่นปวิณปุณศรี",
+            "Faculty":["คณะสถาปัตยกรรมศาสตร์"],
             "coordinate":{"latitude":13.852983,
             "longitude":100.566955}
         },
         {
             "name":"จุดสนามซอฟบอล/ศูนย์จุลินทรีย์",
+            "Faculty":["รวม"],
             "coordinate":{"latitude":13.852101,
             "longitude":100.565758}
         },
         {
             "name":"จุดประตูวิภาวดี-รังสิต",
+            "Faculty":["รวม"],
             "coordinate":{"latitude":13.851845,
             "longitude":100.565390}
         },
         {
             "name":"จุดสำนักการกีฬา",
+            "Faculty":["รวม"],
             "coordinate":{"latitude": 13.851384,
             "longitude":100.565614}
         },
         {
             "name":"จุดสนามตะกร้อ",
+            "Faculty":["รวม"],
             "coordinate":{"latitude":13.848540,
             "longitude":100.565455}
         },
         {
             "name":"จุดสนามอินทรีย์จันทรสถิตย์",
+            "Faculty":["รวม"],
             "coordinate":{"latitude":13.847218,
             "longitude":100.564753}
         },
         {
             "name":"จุดประตูงามวงศ์วาน 3",
+            "Faculty":["รวม"],
             "coordinate":{"latitude":13.845436,
             "longitude":100.566408}
         },
         {
             "name":"จุดประตูงามวงศ์วาน 2",
+            "Faculty":["คณะบริหารธุรกิจ"],
             "coordinate":{"latitude":13.844352,
             "longitude":100.568363}
         },
         {
             "name":"จุดประตูงามวงศ์วาน 1",
+            "Faculty":["คณะเกษตร"],
             "coordinate":{"latitude":13.843025,
             "longitude":100.570769}
         },
         {
             "name":"จุดศูนย์วิจัย",
+            "Faculty":["รวม"],
             "coordinate":{"latitude":13.842580,
             "longitude":100.572246}
         },
         {
             "name":"จุดอนุสาวรีย์สามบูรพาจารย์",
+            "Faculty":["รวม"],
             "coordinate":{"latitude":13.842315,
             "longitude":100.573632}
         },
         {
             "name":"จุดอนุสาวรีย์สามบูรพาจารย์",
+            "Faculty":["รวม"],
             "coordinate":{"latitude":13.842476,
             "longitude":100.573948}
         },
         {
             "name":"จุดประตูพหลโยธิน",
+            "Faculty":["รวม"],
             "coordinate":{"latitude":13.842050,
             "longitude":100.576089}
         },
         {
             "name":"จุดอาคารวิทยพัฒนา(สำนักงานทรัพย์สิน)",
+            "Faculty":["คณะเกษตร"],
             "coordinate":{"latitude":13.843036,
             "longitude":100.572037}
         },
         {
             "name":"จุดคณะวิทยาศาสตร์ SCL",
+            "Faculty":["คณะวิทยาศาสตร์"],
             "coordinate":{"latitude":13.844583,
             "longitude":100.572578}
         },
         {
             "name":"จุดศูนย์ฝึกอบรมวนศาสตร์ชุมชนแห่งภูมิภาคเอเชียแปซิฟิก",
+            "Faculty":["คณะวิทยาศาสตร์","คณะวนศาสตร์"],
             "coordinate":{"latitude":13.846467,
             "longitude":100.572576}
         },
         {
             "name":"จุดสำนักหอสมุด",
+            "Faculty":["คณะเกษตร","คณะวนศาสตร์"],
             "coordinate":{"latitude":13.847844,
             "longitude":100.572603}
         },
         {
             "name":"จุดคณะเกษตร",
+            "Faculty":["คณะเกษตร"],
             "coordinate":{"latitude":13.848697,
             "longitude":100.572609}
         },
         {
             "name":"จุดอาคารพุทธเกษตร",
+            "Faculty":["คณะอุตสาหกรรมเกษตร"],
             "coordinate":{"latitude":13.850518,
             "longitude":100.572626}
         },
         {
             "name":"จุดคณะอุตสาหกรรมเกษตร",
+            "Faculty":["คณะอุตสาหกรรมเกษตร"],
             "coordinate":{"latitude":13.851848,
             "longitude":100.572622}
         },
         {
             "name":"จุดโรงอาหารกลาง 2",
+            "Faculty":["คณะอุตสาหกรรมเกษตร"],
             "coordinate":{"latitude":13.852585,
             "longitude":100.572128}
         },
         {
            "name":"จุดอาคารสารนิเทศ 50 ปี",
+           "Faculty":["คณะศึกษาศาสตร์"],
            "coordinate":{"latitude":13.852578,
            "longitude":100.570618} 
         },
         {
             "name":"จุดโรงเรียนสาธิต",
+            "Faculty":["คณะศึกษาศาสตร์","คณะสถาปัตยกรรมศาสตร์"],
             "coordinate":{"latitude":13.852584,
             "longitude":100.569116}
         }
