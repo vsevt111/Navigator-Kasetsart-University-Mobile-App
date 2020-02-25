@@ -26,92 +26,76 @@ import symbol2 from '../image/busstopLine2.png';
 import symbol3 from '../image/busstopLine3.png';
 import symbol4 from '../image/busstopLine4.png';
 import symbol5 from '../image/busstopLine5.png';
+import Sci from '../database/building/buildingSci.json';
+import Agro from '../database/building/buildingAgro.json';
+import Arch from '../database/building/buildingArch.json';
+import Bus from '../database/building/buildingBus.json';
+import Eco from '../database/building/buildingEco.json';
+import Edu from '../database/building/buildingEdu.json';
+import Eng from '../database/building/buildingEng.json';
+import Env from '../database/building/buildingEnv.json';
+import Fish from '../database/building/buildingFish.json';
+import Forest from '../database/building/buildingForest.json';
+import Hum from '../database/building/buildingHum.json';
+import Soc from '../database/building/buildingSoc.json';
+import Vet from '../database/building/buildingVet.json';
+import VetTech from '../database/building/buildingVetTech.json';
+import Agr from '../database/building/buildingAgr';
+import All from '../database/building/buildingAll';
 
 export default class HomeBusScreen extends React.Component {
   componentDidUpdate(prevProp,prevState){
-     if(prevState.FacultyOrigin !== this.state.FacultyOrigin || 
-      prevState!== this.state.FacultyDestination){
+     if(prevState.Faculty != this.state.Faculty){
       if(prevState.change){
-        if(this.state.FacultyOrigin === "คณะเกษตร" 
-        || this.state.FacultyDestination === "คณะเกษตร"){
-          this.setState({FacultyValue:Agr})
-          console.log('คณะเกษตร')
-        }
-        else if(this.state.FacultyOrigin === "คณะอุตสาหกรรมเกษตร" ||
-        this.state.FacultyDestination === "คณะอุตสาหกรรมเกษตร"){
-          this.setState({FacultyValue:Agro})
-          console.log('คณะอุตสาหกรรมเกษตร')
-        }
-        else if(this.state.FacultyOrigin === "รวม" ||
-        this.state.FacultyDestination === "รวม"){
-          this.setState({FacultyValue:All})
-          console.log('รวม')
-        }
-        else if(this.state.FacultyOrigin === "คณะสถาปัตยกรรมศาสตร์" ||
-        this.state.FacultyDestination === "คณะสถาปัตยกรรมศาสตร์"){
-          this.setState({FacultyValue:Arch})
-          console.log('คณะสถาปัตยกรรมศาสตร์')
-        }
-        else if(this.state.FacultyOrigin === "คณะบริหารธุรกิจ" ||
-        this.state.FacultyDestination === "คณะบริหารธุรกิจ"){
-          this.setState({FacultyValue:Bus})
-          console.log('คณะบริหารธุรกิจ')
-        }
-        else if(this.state.FacultyOrigin === "คณะเศรษฐศาสตร์" ||
-        this.state.FacultyDestination === "คณะเศรษฐศาสตร์"){
-          this.setState({FacultyValue:Eco})
-          console.log('คณะเศรษฐศาสตร์')
-        }
-        else if(this.state.FacultyOrigin === "คณะศึกษาศาสตร์" ||
-        this.state.FacultyDestination === "คณะศึกษาศาสตร์"){
-          this.setState({FacultyValue:Edu})
-          console.log('คณะศึกษาศาสตร์')
-        }
-        else if(this.state.FacultyOrigin === "คณะวิศวกรรมศาสตร์" ||
-        this.state.FacultyDestination === "คณะวิศวกรรมศาสตร์"){
-          this.setState({FacultyValue:Eng})
-          console.log('คณะวิศวกรรมศาสตร์')
-        }
-        else if(this.state.FacultyOrigin === "คณะสิ่งแวดล้อม" ||
-        this.state.FacultyDestination === "คณะสิ่งแวดล้อม"){
-          this.setState({FacultyValue:Env})
-          console.log('คณะสิ่งแวดล้อม')
-        }
-        else if(this.state.FacultyOrigin === "คณะประมง" ||
-        this.state.FacultyDestination === "คณะประมง"){
-          this.setState({FacultyValue:Fish})
-          console.log('คณะประมง')
-        }
-        else if(this.state.FacultyOrigin === "คณะวนศาสตร์" ||
-        this.state.FacultyDestination === "คณะวนศาสตร์"){
-          this.setState({FacultyValue:Forest})
-          console.log('คณะวนศาสตร์')
-        }
-        else if(this.state.FacultyOrigin === "คณะมนุษยศาสตร์" ||
-        this.state.FacultyDestination === "คณะมนุษยศาสตร์"){
-          this.setState({FacultyValue:Hum})
-          console.log('คณะมนุษยศาสตร์')
-        }
-        else if(this.state.FacultyOrigin === "คณะวิทยาศาสตร์" ||
-        this.state.FacultyDestination === "คณะวิทยาศาสตร์"){
-          this.setState({FacultyValue:Sci})
-          console.log('คณะวิทยาศาสตร์')
-        }
-        else if(this.state.FacultyOrigin === "คณะสังคมศาสตร์" ||
-        this.state.FacultyDestination === "คณะสังคมศาสตร์"){
-          this.setState({FacultyValue:Soc})
-          console.log('คณะสังคมศาสตร์')
-        }
-        else if(this.state.FacultyOrigin === "คณะสัตวแพทยศาสตร์" ||
-        this.state.FacultyDestination === "คณะสัตวแพทยศาสตร์"){
-          this.setState({FacultyValue:Vet})
-          console.log('คณะสัตวแพทยศาสตร์')
-        }
-        else if(this.state.FacultyOrigin === "คณะเทคนิคการสัตวแพทย์" ||
-        this.state.FacultyDestination === "คณเทคนิคการสัตวแพทย์"){
-          this.setState({FacultyValue:VetTech})
-          console.log('คณะเทคนิคการสัตวแพทย์')
-        }
+        // if(this.state.Faculty === "คณะเกษตร"){
+        //   this.setState({FacultyValue:Agr})
+        // }
+        // else if(this.state.Faculty === "คณะอุตสาหกรรมเกษตร"){
+        //   this.setState({FacultyValue:Agro})
+        // }
+        // else if(this.state.Faculty === "รวม"){
+        //   this.setState({FacultyValue:All})
+        // }
+        // else if(this.state.Faculty === "คณะสถาปัตยกรรมศาสตร์"){
+        //   this.setState({FacultyValue:Arch})
+        // }
+        // else if(this.state.Faculty === "คณะบริหารธุรกิจ"){
+        //   this.setState({FacultyValue:Bus})
+        // }
+        // else if(this.state.Faculty === "คณะเศรษฐศาสตร์"){
+        //   this.setState({FacultyValue:Eco})
+        // }
+        // else if(this.state.Faculty === "คณะศึกษาศาสตร์"){
+        //   this.setState({FacultyValue:Edu})
+        // }
+        // else if(this.state.Faculty === "คณะวิศวกรรมศาสตร์"){
+        //   this.setState({FacultyValue:Eng})
+        // }
+        // else if(this.state.Faculty === "คณะสิ่งแวดล้อม"){
+        //   this.setState({FacultyValue:Env})
+        // }
+        // else if(this.state.Faculty === "คณะประมง"){
+        //   this.setState({FacultyValue:Fish})
+        // }
+        // else if(this.state.Faculty === "คณะวนศาสตร์"){
+        //   this.setState({FacultyValue:Forest})
+        // }
+        // else if(this.state.Faculty === "คณะมนุษยศาสตร์"){
+        //   this.setState({FacultyValue:Hum})
+        // }
+        // else if(this.state.Faculty === "คณะวิทยาศาสตร์"){
+        //   this.setState({FacultyValue:Sci})
+        // }
+        // else if(this.state.Faculty === "คณะสังคมศาสตร์"){
+        //   this.setState({FacultyValue:Soc})
+        // }
+        // else if(this.state.Faculty === "คณะสัตวแพทยศาสตร์"){
+        //   this.setState({FacultyValue:Vet})
+        // }
+        // else if(this.state.Faculty === "คณะเทคนิคการสัตวแพทย์"){
+        //   this.setState({FacultyValue:VetTech})
+        // }
+       
         this.setState({change:false}) 
       }
       
@@ -122,73 +106,98 @@ export default class HomeBusScreen extends React.Component {
     super(props);
     this.state={
       Path: Bus1,
-      Color:"#000",
+      Color:"#0ce8f7",
       Value: null,
       BusStop:BusStop1,
       symbol:symbol1,
       FacultyOrigin:'',
       FacultyDestination:'',
-      change:false
+      change:false,
+      Faculty:'กรุณาเลือกคณะ',
+      
     };
-    this.handleOnPressLine1= this.handleOnPressLine1.bind(this);
-    this.handleOnPressLine2= this.handleOnPressLine2.bind(this);
-    this.handleOnPressLine3= this.handleOnPressLine3.bind(this);
-    this.handleOnPressLine4= this.handleOnPressLine4.bind(this);
-    this.handleOnPressLine5= this.handleOnPressLine5.bind(this);
+    // this.handleOnPressLine1= this.handleOnPressLine1.bind(this);
+    // this.handleOnPressLine2= this.handleOnPressLine2.bind(this);
+    // this.handleOnPressLine3= this.handleOnPressLine3.bind(this);
+    // this.handleOnPressLine4= this.handleOnPressLine4.bind(this);
+    // this.handleOnPressLine5= this.handleOnPressLine5.bind(this);
+    this.Search=this.Search.bind(this);
    
   }
-  handleOnPressLine1(){
-    this.setState({Path:Bus1});
-    this.setState({Color:"#000"});
-    this.setState({Value:"สาย1"});
-    this.setState({BusStop:BusStop1});
-    this.setState({symbol:symbol1});
-  }
-  handleOnPressLine2(){
+  // handleOnPressLine1(){
+  //   this.setState({Path:Bus1});
+  //   this.setState({Color:"#000"});
+  //   this.setState({Value:"สาย1"});
+  //   this.setState({BusStop:BusStop1});
+  //   this.setState({symbol:symbol1});
+  // }
+  // handleOnPressLine2(){
     
-    this.setState({Path:Bus2});
-    this.setState({Color:"#0eecf0"});
-    this.setState({Value:"สาย2"});
-    this.setState({BusStop:BusStop2});
-    this.setState({symbol:symbol2});
+  //   this.setState({Path:Bus2});
+  //   this.setState({Color:"#0eecf0"});
+  //   this.setState({Value:"สาย2"});
+  //   this.setState({BusStop:BusStop2});
+  //   this.setState({symbol:symbol2});
 
+  // }
+
+  // handleOnPressLine3(){
+  //   this.setState({Path:Bus3});
+  //   this.setState({Color:"#d91fed"});
+  //   this.setState({Value:"สาย3"});
+  //   this.setState({BusStop:BusStop3});
+  //   this.setState({symbol:symbol3});
+
+  // }
+  // handleOnPressLine4(){
+  //   this.setState({Path:Bus4});
+  //   this.setState({Color:"#f50a16"});
+  //   this.setState({Value:"สาย4"});
+  //   this.setState({BusStop:BusStop4});
+  //   this.setState({symbol:symbol4});
+
+  // }
+  // handleOnPressLine5(){
+  //   this.setState({Path:Bus5});
+  //   this.setState({Color:"#f58f0a"});
+  //   this.setState({Value:"สาย5"});
+  //   this.setState({BusStop:BusStop5});
+  //   this.setState({symbol:symbol5});
+  // }
+  Search(){
+    if(this.state.Faculty !== 'กรุณาเลือกคณะ'){
+      this.state.BusStop.markers.map(element =>{
+        element.Faculty.filter(fac => {
+          if(this.state.Faculty === fac){
+            (<Marker coordinate={element.coordinate} Color={'#fae20a'}>
+              <Image source={this.state.symbol} style={{width:20,height:20}}/>
+            </Marker>)
+          }
+        })
+      })
+    }
+    else{
+      (this.state.BusStop.markers.map(marker => (
+        <Marker coordinate={marker.coordinate} Color={'#fae20a'}>
+          <Image source={this.state.symbol} style={{width:20,height:20}}/>
+        </Marker>
+      )))
+    }
   }
 
-  handleOnPressLine3(){
-    this.setState({Path:Bus3});
-    this.setState({Color:"#d91fed"});
-    this.setState({Value:"สาย3"});
-    this.setState({BusStop:BusStop3});
-    this.setState({symbol:symbol3});
-
-  }
-  handleOnPressLine4(){
-    this.setState({Path:Bus4});
-    this.setState({Color:"#f50a16"});
-    this.setState({Value:"สาย4"});
-    this.setState({BusStop:BusStop4});
-    this.setState({symbol:symbol4});
-
-  }
-  handleOnPressLine5(){
-    this.setState({Path:Bus5});
-    this.setState({Color:"#f58f0a"});
-    this.setState({Value:"สาย5"});
-    this.setState({BusStop:BusStop5});
-    this.setState({symbol:symbol5});
-
-  }
-  
   render() {
       let line =[{value:'สาย 1'},{value:'สาย 2'},{value:'สาย3'},
     {value:'สาย 4'},{value:'สาย 5'}]
+    const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
+  ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
+"คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
     if(!this.state.change){
       this.setState({change:true})
     }
     return (
       <View style={{ flex: 1}}>
-        <View style={{zIndex:1,position:'absolute',height:200,width:60,alignSelf:'center'}}>
-        <MenuProvider >
+        {/* <View style={{zIndex:1,position:'absolute',height:200,width:60,alignSelf:'center'}}> */}
+        {/* <MenuProvider >
         <Menu>
         <MenuTrigger text={this.state.Value === null ? 'เลือกสาย':this.state.Value} style={{zIndex:2}}/>
         <MenuOptions >
@@ -199,8 +208,63 @@ export default class HomeBusScreen extends React.Component {
           <MenuOption onSelect={this.handleOnPressLine5} text='สาย5'/>
         </MenuOptions>
         </Menu>
-        </MenuProvider>
-        </View>
+        </MenuProvider> */}
+        <Picker selectedValue={this.state.Value}
+        style={{height:25,width:'50%' ,zIndex:1,position:'absolute',flex:1}}
+        onValueChange={(itemValue,itemIndex) =>{
+          if(itemValue === 'สาย 1'){
+            this.setState({Path:Bus1});
+            this.setState({Color:"#0ce8f7"});
+            this.setState({Value:itemValue});
+            this.setState({BusStop:BusStop1});
+            this.setState({symbol:symbol1});
+          }
+          else if(itemValue === 'สาย 2'){
+            this.setState({Path:Bus2});
+            this.setState({Color:"#fa2057"});
+            this.setState({Value:itemValue});
+            this.setState({BusStop:BusStop2});
+            this.setState({symbol:symbol2});
+          }
+          else if(itemValue === 'สาย 3'){
+            this.setState({Path:Bus3});
+            this.setState({Color:"#d91fed"});
+            this.setState({Value:itemValue});
+            this.setState({BusStop:BusStop3});
+            this.setState({symbol:symbol3});
+          }
+          else if(itemValue === 'สาย 4'){
+            this.setState({Path:Bus4});
+            this.setState({Color:"#92f52f"});
+            this.setState({Value:itemValue});
+            this.setState({BusStop:BusStop4});
+            this.setState({symbol:symbol4});
+          }
+          else if(itemValue === 'สาย 5'){
+            this.setState({Path:Bus5});
+            this.setState({Color:"#f58f0a"});
+            this.setState({Value:itemValue});
+            this.setState({BusStop:BusStop5});
+            this.setState({symbol:symbol5});
+          }
+        }}>
+          <Picker.item label= 'สาย 1' value='สาย 1' />
+          <Picker.item label= 'สาย 2' value='สาย 2' />
+          <Picker.item label= 'สาย 3' value='สาย 3' />
+          <Picker.item label= 'สาย 4' value='สาย 4' />
+          <Picker.item label= 'สาย 5' value='สาย 5' />
+        </Picker>
+        <Picker
+        selectedValue={this.state.Faculty}
+        style={{left:'50%',zIndex:1,position:'absolute',height:25,flex:1,width:'50%'}}
+        onValueChange={(itemValue,itemIndex)=>{
+          this.setState({Faculty:itemValue})
+        }}>
+          {faculty.map(element =>(
+            <Picker.item label={element} value={element}/>
+          ))}
+        </Picker>
+        {/* </View> */}
         <MapView style={{flex : 1,zIndex:-1}}
         initialRegion={{
           latitude: 13.847639,
@@ -219,6 +283,7 @@ export default class HomeBusScreen extends React.Component {
                 <Image source={this.state.symbol} style={{width:20,height:20}}/>
               </Marker>
             ))} 
+           
         </MapView>
         
       </View>
@@ -236,6 +301,7 @@ const COLORS = [
   '#0eecf0',
   '#d91fed',
   '#f58f0a',
+  '#0ce8f7'
 ];
 
 const styles = StyleSheet.create({

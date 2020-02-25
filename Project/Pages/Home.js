@@ -59,95 +59,190 @@ export default class HomeScreen extends React.Component {
     requestLocationPermission();
   }
   componentDidUpdate(prevProp,prevState){
-    if(prevState.coordinateOrigin !== this.state.coordinateOrigin){
-      this.DisplayAll
-    }
-    else if(prevState.coordinateDestination !== this.state.coordinateDestination){
-      this.DisplayAll
-    }
-    else if(prevState.FacultyOrigin !== this.state.FacultyOrigin || 
-      prevState!== this.state.FacultyDestination){
+    if((prevState.FacultyOrigin !== this.state.FacultyOrigin) || 
+      (prevState.FacultyDestination !== this.state.FacultyDestination)){
       if(prevState.change){
-        if(this.state.FacultyOrigin === "คณะเกษตร" 
-        || this.state.FacultyDestination === "คณะเกษตร"){
+        if(prevState.FacultyOrigin!== this.state.FacultyOrigin){
+          if(this.state.FacultyOrigin === "คณะเกษตร"){
+            this.setState({FacultyValueOrigin:Agr})
+            this.setState({FacultyValue:Agr})
+            console.log('คณะเกษตร')
+          }
+          else if(this.state.FacultyOrigin === "คณะอุตสาหกรรมเกษตร"){
+            this.setState({FacultyValueOrigin:Agro})
+            this.setState({FacultyValue:Agro})
+            console.log('คณะอุตสาหกรรมเกษตร')
+          }
+          else if(this.state.FacultyOrigin === "รวม" ){
+            this.setState({FacultyValueOrigin:All})
+            this.setState({FacultyValue:All})
+            console.log('รวม')
+          }
+          else if(this.state.FacultyOrigin === "คณะสถาปัตยกรรมศาสตร์"){
+            this.setState({FacultyValueOrigin:Arch})
+            this.setState({FacultyValue:Arch})
+            console.log('คณะสถาปัตยกรรมศาสตร์')
+          }
+          else if(this.state.FacultyOrigin === "คณะบริหารธุรกิจ"){
+            this.setState({FacultyValueOrigin:Bus})
+            this.setState({FacultyValue:Bus})
+            console.log('คณะบริหารธุรกิจ')
+          }
+          else if(this.state.FacultyOrigin === "คณะเศรษฐศาสตร์"){
+            this.setState({FacultyValueOrigin:Eco})
+            this.setState({FacultyValue:Eco})
+            console.log('คณะเศรษฐศาสตร์')
+          }
+          else if(this.state.FacultyOrigin === "คณะศึกษาศาสตร์"){
+            this.setState({FacultyValueOrigin:Edu})
+            this.setState({FacultyValue:Edu})
+            console.log('คณะศึกษาศาสตร์')
+          }
+          else if(this.state.FacultyOrigin === "คณะวิศวกรรมศาสตร์"){
+            this.setState({FacultyValueOrigin:Eng})
+            this.setState({FacultyValue:Eng})
+            console.log('คณะวิศวกรรมศาสตร์')
+          }
+          else if(this.state.FacultyOrigin === "คณะสิ่งแวดล้อม" ){
+            this.setState({FacultyValueOrigin:Env})
+            this.setState({FacultyValue:Env})
+            console.log('คณะสิ่งแวดล้อม')
+          }
+          else if(this.state.FacultyOrigin === "คณะประมง"){
+            this.setState({FacultyValueOrigin:Fish})
+            this.setState({FacultyValue:Fish})
+            console.log('คณะประมง')
+          }
+          else if(this.state.FacultyOrigin === "คณะมนุษยศาสตร์"){
+            this.setState({FacultyValueOrigin:Hum})
+            this.setState({FacultyValue:Hum})
+            console.log('คณะมนุษยศาสตร์')
+          }
+          else if(this.state.FacultyOrigin === "คณะวิทยาศาสตร์"){
+            this.setState({FacultyValueOrigin:Sci})
+            this.setState({FacultyValue:Sci})
+            console.log('คณะวิทยาศาสตร์')
+          }
+          else if(this.state.FacultyOrigin === "คณะสังคมศาสตร์"){
+            this.setState({FacultyValueOrigin:Soc})
+            this.setState({FacultyValue:Soc})
+            console.log('คณะสังคมศาสตร์')
+          }
+          else if(this.state.FacultyOrigin === "คณะสัตวแพทยศาสตร์"){
+            this.setState({FacultyValueOrigin:Vet})
+            this.setState({FacultyValue:Vet})
+            console.log('คณะสัตวแพทยศาสตร์')
+          }
+          else if(this.state.FacultyOrigin === "คณะเทคนิคการสัตวแพทย์"){
+            this.setState({FacultyValueOrigin:VetTech})
+            this.setState({FacultyValue:VetTech})
+            console.log('คณะเทคนิคการสัตวแพทย์')
+          }
+          else if(this.state.FacultyOrigin === "คณะวนศาสตร์"){
+            this.setState({FacultyValueOrigin:Forest})
+            this.setState({FacultyValue:Forest})
+            console.log('คณะวนศาสตร์')
+          }
+        
+       
+        }
+       if(prevState.FacultyDestination !== this.state.FacultyDestination){
+        if(this.state.FacultyDestination === "คณะเกษตร"){
+          this.setState({FacultyValueDestination:Agr})
           this.setState({FacultyValue:Agr})
-          console.log('คณะเกษตร')
+          console.log('คณะเกษตรปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะอุตสาหกรรมเกษตร" ||
-        this.state.FacultyDestination === "คณะอุตสาหกรรมเกษตร"){
+       
+        else if(this.state.FacultyDestination === "คณะอุตสาหกรรมเกษตร"){
+          this.setState({FacultyValueDestination:Agro})
           this.setState({FacultyValue:Agro})
-          console.log('คณะอุตสาหกรรมเกษตร')
+          console.log('คณะอุตสาหกรรมเกษตรปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "รวม" ||
-        this.state.FacultyDestination === "รวม"){
+        
+        else if(this.state.FacultyDestination === "รวม"){
+          this.setState({FacultyValueDestination:All})
           this.setState({FacultyValue:All})
           console.log('รวม')
         }
-        else if(this.state.FacultyOrigin === "คณะสถาปัตยกรรมศาสตร์" ||
-        this.state.FacultyDestination === "คณะสถาปัตยกรรมศาสตร์"){
+        
+        else if(this.state.FacultyDestination === "คณะสถาปัตยกรรมศาสตร์"){
+          this.setState({FacultyValueDestination:Arch})
           this.setState({FacultyValue:Arch})
-          console.log('คณะสถาปัตยกรรมศาสตร์')
+          console.log('คณะสถาปัตยกรรมศาสตร์ปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะบริหารธุรกิจ" ||
-        this.state.FacultyDestination === "คณะบริหารธุรกิจ"){
+        
+        else if(this.state.FacultyDestination === "คณะบริหารธุรกิจ"){
+          this.setState({FacultyDestination:Bus})
           this.setState({FacultyValue:Bus})
-          console.log('คณะบริหารธุรกิจ')
+          console.log('คณะบริหารธุรกิจปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะเศรษฐศาสตร์" ||
-        this.state.FacultyDestination === "คณะเศรษฐศาสตร์"){
+        
+        else if(this.state.FacultyDestination === "คณะเศรษฐศาสตร์"){
+          this.setState({FacultyValueDestination:Eco})
           this.setState({FacultyValue:Eco})
-          console.log('คณะเศรษฐศาสตร์')
+          console.log('คณะเศรษฐศาสตร์ปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะศึกษาศาสตร์" ||
-        this.state.FacultyDestination === "คณะศึกษาศาสตร์"){
+       
+        else if(this.state.FacultyDestination === "คณะศึกษาศาสตร์"){
+          this.setState({FacultyValueDestination:Edu})
           this.setState({FacultyValue:Edu})
-          console.log('คณะศึกษาศาสตร์')
+          console.log('คณะศึกษาศาสตร์ปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะวิศวกรรมศาสตร์" ||
-        this.state.FacultyDestination === "คณะวิศวกรรมศาสตร์"){
+        
+        else if(this.state.FacultyDestination === "คณะวิศวกรรมศาสตร์"){
+          this.setState({FacultyValueDestination:Eng})
           this.setState({FacultyValue:Eng})
-          console.log('คณะวิศวกรรมศาสตร์')
+          console.log('คณะวิศวกรรมศาสตร์ปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะสิ่งแวดล้อม" ||
-        this.state.FacultyDestination === "คณะสิ่งแวดล้อม"){
+       
+        else if(this.state.FacultyDestination === "คณะสิ่งแวดล้อม"){
+          this.setState({FacultyValueDestination:Env})
           this.setState({FacultyValue:Env})
-          console.log('คณะสิ่งแวดล้อม')
+          console.log('คณะสิ่งแวดล้อมปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะประมง" ||
-        this.state.FacultyDestination === "คณะประมง"){
+        
+        else if(this.state.FacultyDestination === "คณะประมง"){
+          this.setState({FacultyValueDestination:Fish})
           this.setState({FacultyValue:Fish})
-          console.log('คณะประมง')
+          console.log('คณะประมงปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะวนศาสตร์" ||
-        this.state.FacultyDestination === "คณะวนศาสตร์"){
+        
+        else if(this.state.FacultyDestination === "คณะวนศาสตร์"){
+          this.setState({FacultyValueDestination:Forest})
           this.setState({FacultyValue:Forest})
-          console.log('คณะวนศาสตร์')
+          console.log('คณะวนศาสตร์ปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะมนุษยศาสตร์" ||
-        this.state.FacultyDestination === "คณะมนุษยศาสตร์"){
+        
+        else if(this.state.FacultyDestination === "คณะมนุษยศาสตร์"){
+          this.setState({FacultyValueDestination:Hum})
           this.setState({FacultyValue:Hum})
-          console.log('คณะมนุษยศาสตร์')
+          console.log('คณะมนุษยศาสตร์ปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะวิทยาศาสตร์" ||
-        this.state.FacultyDestination === "คณะวิทยาศาสตร์"){
+       
+        else if(this.state.FacultyDestination === "คณะวิทยาศาสตร์"){
+          this.setState({FacultyValueDestination:Sci})
           this.setState({FacultyValue:Sci})
-          console.log('คณะวิทยาศาสตร์')
+          console.log('คณะวิทยาศาสตร์ปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะสังคมศาสตร์" ||
-        this.state.FacultyDestination === "คณะสังคมศาสตร์"){
+       
+        else if(this.state.FacultyDestination === "คณะสังคมศาสตร์"){
+          this.setState({FacultyValueDestination:Soc})
           this.setState({FacultyValue:Soc})
-          console.log('คณะสังคมศาสตร์')
+          console.log('คณะสังคมศาสตร์ปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะสัตวแพทยศาสตร์" ||
-        this.state.FacultyDestination === "คณะสัตวแพทยศาสตร์"){
+       
+        else if(this.state.FacultyDestination === "คณะสัตวแพทยศาสตร์"){
+          this.setState({FacultyValueDestination:Vet})
           this.setState({FacultyValue:Vet})
-          console.log('คณะสัตวแพทยศาสตร์')
+          console.log('คณะสัตวแพทยศาสตร์ปลายทาง')
         }
-        else if(this.state.FacultyOrigin === "คณะเทคนิคการสัตวแพทย์" ||
-        this.state.FacultyDestination === "คณเทคนิคการสัตวแพทย์"){
+        
+        else if(this.state.FacultyDestination === "คณะเทคนิคการสัตวแพทย์"){
+          this.setState({FacultyValueDestination:VetTech})
           this.setState({FacultyValue:VetTech})
-          console.log('คณะเทคนิคการสัตวแพทย์')
+          console.log('คณะเทคนิคการสัตวแพทย์รปลายทาง')
         }
+       }
         this.setState({change:false}) 
       }
       
@@ -158,49 +253,39 @@ export default class HomeScreen extends React.Component {
     this.state={
       TextOrigin:"",
       TextDestination:"",
-      coordinateOrigin : {"latitude":13.847639,"longitude":100.569584},
-      coordinateDestination : {"latitude":13.847639,"longitude":100.569584},
       Origin:"",
       Destination:"",
       coordinate:[],
       setOrigin:true,
       FacultyOrigin:"",
       FacultyDestination:"",
-      FacultyValue:null,
-      change:false
+      FacultyValue:All,
+      change:false,
+      changeOrigin:true,
+      FacultyValueOrigin:All,
+      FacultyValueDestination:All,
     };
-    
-    this.DisplayOrigin=this.DisplayOrigin.bind(this);
-    this.DisplayDestination=this.DisplayDestination.bind(this);
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
-  }
-  DisplayOrigin(){
-    this.setState({Origin:this.state.TextOrigin})
-    this.Search(this.state.Origin)
-  }
-  DisplayDestination(){
-    this.setState({Destination:this.state.TextDestination})
-    this.Search(this.state.Destination)
   }
 
   DisplayAll(){
     const array = []
     console.log('tab this button')
     this.setState({Origin:this.state.TextOrigin})
-    this.Search(this.state.Origin,array)
+    this.Search(this.state.Origin,array,this.state.FacultyValueOrigin)
     this.setState({Destination:this.state.TextDestination})
-    this.Search(this.state.Destination,array)
+    this.Search(this.state.Destination,array,this.state.FacultyValueDestination)
   }
 
-  Search(text,array){
+  Search(text,array,faculty){
     const texts = text.toUpperCase()
-    Sci.building.filter(item => {
+    faculty.building.filter(item => {
       if(item.name === texts){
-      this.setState({coordinateOrigin:item.coordinate})
       array.push(item.coordinate)
       this.setState({coordinate:array})
       console.log(array)
+      
         return item
       }
       else{
@@ -208,34 +293,37 @@ export default class HomeScreen extends React.Component {
       }
     })
   }
-  
-  
-  
   render() {
+
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
   ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
 "คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
 if(!this.state.change){
   this.setState({change:true})
 }
+
     return (
       <View style={{ flex: 1}}>
         <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1}}>
         <Picker
-        selectedValue={this.state.FacultyOrigin}
-       
-        style={{height: 50, width: 100}}
-        onValueChange={(itemValue, itemIndex) =>
+        selectedValue={this.state.changeOrigin ?  this.state.FacultyOrigin:this.state.FacultyDestination}
+        style={{height: 50, width: 170}}
+        onValueChange={(itemValue, itemIndex) =>{
+          if(this.state.changeOrigin){
           this.setState({FacultyOrigin:itemValue})
+        }
+          else{
+            this.setState({FacultyDestination:itemValue})
+          }
+        }
         }>
         {faculty.map(fac =>(
           <Picker.Item label={fac} value={fac}/>
         ))}
+        
 </Picker>
-{console.log(this.state.change)}
-<Picker
+{/* <Picker
         selectedValue={this.state.FacultyDestination}
-       
         style={{height: 50, width: 100}}
         onValueChange={(itemValue, itemIndex) =>
           this.setState({FacultyDestination:itemValue})
@@ -243,11 +331,36 @@ if(!this.state.change){
         {faculty.map(fac =>(
           <Picker.Item label={fac} value={fac}/>
         ))}
-</Picker>
-
+</Picker> */}
+<Picker 
+selectedValue = {this.state.changeOrigin ? this.state.TextOrigin:this.state.TextDestination}
+style ={{height:50,width:50}}
+onValueChange={(itemValue,itemIndex) =>{
+  if(this.state.changeOrigin){
+this.setState({TextOrigin:itemValue})
+}
+else {
+  this.setState({TextDestination:itemValue})
+}
+}}>
+  <Picker.item label='กรุณาเลือกสถานที่' value ='กรุณาเลือกสถานที่ '/>
+  {this.state.FacultyValue.building.map((building) =>(
+    <Picker.item label={building.name} value={building.name}/>
+  ))}
+  
+</Picker> 
         <TextInput
-    
-        onChangeText={TextOrigin => this.setState({TextOrigin})}
+        onChangeText={(TextOrigin) => {
+          this.setState({TextOrigin})   
+        }}
+        onFocus={(focus)=>{
+          if(focus){
+            this.setState({changeOrigin:true})
+          }
+          else{
+            this.setState({changeOrigin:false})
+          }
+        }}
         value={this.state.TextOrigin}
         style={{ height: 40, borderColor: 'gray', borderWidth: 1
         }}
@@ -255,6 +368,15 @@ if(!this.state.change){
       />
       <TextInput
         onChangeText={TextDestination => this.setState({TextDestination})}
+        onFocus={(focus)=>
+        {
+          if(focus){
+            this.setState({changeOrigin:false})
+          }
+          else{
+            this.setState({changeOrigin:true})
+          }
+        }}
         value={this.state.TextDestination}
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         placeholder="Type Destination"
@@ -272,15 +394,10 @@ if(!this.state.change){
           longitudeDelta: 0.0021
         }}
         showsUserLocation={true}>
-       
           {this.state.coordinate.map(coor=>(
             <Marker coordinate={coor}>
-
             </Marker>
           ))}
-          {console.log(this.state.coordinate)}
-          
-     
         </MapView>
       </View>
     );
