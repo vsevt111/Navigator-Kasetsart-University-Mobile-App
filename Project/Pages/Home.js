@@ -172,7 +172,7 @@ export default class HomeScreen extends React.Component {
         }
         
         else if(this.state.FacultyDestination === "คณะบริหารธุรกิจ"){
-          this.setState({FacultyDestination:Bus})
+          this.setState({FacultyValueDestination:Bus})
           this.setState({FacultyValue:Bus})
           console.log('คณะบริหารธุรกิจปลายทาง')
         }
@@ -253,8 +253,6 @@ export default class HomeScreen extends React.Component {
     this.state={
       TextOrigin:"",
       TextDestination:"",
-      Origin:"",
-      Destination:"",
       coordinate:[],
       setOrigin:true,
       FacultyOrigin:"",
@@ -271,17 +269,16 @@ export default class HomeScreen extends React.Component {
 
   DisplayAll(){
     const array = []
-    console.log('tab this button')
-    this.setState({Origin:this.state.TextOrigin})
-    this.Search(this.state.Origin,array,this.state.FacultyValueOrigin)
-    this.setState({Destination:this.state.TextDestination})
-    this.Search(this.state.Destination,array,this.state.FacultyValueDestination)
+    this.Search(this.state.TextOrigin,array,this.state.FacultyValueOrigin)
+    this.Search(this.state.TextDestination,array,this.state.FacultyValueDestination)
   }
 
   Search(text,array,faculty){
     const texts = text.toUpperCase()
     faculty.building.filter(item => {
+     
       if(item.name === texts){
+        
       array.push(item.coordinate)
       this.setState({coordinate:array})
       console.log(array)
@@ -314,6 +311,7 @@ if(!this.state.change){
         }
           else{
             this.setState({FacultyDestination:itemValue})
+     
           }
         }
         }>
@@ -322,22 +320,13 @@ if(!this.state.change){
         ))}
         
 </Picker>
-{/* <Picker
-        selectedValue={this.state.FacultyDestination}
-        style={{height: 50, width: 100}}
-        onValueChange={(itemValue, itemIndex) =>
-          this.setState({FacultyDestination:itemValue})
-        }>
-        {faculty.map(fac =>(
-          <Picker.Item label={fac} value={fac}/>
-        ))}
-</Picker> */}
 <Picker 
 selectedValue = {this.state.changeOrigin ? this.state.TextOrigin:this.state.TextDestination}
-style ={{height:50,width:50}}
+style ={{height:50,width:170}}
 onValueChange={(itemValue,itemIndex) =>{
   if(this.state.changeOrigin){
 this.setState({TextOrigin:itemValue})
+
 }
 else {
   this.setState({TextDestination:itemValue})
@@ -384,7 +373,6 @@ else {
       
       <Button onPress={this.DisplayAll
       } title="ค้นหา"/>
-
         </View>
         <MapView style={{flex : 1,zIndex:-1}}
         initialRegion={{
