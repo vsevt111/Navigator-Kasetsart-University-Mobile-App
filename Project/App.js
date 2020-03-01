@@ -20,6 +20,7 @@ import Search from './Pages/Direction';
 import { ScrollView } from 'react-native-gesture-handler';
 import HomeBus from './Pages/HomeBus';
 import HomeMotor from './Pages/HomeMotorcycle';
+import pinpoint from './image/pinpoint.png'
 
 //Making TabNavigator which will be called in App StackNavigator
 //we can directly export the TabNavigator also but header will not be visible
@@ -27,8 +28,13 @@ import HomeMotor from './Pages/HomeMotorcycle';
  
 // const TabScreen = createMaterialTopTabNavigator(
 //   {
-//     Home:  HomeScreen ,
-//     Direction: Search ,
+//     ค้นหา:  {
+//       screen :HomeScreen ,
+//     navigationOptions:{
+      
+//     }},
+//     รถตะลัย:{screen: HomeBus ,},
+//     วินมอเตอร์ไซค์:{ screen:HomeMotor,}
 //   },
 //   {
 //     tabBarPosition: 'top',
@@ -51,7 +57,7 @@ import HomeMotor from './Pages/HomeMotorcycle';
 //   }
 // );
  
-//making a StackNavigator to export as default
+// // making a StackNavigator to export as default
 // const App = createStackNavigator({
 //   TabScreen: {
 //     screen: TabScreen,
@@ -135,7 +141,7 @@ const Screen3_StackNavigator = createStackNavigator({
   },
 });
 
-const DrawerNavigatorExample = createDrawerNavigator({
+const TabNavigatorExample = createDrawerNavigator({
   //Drawer Options and indexing |||RouteConfigs|||
   Screen1: {
     screen: FirstActivity_StackNavigator,
@@ -177,4 +183,4 @@ const CustomDrawerContentComponent = props => (
 )
 
 
-export default createAppContainer(DrawerNavigatorExample);
+export default createAppContainer(TabNavigatorExample);

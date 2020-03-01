@@ -2,7 +2,7 @@ import MapView,{Polyline, PROVIDER_GOOGLE,Marker} from 'react-native-maps';
 import * as React from 'react';
 import motorcycle from '../database/motorcycle.json';
 import { Button, View, Text,TextInput,StyleSheet,Image} from 'react-native';
-import symbol from '../image/motorcycleTaxi.png'
+import symbol from '../image/motorcycleTaxi2.png'
 
 export default class HomeMotorcycle extends React.Component{
     render(){

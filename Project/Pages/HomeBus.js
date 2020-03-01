@@ -29,36 +29,38 @@ export default class HomeBusScreen extends React.Component {
           this.setState({Color:"#0ce8f7"});
           this.setState({BusStop:BusStop1});
           this.setState({symbol:symbol1});
-          this.setState({arrayMark:[]});
+ 
        }
        else if(this.state.Value === "สาย 2"){
         this.setState({Path:Bus2});
         this.setState({Color:"#fa2057"});
         this.setState({BusStop:BusStop2});
         this.setState({symbol:symbol2});
-        this.setState({arrayMark:[]});
+ 
        }
        else if(this.state.Value === "สาย 3"){
         this.setState({Path:Bus3});
         this.setState({Color:"#d91fed"});
         this.setState({BusStop:BusStop3});
         this.setState({symbol:symbol3});
-        this.setState({arrayMark:[]});
+   
        }
        else if(this.state.Value === "สาย 4"){
         this.setState({Path:Bus4});
         this.setState({Color:"#92f52f"});
         this.setState({BusStop:BusStop4});
         this.setState({symbol:symbol4});
-        this.setState({arrayMark:[]});
+       
        }
        else if(this.state.Value === "สาย 5"){
         this.setState({Path:Bus5});
         this.setState({Color:"#f58f0a"});
         this.setState({BusStop:BusStop5});
         this.setState({symbol:symbol5});
-        this.setState({arrayMark:[]});
+        
        }
+       this.setState({Faculty:'แสดงทั้งหมด'})
+       this.setState({arrayMark:[]})
      }
      else if(prevState.Faculty !== this.state.Faculty){
        this.Search(this.state.Faculty)
@@ -76,7 +78,7 @@ export default class HomeBusScreen extends React.Component {
       FacultyOrigin:'',
       FacultyDestination:'',
       change:false,
-      Faculty:'กรุณาเลือกคณะ',
+      Faculty:"แสดงทั้งหมด",
       arrayMark :[]
     };
     this.Search=this.Search.bind(this);
@@ -85,6 +87,12 @@ export default class HomeBusScreen extends React.Component {
   Search(name){
     const arrayOfMark=[]
     console.log('start')
+    if(this.state.Faculty === 'แสดงทั้งหมด'){
+       this.state.BusStop.markers.map(ele =>{
+         arrayOfMark.push(ele.coordinate)
+       })
+    }
+    else{
       this.state.BusStop.markers.map(element =>{
         element.Faculty.filter(fac => {
           if(name === fac){
@@ -92,6 +100,7 @@ export default class HomeBusScreen extends React.Component {
           }
         })
       })
+    }
       console.log(arrayOfMark)
       this.setState({arrayMark:arrayOfMark})
   }
@@ -100,12 +109,17 @@ export default class HomeBusScreen extends React.Component {
   render() {
       let line =[{value:'สาย 1'},{value:'สาย 2'},{value:'สาย3'},
     {value:'สาย 4'},{value:'สาย 5'}]
-    const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
+    const faculty=["แสดงทั้งหมด","รวม(ไม่อยู่ใกล้คณะใดๆ)","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
   ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
 "คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
     if(!this.state.change){
       this.setState({change:true})
     }
+    if(this.state.Faculty === "แสดงทั้งหมด"){
+    this.state.BusStop.markers.map(ele =>{
+      this.state.arrayMark.push(ele.coordinate)
+    })
+  }
     return (
       <View style={{ flex: 1}}>
  
@@ -127,6 +141,7 @@ export default class HomeBusScreen extends React.Component {
           this.setState({Faculty:itemValue})
           // this.Search(this.state.Faculty)
         }}>
+          
           {faculty.map(element =>(
             <Picker.item label={element} value={element}/>
           ))}
@@ -150,6 +165,7 @@ export default class HomeBusScreen extends React.Component {
                 <Image source={this.state.symbol} style={{width:20,height:20}}/>
               </Marker>
             ))}  */}
+            
             {this.state.arrayMark.map(marker => (
               <Marker coordinate={marker} Color={'#fae20a'}>
                 <Image source={this.state.symbol} style={{width:20,height:20}}/>
