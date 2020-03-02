@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, View, Text,TextInput,StyleSheet,PermissionsAndroid, TouchableHighlightBase,Picker} from 'react-native';
+import { Button, View, Text,TextInput,StyleSheet,
+  PermissionsAndroid, TouchableHighlightBase,Picker,Image} from 'react-native';
 
 import MapView,{Polyline, PROVIDER_GOOGLE,Marker} from 'react-native-maps';
 import Sci from '../database/building/buildingSci.json';
@@ -18,6 +19,7 @@ import Vet from '../database/building/buildingVet.json';
 import VetTech from '../database/building/buildingVetTech.json';
 import Agr from '../database/building/buildingAgr';
 import All from '../database/building/buildingAll';
+import locPress from '../image/PressMark.png'
 
 async function requestLocationPermission() {
   
@@ -263,10 +265,12 @@ export default class HomeScreen extends React.Component {
       FacultyValueOrigin:All,
       FacultyValueDestination:All,
       prevTextOrigin:'',
-      prevTextDestination:''
+      prevTextDestination:'',
+      pressCoor:[]
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
+    this.handlePressOnMap = this.handlePressOnMap.bind(this);
   }
 
   DisplayAll(){
@@ -289,6 +293,18 @@ export default class HomeScreen extends React.Component {
         return null
       }
     })
+  }
+
+  handlePressOnMap(e){
+    this.setState({
+      pressCoor:[
+        ...this.state.pressCoor,
+        {
+          coordinate: e.nativeEvent.coordinate
+        }
+    ]
+    })
+    console.log(e.nativeEvent.coordinate)
   }
   render() {
 
@@ -564,9 +580,15 @@ else {
           latitudeDelta: 0.0122,
           longitudeDelta: 0.0021
         }}
+        onPress={this.handlePressOnMap}
         showsUserLocation={true}>
           {this.state.coordinate.map(coor=>(
             <Marker coordinate={coor}>
+            </Marker>
+          ))}
+          {this.state.pressCoor.map(ele=>(
+            <Marker {...ele}>
+              <Image source={locPress} style={{width:40,height:40}}/>
             </Marker>
           ))}
         </MapView>
