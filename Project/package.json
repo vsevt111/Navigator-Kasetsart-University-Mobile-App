@@ -16,6 +16,7 @@
     "mysqli": "^3.0.11",
     "react": "16.9.0",
     "react-native": "0.61.5",
+    "react-native-geolocation-service": "^4.0.0",
     "react-native-gesture-handler": "^1.5.2",
     "react-native-mapbox-direction": "^1.0.0",
     "react-native-maps": "^0.26.1",

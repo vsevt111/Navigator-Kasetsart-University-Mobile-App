@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, View, Text,TextInput,StyleSheet,
   PermissionsAndroid, TouchableHighlightBase,Picker,Image} from 'react-native';
-
+import Geolocation from 'react-native-geolocation-service';
 import MapView,{Polyline, PROVIDER_GOOGLE,Marker} from 'react-native-maps';
 import Sci from '../database/building/buildingSci.json';
 import Agro from '../database/building/buildingAgro.json';
@@ -38,8 +38,10 @@ async function requestLocationPermission() {
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       console.log('You can use the location');
+      return true
     } else {
       console.log('location permission denied');
+      return false
     }
   } catch (err) {
     console.warn(err);
@@ -57,8 +59,22 @@ async function requestLocationPermission() {
 
 export default class HomeScreen extends React.Component {
   componentDidMount(){
-    // MapboxGL.setTelemetryEnabled(false);
+   
     requestLocationPermission();
+    if (requestLocationPermission()) {
+      Geolocation.getCurrentPosition(
+          (position) => {
+              console.log(position);
+              console.log(position.coords.latitude)
+              console.log(position.coords.longitude)
+          },
+          (error) => {
+              // See error code charts below.
+              console.log(error.code, error.message);
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      );
+  }
   }
   componentDidUpdate(prevProp,prevState){
       if(prevState.change){
@@ -296,6 +312,11 @@ export default class HomeScreen extends React.Component {
   }
 
   handlePressOnMap(e){
+    if(this.state.pressCoor.length === 2){
+      console.log('condition press')
+      this.state.pressCoor.shift()
+    }
+    console.log(this.state.pressCoor.length)
     this.setState({
       pressCoor:[
         ...this.state.pressCoor,
@@ -304,7 +325,6 @@ export default class HomeScreen extends React.Component {
         }
     ]
     })
-    console.log(e.nativeEvent.coordinate)
   }
   render() {
 
@@ -588,6 +608,7 @@ else {
           ))}
           {this.state.pressCoor.map(ele=>(
             <Marker {...ele}>
+              
               <Image source={locPress} style={{width:40,height:40}}/>
             </Marker>
           ))}
