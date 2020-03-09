@@ -18,8 +18,8 @@ export default class HomeMotorcycle extends React.Component{
             showsUserLocation={true}>
        
           {motorcycle.point.map(coor=>(
-            <Marker coordinate={coor.coordination}>
-                <Image source={symbol} style={{width:40,height:40}}/>
+            <Marker coordinate={coor.coordination} key={coor}>
+                <Image source={symbol} style={{width:20,height:20}}/>
             </Marker>
           ))}
        

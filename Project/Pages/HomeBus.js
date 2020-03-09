@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TouchableOpacity, View, Text,TextInput,StyleSheet,Picker,Dropdown,Image} from 'react-native';
 
-import MapView,{Polyline, PROVIDER_GOOGLE,Marker} from 'react-native-maps';
+import MapView,{Polyline, PROVIDER_GOOGLE,Marker,Callout} from 'react-native-maps';
 import Bus1 from '../database/bus/bus1.json';
 import Bus2 from '../database/bus/bus2.json';
 import Bus3 from '../database/bus/bus3.json';
@@ -19,7 +19,7 @@ import symbol2 from '../image/busstopLine2.png';
 import symbol3 from '../image/busstopLine3.png';
 import symbol4 from '../image/busstopLine4.png';
 import symbol5 from '../image/busstopLine5.png';
-
+import HomeScreen,{handlePressOnMap} from './Home.js';
 
 export default class HomeBusScreen extends React.Component {
   componentDidUpdate(prevProp,prevState){
@@ -66,6 +66,9 @@ export default class HomeBusScreen extends React.Component {
        this.Search(this.state.Faculty)
      }
 }
+componentDidMount(){
+  HomeScreen;
+}
   
   constructor(props){
     super(props);
@@ -79,9 +82,13 @@ export default class HomeBusScreen extends React.Component {
       FacultyDestination:'',
       change:false,
       Faculty:"แสดงทั้งหมด",
-      arrayMark :[]
+      arrayMark :[],
+      obj:HomeScreen,
+      pressCoor:[]
     };
     this.Search=this.Search.bind(this);
+    
+    
   }
 
   Search(name){
@@ -96,6 +103,7 @@ export default class HomeBusScreen extends React.Component {
       this.state.BusStop.markers.map(element =>{
         element.Faculty.filter(fac => {
           if(name === fac){
+       
             arrayOfMark.push(element.coordinate)
           }
         })
@@ -128,11 +136,11 @@ export default class HomeBusScreen extends React.Component {
         onValueChange={(itemValue,itemIndex) =>{
           this.setState({Value:itemValue})
         }}>
-          <Picker.item label= 'สาย 1' value='สาย 1' />
-          <Picker.item label= 'สาย 2' value='สาย 2' />
-          <Picker.item label= 'สาย 3' value='สาย 3' />
-          <Picker.item label= 'สาย 4' value='สาย 4' />
-          <Picker.item label= 'สาย 5' value='สาย 5' />
+          <item label= 'สาย 1' value='สาย 1' />
+          <item label= 'สาย 2' value='สาย 2' />
+          <item label= 'สาย 3' value='สาย 3' />
+          <item label= 'สาย 4' value='สาย 4' />
+          <item label= 'สาย 5' value='สาย 5' />
         </Picker>
         <Picker
         selectedValue={this.state.Faculty}
@@ -143,7 +151,7 @@ export default class HomeBusScreen extends React.Component {
         }}>
           
           {faculty.map(element =>(
-            <Picker.item label={element} value={element}/>
+            <item label={element} value={element} key={element}/>
           ))}
         </Picker>
         {/* </View> */}
@@ -154,26 +162,30 @@ export default class HomeBusScreen extends React.Component {
           latitudeDelta: 0.0202,
           longitudeDelta: 0.0101
         }}
-        showsUserLocation={true}>
+        showsUserLocation={true}
+        onPress={this.pressMap}>
           <Polyline           
             coordinates={this.state.Path.path}
             strokeColor={this.state.Color}
             strokeColors={COLORS}
-            strokeWidth={4}/>
-            {/* {this.state.BusStop.markers.map(marker => (
-              <Marker coordinate={marker.coordinate} Color={'#fae20a'}>
-                <Image source={this.state.symbol} style={{width:20,height:20}}/>
-              </Marker>
-            ))}  */}
-            
+            strokeWidth={4}>
+                 
+            </Polyline>
             {this.state.arrayMark.map(marker => (
-              <Marker coordinate={marker} Color={'#fae20a'}>
+              
+              <Marker coordinate={marker} Color={'#fae20a'} >
                 <Image source={this.state.symbol} style={{width:20,height:20}}/>
+                {console.log(marker)}
               </Marker>
             ))} 
-           
+
+            {/* {obj.state.pressCoor.map(ele=>(
+            <Marker {...ele}>
+              <Image source={HomeScreen.locPress} style={{width:40,height:40}}/>
+            </Marker>
+          ))} */}
         </MapView>
-        
+        {/* <HomeScreen ref ={ ref => (this.HomeScreen = ref)}/> */}
       </View>
     );
   }

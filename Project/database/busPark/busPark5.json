@@ -3,43 +3,43 @@
     "markers":[
         {
             "name":"จุดหอพักนิสิตหญิงสุพรรณนิการ์",
-            "Faculty":["รวม"],
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.852376,
             "longitude":100.580682}
         },
         {
             "name":"จุดหอแสงจันทร์",
-            "Faculty":["รวม"],
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.852957,
             "longitude":100.580623}
         },
         {
             "name":"จุดหอพักหญิงขจีนุช",
-            "Faculty":["รวม"],
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.853321,
             "longitude":100.580520}
         },
         {
             "name":"จุดหอพักKritsana",
-            "Faculty":["รวม"],
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.853609,
             "longitude":100.580420}
         },
         {
             "name":"จุดToo Fast To Sleep@KU",
-            "Faculty":["รวม"],
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.853504,
             "longitude":100.578993}
         },
         {
             "name":"จุดอาคารสวัสดิการ มก.",
-            "Faculty":["รวม"],
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.853138,
             "longitude":100.578402}
         },
         {
             "name":"จุดคลังยาเกษตร",
-            "Faculty":["รวม"],
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.852481,
             "longitude":100.576723}
         },
@@ -62,7 +62,7 @@
             "longitude":100.572404}
         },
         {
-            "name":"จุดสำนักหอสมุด",
+            "name":"จุดสำนักหอสมุด 1",
             "Faculty":["คณะวิทยาศาสตร์","คณะวนศาสตร์","คณะมนุษยศาสตร์"],
             "coordinate":{"latitude":13.848146,
             "longitude":100.572430}
@@ -74,7 +74,7 @@
             "longitude":100.572593}
         },
         {
-            "name":"จุดสำนักหอสมุด",
+            "name":"จุดสำนักหอสมุด 2",
             "Faculty":["คณะวิทยาศาสตร์","คณะวนศาสตร์","คณะมนุษยศาสตร์"],
             "coordinate":{"latitude":13.847830,
             "longitude":100.572590}
