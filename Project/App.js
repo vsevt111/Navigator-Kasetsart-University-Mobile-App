@@ -104,7 +104,7 @@ const FirstActivity_StackNavigator = createStackNavigator({
       headerRight: <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
         height:60,
-        backgroundColor: '#3d3c37',
+        backgroundColor: '#000000',
       },
       headerTintColor: '#fff',
     }),
@@ -119,7 +119,7 @@ const Screen2_StackNavigator = createStackNavigator({
       title: 'รถตะลัย',
       headerRight: <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
-        backgroundColor: '#3d3c37',
+        backgroundColor: '#000000',
       },
       headerTintColor: '#fff',
     }),
@@ -134,7 +134,7 @@ const Screen3_StackNavigator = createStackNavigator({
       title: 'วินมอเตอร์ไซค์',
       headerRight: <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
-        backgroundColor: '#3d3c37',
+        backgroundColor: '#000000',
       },
       headerTintColor: '#fff',
     }),

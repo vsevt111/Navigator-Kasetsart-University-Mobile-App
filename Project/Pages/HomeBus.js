@@ -171,9 +171,9 @@ componentDidMount(){
             strokeWidth={4}>
                  
             </Polyline>
-            {this.state.arrayMark.map(marker => (
+            {this.state.arrayMark.map((marker,index) => (
               
-              <Marker coordinate={marker} Color={'#fae20a'} >
+              <Marker coordinate={marker} Color={'#fae20a'} key={index}>
                 <Image source={this.state.symbol} style={{width:20,height:20}}/>
                 {console.log(marker)}
               </Marker>

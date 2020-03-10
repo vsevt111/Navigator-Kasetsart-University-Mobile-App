@@ -21,7 +21,12 @@ import Agr from '../database/building/buildingAgr';
 import All from '../database/building/buildingAll';
 import locPress from '../image/PressMark.png';
 import Direction from 'react-native-maps-directions';
-import busStop1 from '../database/busPark/busPark2.json';
+import busStop1 from '../database/busPark/busPark1.json';
+import busStop2 from '../database/busPark/busPark2.json';
+import busStop3 from '../database/busPark/busPark3.json';
+import busStop4 from '../database/busPark/busPark4.json';
+import busStop5 from '../database/busPark/busPark5.json';
+
 
 async function requestLocationPermission() {
   
@@ -66,11 +71,13 @@ export default class HomeScreen extends React.Component {
     if (requestLocationPermission()) {
       Geolocation.getCurrentPosition(
           (position) => {
+            const {myLatitude,myLongtitude,myLocation} = this.state
               console.log(position);
               console.log(position.coords.latitude)
               console.log(position.coords.longitude)
-              this.setState({myLatitude:position.coords.latitude})
-              this.setState({myLongitude:position.coords.longitude})
+              this.setState({myLocation:{latitude:position.coords.latitude,
+                longitude:position.coords.longitude}})
+            
           },
           (error) => {
               // See error code charts below.
@@ -290,7 +297,8 @@ export default class HomeScreen extends React.Component {
       myLatitude:null,
       myLongitude:null,
       time:null,
-      distance:null
+      distance:null,
+      myLocation:[]
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -301,65 +309,86 @@ export default class HomeScreen extends React.Component {
     const {coordinate} = this.state
     const array = [...coordinate]
     const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin} = this.state
-    this.Search(TextOrigin,array,FacultyValueOrigin,true)
-    this.Search(TextDestination,array,FacultyValueDestination,false)
+    this.Search(TextOrigin,coordinate,FacultyValueOrigin,true)
+    this.Search(TextDestination,coordinate,FacultyValueDestination,false)
   }
 
   Search(text,array,faculty,bool){
     const texts = text.toUpperCase()
-    const {coordinate,TextOrigin,TextDestination} = this.state
+    const {coordinate,TextOrigin,TextDestination,myLocation} = this.state
+
+      if(bool && TextOrigin=== 'ตำแหน่งของตัวเอง'){
+        if(coordinate.length === 0){
+          console.log('Search condition 1.1.1')
+          coordinate.push(myLocation)
+        }
+        else{
+          console.log('Search condition 1.1.2')
+          coordinate.fill(myLocation,0,1)
+        }
+      }
+      else if (!bool && TextDestination === 'ตำแหน่งของตัวเอง'){
+        if(coordinate.length === 1){
+          console.log('Search condition 1.2.1')
+          coordinate.push(myLocation)
+        }
+        else{
+          console.log('Search condition 1.2.2')
+          coordinate.fill(myLocation,1,2)
+         
+        }
+      }
+    
+    else{
     faculty.building.filter(item => {
       if(item.name === texts){
         if(TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' && bool){
-        
           if(coordinate.length === 0){
-            array.push(item.coordinate)
+            coordinate.push(item.coordinate)
           }
           else{
-            array.fill(item.coordinate,0,1)
+            coordinate.fill(item.coordinate,0,1)
           }
         }
-      // array.push(item.coordinate)
-      
-      // this.setState({coordinate:array})
-      // console.log(array)
       if(TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' && !bool){
         if(coordinate.length === 1){
-          array.push(item.coordinate)
+          coordinate.push(item.coordinate)
         }
         else{
-          array.fill(item.coordinate,1,2)
+          coordinate.fill(item.coordinate,1,2)
         }
       }
       this.setState({coordinate:array})
-      console.log(array)
+      console.log(coordinate)
         return item
       }
       else{
         return null
       }
-    })
+    })}
+    console.log(coordinate)
   }
+  BusStopOrigin(){
 
+  }
+  BusStopDestination(){
+
+  }
   handlePressOnMap(e){
     const {pressCoor,TextOrigin,TextDestination,changeOrigin,coordinate} =this.state
 
     console.log(changeOrigin)
     if(changeOrigin){
-     
       if(coordinate.length === 1 ){
         coordinate.shift()
         coordinate.push(e.nativeEvent.coordinate)
       }
       else if(coordinate.length === 2){
         coordinate.fill(e.nativeEvent.coordinate,0,1)
-     
       }
       else if(coordinate.length === 0){
         coordinate.push(e.nativeEvent.coordinate)
       }
-      
- 
       this.setState({TextOrigin:'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'})
       console.log(coordinate,typeof(coordinate))
     }
@@ -394,10 +423,11 @@ export default class HomeScreen extends React.Component {
   ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
 "คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
 if(!this.state.change){
-  const{pressCoor,coordinate,changeOrigin} = this.state
+  const{pressCoor,coordinate,changeOrigin,myLocation} = this.state
   this.setState({change:true})
   this.setState({prevTextOrigin:this.state.TextOrigin})
   this.setState({prevTextDestination:this.state.TextDestination})
+  
   // pressCoor.map(ele=>(coordinate.push(ele.coordinate)))
 //  console.log(this.state.prevTextOrigin)
   
@@ -619,6 +649,7 @@ else {
 }
 }}>
   <item label='กรุณาเลือกสถานที่' value ='กรุณาเลือกสถานที่ '/>
+  <item label='ตำแหน่งของตัวเอง' value ='ตำแหน่งของตัวเอง'/>
   {this.state.FacultyValue.building.map((building) =>(
     <item label={building.name} value={building.name} key={building.name}/>
   ))}
@@ -672,13 +703,12 @@ else {
         onPress={this.handlePressOnMap}
         showsUserLocation={true}
         >
-          {this.state.coordinate.map(coor=>(
-            <Marker coordinate={coor}>
-               {/* <Callout>
-                <View>
-                  <Text></Text>
-                </View>
-              </Callout> */}
+          {this.state.coordinate.map((coor,index)=>(
+            <Marker coordinate={coor} key={index}>
+              {index === 0 ? <Callout >
+                <Text>{this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ? this.state.TextOrigin:'สถานที่ต้นทาง'}</Text>
+                </Callout>:<Callout >
+                  <Text>{this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text></Callout>}
             </Marker>
           ))}
        
@@ -687,7 +717,7 @@ else {
               <Image source={locPress} style={{width:40,height:40}}/>
             </Marker>
           ))} */}
-            {/* <Direction
+            <Direction
           
             origin = {coordinate[0]}
             destination = {coordinate[1]}
@@ -711,7 +741,7 @@ else {
               console.log(error)
             }}
             >
-            </Direction> */}
+            </Direction>
         </MapView>
           <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Math.round(distance)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
       </View>
