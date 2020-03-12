@@ -285,6 +285,7 @@ export default class HomeScreen extends React.Component {
       prevTextOrigin:'',
       prevTextDestination:'',
       time:null,
+      distance:null,
       distOrigin:null,
       myLocation:[],
       indexBusStopOrigin:null,
@@ -429,7 +430,7 @@ export default class HomeScreen extends React.Component {
   }
   render() {
     
-    const {coordinate,time,distOrigin} = this.state
+    const {coordinate,time,distOrigin,distance} = this.state
     const testCoor = {"latitude":13.850570,"longitude":100.572443}
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
   ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
@@ -734,7 +735,7 @@ else {
               console.log(`Distance: ${result.distOrigin} km`)
               console.log(`Duration: ${result.duration} minOrigin .`)
               this.setState({time:result.duration})
-              this.setState({distOrigin:result.distOrigin})
+              this.setState({distance:result.distance})
             }}
             onError={error=>{
               console.log(error)
@@ -742,7 +743,7 @@ else {
             >
             </Direction>
         </MapView>
-          <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Math.round(distOrigin)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
+          <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Math.round(distance)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
       </View>
     );
   }
