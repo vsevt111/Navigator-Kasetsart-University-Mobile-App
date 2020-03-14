@@ -126,20 +126,20 @@ const Screen2_StackNavigator = createStackNavigator({
   },
 });
 
-const Screen3_StackNavigator = createStackNavigator({
-  //All the screen from the Screen2 will be indexed here
-  Third: {
-    screen: HomeMotor,
-    navigationOptions: ({ navigation }) => ({
-      title: 'วินมอเตอร์ไซค์',
-      headerRight: <NavigationDrawerStructure navigationProps={navigation} />,
-      headerStyle: {
-        backgroundColor: '#000000',
-      },
-      headerTintColor: '#fff',
-    }),
-  },
-});
+// const Screen3_StackNavigator = createStackNavigator({
+//   //All the screen from the Screen2 will be indexed here
+//   Third: {
+//     screen: HomeMotor,
+//     navigationOptions: ({ navigation }) => ({
+//       title: 'วินมอเตอร์ไซค์',
+//       headerRight: <NavigationDrawerStructure navigationProps={navigation} />,
+//       headerStyle: {
+//         backgroundColor: '#000000',
+//       },
+//       headerTintColor: '#fff',
+//     }),
+//   },
+// });
 
 const TabNavigatorExample = createDrawerNavigator({
   //Drawer Options and indexing |||RouteConfigs|||
@@ -155,12 +155,12 @@ const TabNavigatorExample = createDrawerNavigator({
       drawerLabel: 'รถตะลัย',
     },
   },
-  Screen3: {
-    screen: Screen3_StackNavigator,
-    navigationOptions: {
-      drawerLabel: 'วินมอเตอร์ไซค์',
-    },
-  }
+  // Screen3: {
+  //   screen: Screen3_StackNavigator,
+  //   navigationOptions: {
+  //     drawerLabel: 'วินมอเตอร์ไซค์',
+  //   },
+  // }
 },
 //|||DrawerNavigatorConfig|||
   {

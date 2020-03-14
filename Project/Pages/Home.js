@@ -27,7 +27,7 @@ import busStop2 from '../database/busPark/busPark2.json';
 import busStop3 from '../database/busPark/busPark3.json';
 import busStop4 from '../database/busPark/busPark4.json';
 import busStop5 from '../database/busPark/busPark5.json';
-import geolib,{getPreciseDistance,getDistance,convertDistance} from 'geolib';
+import geolib,{getPreciseDistance,getDistance,convertDistance,getCenter} from 'geolib';
 
 
 async function requestLocationPermission() {
@@ -58,6 +58,7 @@ async function requestLocationPermission() {
 }
 
 export default class HomeScreen extends React.Component {
+  
   componentDidMount(){
     requestLocationPermission();
     if (requestLocationPermission()) {
@@ -82,12 +83,14 @@ export default class HomeScreen extends React.Component {
   componentDidUpdate(prevProp,prevState){
       if(prevState.change){
         if(prevState.FacultyOrigin !== this.state.FacultyOrigin){
+          
           console.log('faculty origin change')
           if(this.state.FacultyOrigin === "คณะเกษตร"){
             //this.setState({FacultyValueOrigin:Agr})
             this.setState({FacultyValue:Agr})
             console.log('คณะเกษตร')
           }
+          
           else if(this.state.FacultyOrigin === "คณะอุตสาหกรรมเกษตร"){
             //this.setState({FacultyValueOrigin:Agro})
             this.setState({FacultyValue:Agro})
@@ -168,6 +171,7 @@ export default class HomeScreen extends React.Component {
         }
        if(prevState.FacultyDestination !== this.state.FacultyDestination){
         console.log('faculty Destination change')
+    
         if(this.state.FacultyDestination === "คณะเกษตร"){
           //this.setState({FacultyValueDestination:Agr})
           this.setState({FacultyValue:Agr})
@@ -265,9 +269,20 @@ export default class HomeScreen extends React.Component {
         }
        }
         this.setState({change:false}) 
+        if(this.state.TextOrigin !== ""){
+          this.setState({TextColor:'white'})
+          this.setState({Opacity:1})
+          
+        }
+        else if(this.state.TextOrigin === ""){
+          this.setState({TextColor:'gray'})
+          this.setState({Opacity:0.2})
+        }
+        // if(prevState.TextOrigin !== this.state.TextOrigin 
+        //   || prevState.TextDestination!== this.state.TextDestination){
+        //   this.setState({Waypoints:[],NameWaypoints:[]})
+        // }
       }
-      
-  
 }
   constructor(props){
     super(props);
@@ -289,7 +304,11 @@ export default class HomeScreen extends React.Component {
       distOrigin:null,
       myLocation:[],
       indexBusStopOrigin:null,
-      indexBusStopDes:null
+      indexBusStopDes:null,
+      TextColor:'gray',
+      Opacity:0.2,
+      Waypoints:[],
+      NameWaypoints:[]
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -299,16 +318,36 @@ export default class HomeScreen extends React.Component {
   }
 
   DisplayAll(){
-    const {coordinate} = this.state
-    const array = [...coordinate]
-    const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin} = this.state
-    this.Search(TextOrigin,coordinate,true)
-    this.Search(TextDestination,coordinate,false)
+    const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin,coordinate} = this.state
+    this.Search(TextOrigin,true)
+    this.Search(TextDestination,false)
     this.getBusStop()
+    var latitudeDelta
+    var longitudeDelta
+    if(coordinate.length === 2){
+    var latitude1 = coordinate[0].latitude
+    var latitude2 = coordinate[1].latitude
+    var longitude1 = coordinate[0].longitude
+    var longitude2 = coordinate[1].longitude
+    latitudeDelta = Math.max(latitude1,latitude2)-Math.min(latitude1,latitude2)+0.01
+    longitudeDelta = Math.max(longitude1,longitude2)-Math.min(longitude1,longitude2)+0.01
+  }
+  else if(coordinate.length === 1){
+    latitudeDelta =0.0122,
+    longitudeDelta = 0.0021
+  }
+    const region = {
+      ...getCenter(coordinate),
+      latitudeDelta: latitudeDelta,
+      longitudeDelta: longitudeDelta
+    }
+
+    this.mapRef.animateToRegion(region,250)
   }
 
-  Search(text,array,bool){
+  Search(text,bool){
     const texts = text.toUpperCase()
+    var filter = false 
     const {coordinate,TextOrigin,TextDestination,myLocation} = this.state
       if(bool && TextOrigin=== 'ตำแหน่งของตัวเอง'){
         if(coordinate.length === 0){
@@ -331,9 +370,9 @@ export default class HomeScreen extends React.Component {
          
         }
       }
-    
     else{
-    AllBuilding.building.filter(item => {
+    const SearchPlace = AllBuilding.building.filter(item => {
+      filter = true
       if(item.name === texts){
         if(TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' && bool){
           if(coordinate.length === 0){
@@ -347,26 +386,25 @@ export default class HomeScreen extends React.Component {
         if(coordinate.length === 1){
           coordinate.push(item.coordinate)
         }
-        else{
+        else if(coordinate.length === 2){
           coordinate.fill(item.coordinate,1,2)
         }
       }
-      this.setState({coordinate:array})
-      console.log(coordinate)
+      this.setState({coordinate})
         return item
       }
-      else{
-        return null
-      }
-    })}
-    console.log(coordinate)
+    })
+    }
   }
   getBusStop(){
-    const {coordinate,indexBusStopOrigin} = this.state
-    var minOrigin  = 999
+    const {coordinate,indexBusStopOrigin,Waypoints,NameWaypoints} = this.state
+    Waypoints.splice(0,Waypoints.length)
+    NameWaypoints.splice(0,NameWaypoints.length)
+    if(coordinate.length === 2)
+  {  var minOrigin  = 999
     var minDes = 999
     var indexOrigin = 0
-    var indexDes = 0
+    var indexDes = 0}
     if(coordinate.length >=1){
       busStop1.markers.map((item,index)=>{
         const distOrigin = getPreciseDistance(coordinate[0],item.coordinate)
@@ -387,20 +425,32 @@ export default class HomeScreen extends React.Component {
     this.setState({indexBusStopOrigin:indexOrigin})
     console.log('minimumOrigin: '+minOrigin  +' IndexOrigin: '+indexOrigin+'/'+indexBusStopOrigin)
     console.log('minimumDes: '+minDes+' IndexDes: '+indexDes)
-    console.log(this.state.TextOrigin)
-    console.log(this.state.TextDestination)
+    if(indexOrigin < indexDes){
+      const busStop = busStop1.markers.slice(indexOrigin,indexDes+1)
+      busStop.map(ele =>{
+        NameWaypoints.push(ele.name)
+        Waypoints.push(ele.coordinate)
+      })
+      console.log(Waypoints)
+    }
+    else if(indexOrigin > indexDes){
+      const busStopFirst = busStop1.markers.slice(indexOrigin)
+      const busStopLast = busStop1.markers.slice(1,indexDes+1)
+      busStopFirst.map(ele =>{
+        NameWaypoints.push(ele.name)
+        Waypoints.push(ele.coordinate)
+      })
+      busStopLast.map(ele=>{
+        NameWaypoints.push(ele.name)
+        Waypoints.push(ele.coordinate)
+      })
+    }
   }
 
-  // getBusStopDes(){
-  //   const {coordinate,indexBusStopDes} = this.state
-  //   var minDes=999
-  //   var indexDes = 0
-  //   if(coordinate === 2){
-  //     const distDes = getPreciseDistance(coordinate[1])
-  //   }
-  // }
   handlePressOnMap(e){
     const {TextOrigin,TextDestination,changeOrigin,coordinate} =this.state
+  
+    console.log(getCenter(coordinate))
     console.log(changeOrigin)
     if(changeOrigin){
       if(coordinate.length === 1 ){
@@ -429,9 +479,8 @@ export default class HomeScreen extends React.Component {
     }
   }
   render() {
-    
-    const {coordinate,time,distOrigin,distance} = this.state
-    const testCoor = {"latitude":13.850570,"longitude":100.572443}
+    const {coordinate,time,distOrigin,distance,TextOrigin,
+      TextDestination,TextColor,Opacity,Waypoints,NameWaypoints} = this.state
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
   ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
 "คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
@@ -663,8 +712,8 @@ else {
   
 </Picker> 
         <TextInput
-        onChangeText={(TextOrigin) => {
-          this.setState({TextOrigin})   
+        onChangeText={(TextOrigin) => { 
+          this.setState({TextOrigin}) 
         }}
         onFocus={(focus)=>{
           if(focus){
@@ -691,8 +740,12 @@ else {
           }
         }}
         value={this.state.TextDestination}
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+        
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1,backgroundColor:TextColor,opacity:Opacity }}
         placeholder="Type Destination"
+        editable={TextOrigin!=="" ? true:false}
+        
+        
       />
       
       <Button onPress={this.DisplayAll
@@ -700,19 +753,23 @@ else {
       // disabled={true}
       />
         </View>
+        
         <MapView style={{flex : 1,zIndex:-1}}
+        ref = {el =>(this.mapRef=el)}
         initialRegion={{
           latitude: 13.847639,
           longitude: 100.569584,
           latitudeDelta: 0.0122,
           longitudeDelta: 0.0021
         }}
+        
         onPress={this.handlePressOnMap}
         showsUserLocation={true}
         >
+          
           {this.state.coordinate.map((coor,index)=>(
             <Marker coordinate={coor} key={index}>
-              {index === 0 ? <Callout >
+              {index === 0 ? <Callout>
                 <Text>{this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ? this.state.TextOrigin:'สถานที่ต้นทาง'}</Text>
                 </Callout>:<Callout >
                   <Text>{this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text></Callout>}
@@ -724,9 +781,7 @@ else {
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
             strokeColor='red'
-            // waypoints = {busStop1.markers.map(ele =>{
-            //   return ele.coordinate
-            // })}
+            waypoints = {Waypoints}
             // resetOnChange={true}
             // mode={'WALKING'}
             // optimizeWaypoints={true}
@@ -743,7 +798,10 @@ else {
             >
             </Direction>
         </MapView>
-          <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Math.round(distance)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
+          <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Number.isNaN(Number.parseFloat(distance))? 0:Number.parseFloat(distance).toFixed(2)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
+          {NameWaypoints.map((ele ,index)=>(
+            <Text key={index}>ผ่านป้ายจอด: {ele}</Text>
+          ))}
       </View>
     );
   }
