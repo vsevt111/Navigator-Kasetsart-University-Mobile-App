@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, View, Text,TextInput,StyleSheet,
-  PermissionsAndroid, TouchableHighlightBase,Picker,Image,SafeAreaView,FlatList} from 'react-native';
+  PermissionsAndroid, TouchableHighlightBase,Picker,Image,SafeAreaView,FlatList,ScrollView} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import MapView,{Polyline, PROVIDER_GOOGLE,Marker,Callout} from 'react-native-maps';
 import Sci from '../database/building/buildingSci.json';
@@ -65,7 +65,7 @@ export default class HomeScreen extends React.Component {
       Geolocation.getCurrentPosition(
           (position) => {
             const {myLocation} = this.state
-              console.log(position);
+              // console.log(position);
               console.log(position.coords.latitude)
               console.log(position.coords.longitude)
               this.setState({myLocation:{latitude:position.coords.latitude,
@@ -80,8 +80,12 @@ export default class HomeScreen extends React.Component {
       );
   }
   }
+
+  componentWillUnmount(){
+    requestLocationPermission();
+  }
   componentDidUpdate(prevProp,prevState){
-    const {Waypoints,NameWaypoints} = this.state
+  
       if(prevState.change){
         if(prevState.FacultyOrigin !== this.state.FacultyOrigin){
           
@@ -269,22 +273,13 @@ export default class HomeScreen extends React.Component {
           console.log('คณะเทคนิคการสัตวแพทย์รปลายทาง')
         }
        }
-        this.setState({change:false}) 
-        // if(this.state.TextOrigin !== ""){
-        //   this.setState({TextColor:'white'})
-        //   this.setState({Opacity:1})
-          
-        // }
-        // else if(this.state.TextOrigin === ""){
-        //   this.setState({TextColor:'gray'})
-        //   this.setState({Opacity:0.2})
-        // }
+        
         if(prevState.line !== this.state.line){
+          const {Waypoints,NameWaypoints,coordinate} = this.state
           if(this.state.line === "สาย 1"){
             console.log('line 1')
             this.setState({BusStopLine:busStop1})
             this.setState({LineColor:"#0ce8f7"})
-            
           }
           else if(this.state.line === "สาย 3"){
             console.log('line 3')
@@ -295,9 +290,11 @@ export default class HomeScreen extends React.Component {
             console.log('line 5')
             this.setState({BusStopLine:busStop5})
             this.setState({LineColor:"#f58f0a"})
-          }   
+          } 
+    
+          console.log('after line condition')
         }
-      // this.getBusStop()
+      this.setState({change:false})
       }
 }
   constructor(props){
@@ -328,7 +325,8 @@ export default class HomeScreen extends React.Component {
       LineColor:null,
       countOrigin:0,
       countDes:0,
-      FirstFromDes:false
+      FirstFromDes:false,
+      request:false
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -341,7 +339,7 @@ export default class HomeScreen extends React.Component {
     const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin,coordinate} = this.state
     this.Search(TextOrigin,true)
     this.Search(TextDestination,false)
-    this.getBusStop()
+    // this.getBusStop()
     var latitudeDelta
     var longitudeDelta
     if(coordinate.length === 2){
@@ -363,8 +361,9 @@ export default class HomeScreen extends React.Component {
     }
 
     this.mapRef.animateToRegion(region,250)
+   
   }
-
+ 
   Search(text,bool){
     const texts = text.toUpperCase()
     const {coordinate,TextOrigin,TextDestination,myLocation,FirstFromDes} = this.state
@@ -457,8 +456,7 @@ export default class HomeScreen extends React.Component {
     }
   }
   getBusStop(){
-    const arrayWaypoints = []
-    const arrayName = []
+    // console.log('getBusStop() method',this.state.BusStopLine)
     const {coordinate,Waypoints,NameWaypoints,BusStopLine,line} = this.state
     Waypoints.splice(0,Waypoints.length)
     NameWaypoints.splice(0,NameWaypoints.length)
@@ -486,15 +484,14 @@ export default class HomeScreen extends React.Component {
           }
         }
     })}
-    
-    console.log('minimumOrigin: '+minOrigin  +' IndexOrigin: '+indexOrigin)
-    console.log('minimumDes: '+minDes+' IndexDes: '+indexDes)
+    // console.log('minimumOrigin: '+minOrigin  +' IndexOrigin: '+indexOrigin)
+    // console.log('minimumDes: '+minDes+' IndexDes: '+indexDes)
     if(BusStopLine !== null){
       if(indexOrigin < indexDes){
       const busStop = BusStopLine.markers.slice(indexOrigin,indexDes+1)
       busStop.map(ele =>{
         NameWaypoints.push(ele.name)
-        arrayWaypoints.push(ele.coordinate)
+        Waypoints.push(ele.coordinate)
       })
     }
     else if(indexOrigin > indexDes){
@@ -502,18 +499,21 @@ export default class HomeScreen extends React.Component {
       const busStopLast = BusStopLine.markers.slice(0,indexDes+1)
       busStopFirst.map(ele =>{
         NameWaypoints.push(ele.name)
-        arrayWaypoints.push(ele.coordinate)
+        Waypoints.push(ele.coordinate)
       })
       busStopLast.map(ele=>{
         NameWaypoints.push(ele.name)
-        arrayWaypoints.push(ele.coordinate)
+        Waypoints.push(ele.coordinate)
       })
     }
   }
-  this.setState({Waypoints:arrayWaypoints})
+  this.setState({Waypoints})
   this.setState({NameWaypoints})
   }
+  
+  optimalRoute(){
 
+  }
   handlePressOnMap(e){
     const {TextOrigin,TextDestination,changeOrigin,coordinate,FirstFromDes} =this.state
     if(changeOrigin){
@@ -553,23 +553,31 @@ export default class HomeScreen extends React.Component {
     }
     this.getBusStop()
   }
+
+  resetRequest(){
+    this.setState({BusStopLine:null})
+  }
   render() {
     const {coordinate,time,distOrigin,distance,TextOrigin,
       TextDestination,TextColor,Opacity,Waypoints,NameWaypoints,line,LineColor,countDes,
-    countOrigin,changeOrigin} = this.state
+    countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination} = this.state
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
   ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
 "คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
 const Arrayline =["สาย 1","สาย 3","สาย 5"]
 
 if(!this.state.change){
-  const{coordinate,changeOrigin,myLocation} = this.state
+  const{coordinate,changeOrigin,myLocation,Waypoints} = this.state
   this.setState({change:true})
   this.setState({prevTextOrigin:this.state.TextOrigin})
   this.setState({prevTextDestination:this.state.TextDestination})
   
+  this.getBusStop()
+  this.setState({request:true})
 }
+
 else if(this.state.prevTextOrigin !== this.state.TextOrigin){
+ 
   var boolOrigin = false
   AllBuilding.building.filter((item)=>{
   
@@ -673,7 +681,6 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
       this.setState({countDes:0})
       boolDes = true
     }
-  
   })
   if(!boolDes && countDes < 1){
     coordinate.pop()
@@ -816,18 +823,6 @@ else {
     <item label={building.name} value={building.name} key={building.name}/>
   ))}
 </Picker> 
-<Picker
-selectedValue={line === null ? 'เลือกสายที่ใช้':line}
-style={{height:50}}
-onValueChange={(itemValue,itemIndex)=>{
-  this.setState({line:itemValue})
-}}>
-  <item label='เลือกสายที่ใช้' value='เลือกสายที่ใช้'/>
-  {Arrayline.map((ele)=>(
-    <item label={ele} value={ele} key={ele}/>
-  ))}
-
-</Picker>
         <TextInput
         onChangeText={(TextOrigin) => { 
           this.setState({TextOrigin})
@@ -846,6 +841,17 @@ onValueChange={(itemValue,itemIndex)=>{
         }}
         placeholder="Type Origin or click on the map"
       />
+      {/* {AllBuilding.building.filter((item,index)=>{
+        if(item.name === TextOrigin){
+        return (
+          <View>
+        <FlatList data={item.name} 
+        renderItem={(item) => 
+        <Text>{item}</Text>}/>
+        </View>
+          )
+        }
+      })} */}
       <TextInput
         onChangeText={TextDestination => {
           this.setState({TextDestination})
@@ -865,16 +871,28 @@ onValueChange={(itemValue,itemIndex)=>{
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         placeholder="Type Destination or click on the map"
         // editable={TextOrigin!=="" ? true:false}
-        
-        
       />
-      
       <Button onPress={this.DisplayAll
       } title="ค้นหา" 
       // disabled={true}
       />
         </View>
-        
+        <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%',left:'50%'}}>
+              <Picker
+    selectedValue={line === null ? 'เลือกสายที่ใช้':line}
+    style={{height:50}}
+    onValueChange={(itemValue,itemIndex)=>{
+      this.setState({line:itemValue,request:false})
+      if(itemValue === 'เลือกสายที่ใช้'){
+        this.setState({BusStopLine:null,line:null})
+      }
+    }}>
+      <item label='เลือกสายที่ใช้' value='เลือกสายที่ใช้'/>
+      {Arrayline.map((ele)=>(
+        <item label={ele} value={ele} key={ele}/>
+      ))}
+    </Picker>
+        </View>
         <MapView style={{flex : 1,zIndex:-1}}
         ref = {el =>(this.mapRef=el)}
         initialRegion={{
@@ -887,28 +905,33 @@ onValueChange={(itemValue,itemIndex)=>{
         onPress={this.handlePressOnMap}
         showsUserLocation={true}
         >
-          
           {this.state.coordinate.map((coor,index)=>(
-            <Marker coordinate={coor} key={index}>
-              {index === 0 ? <Callout>
+            <Marker coordinate={coor} key={index} >
+              {/* {index === 0 && coordinate.length === 2 ? <Callout>
                 <Text>index 0{this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ? this.state.TextOrigin:'สถานที่ต้นทาง'}</Text>
                 </Callout>:<Callout >
-                  <Text>index 1{this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text></Callout>}
+                  <Text>index 1{this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text>
+                  </Callout>} */}
+              {coordinate.length === 2 && index === 0 && <Callout>
+              <Text>{this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ? this.state.TextOrigin:'สถานที่ต้นทาง'}</Text></Callout>}
+              {coordinate.length === 2 && index === 1 && <Callout><Text>
+                {this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text></Callout>}
             </Marker>
           ))}
-         
-            <Direction
+           {BusStopLine !== null && this.state.request? <Direction
             origin = {coordinate[0]}
             destination = {coordinate[1]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
             strokeColor={LineColor}
             waypoints = {Waypoints}
-            // resetOnChange={true}
             // mode={'WALKING'}
             // optimizeWaypoints={true}
             // splitWaypoints={true}
             // resetOnChange={true}
+            onStart={(params) => {
+              console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
+            }}
             onReady ={result =>{
               console.log(`Distance: ${result.distance} km`)
               console.log(`Duration: ${result.duration} minOrigin .`)
@@ -919,13 +942,23 @@ onValueChange={(itemValue,itemIndex)=>{
               console.log(error)
             }}
             >
-            
-            </Direction>
+            </Direction>:null}
+      
         </MapView>
           <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Number.isNaN(Number.parseFloat(distance))? 0:Number.parseFloat(distance).toFixed(2)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
-          {/* {NameWaypoints.map((ele ,index)=>(
-            <Text key={index}>ผ่านป้ายจอด: {ele}</Text>
-          ))} */}
+          <View style={NameWaypoints.length === 0 ? {height:'0%'}:{height:'12%'}}>
+            <ScrollView>
+          {NameWaypoints.map((ele ,index)=>(
+            <Text key={index}>{index === 0 && index !== NameWaypoints.length-1 ? `ขึ้นที่ป้ายจอด : ${ele}`:null}
+            {index!== 0 && index !== NameWaypoints.length-1 ? `ผ่านป้ายจอด : ${ele}`:null}
+            {index === NameWaypoints.length-1 ? `ลงที่ป้ายจอด : ${ele}`:null}
+            </Text>
+            
+          ))}
+          </ScrollView>
+          </View>
+        
+  
       </View>
     );
   }
