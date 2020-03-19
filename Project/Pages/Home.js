@@ -326,7 +326,9 @@ export default class HomeScreen extends React.Component {
       countOrigin:0,
       countDes:0,
       FirstFromDes:false,
-      request:false
+      request:false,
+      walkToOri:[],
+      walkToDes:[]
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -457,7 +459,7 @@ export default class HomeScreen extends React.Component {
   }
   getBusStop(){
     // console.log('getBusStop() method',this.state.BusStopLine)
-    const {coordinate,Waypoints,NameWaypoints,BusStopLine,line} = this.state
+    const {coordinate,Waypoints,NameWaypoints,BusStopLine,line,walkToDes,walkToOri} = this.state
     Waypoints.splice(0,Waypoints.length)
     NameWaypoints.splice(0,NameWaypoints.length)
     if(coordinate.length === 2)
@@ -489,7 +491,7 @@ export default class HomeScreen extends React.Component {
     if(BusStopLine !== null){
       if(indexOrigin < indexDes){
       const busStop = BusStopLine.markers.slice(indexOrigin,indexDes+1)
-      busStop.map(ele =>{
+      busStop.map((ele,index) =>{
         NameWaypoints.push(ele.name)
         Waypoints.push(ele.coordinate)
       })
@@ -497,16 +499,21 @@ export default class HomeScreen extends React.Component {
     else if(indexOrigin > indexDes){
       const busStopFirst = BusStopLine.markers.slice(indexOrigin)
       const busStopLast = BusStopLine.markers.slice(0,indexDes+1)
-      busStopFirst.map(ele =>{
+      busStopFirst.map((ele,index) =>{
         NameWaypoints.push(ele.name)
         Waypoints.push(ele.coordinate)
       })
-      busStopLast.map(ele=>{
+      busStopLast.map((ele,index)=>{
         NameWaypoints.push(ele.name)
         Waypoints.push(ele.coordinate)
       })
     }
   }
+  walkToOri.push(coordinate[0])
+  walkToOri.push(Waypoints[0])
+  walkToDes.push(Waypoints[Waypoints.length-1])
+  walkToDes.push(coordinate[1])
+  this.setState({walkToOri,walkToDes})
   this.setState({Waypoints})
   this.setState({NameWaypoints})
   }
@@ -560,7 +567,8 @@ export default class HomeScreen extends React.Component {
   render() {
     const {coordinate,time,distOrigin,distance,TextOrigin,
       TextDestination,TextColor,Opacity,Waypoints,NameWaypoints,line,LineColor,countDes,
-    countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination} = this.state
+    countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination
+  ,walkToOri,walkToDes} = this.state
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
   ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
 "คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
@@ -918,7 +926,37 @@ else {
                 {this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text></Callout>}
             </Marker>
           ))}
-           {BusStopLine !== null && this.state.request? <Direction
+
+{/* {BusStopLine !== null && this.state.request && <Direction
+            origin = {coordinate[0]}
+            destination = {walkToOri[0]}
+            apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+            strokeWidth={4}
+            strokeColor={LineColor}
+        
+            mode={'WALKING'}
+            // optimizeWaypoints={true}
+            // splitWaypoints={true}
+            // resetOnChange={true}
+            onStart={(params) => {
+              console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
+            }}
+            onReady ={result =>{
+              console.log(`Distance: ${result.distance} km`)
+              console.log(`Duration: ${result.duration} minOrigin .`)
+              console.log('direction 1')
+              this.setState({time:time+result.duration})
+              this.setState({distance:distance+result.distance})
+            }}
+            onError={error=>{
+              console.log(error)
+            }}
+            >
+               
+            </Direction>} */}
+
+           {BusStopLine !== null && this.state.request &&
+           <Direction
             origin = {coordinate[0]}
             destination = {coordinate[1]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
@@ -935,6 +973,7 @@ else {
             onReady ={result =>{
               console.log(`Distance: ${result.distance} km`)
               console.log(`Duration: ${result.duration} minOrigin .`)
+              console.log('direction 2')
               this.setState({time:result.duration})
               this.setState({distance:result.distance})
             }}
@@ -942,7 +981,8 @@ else {
               console.log(error)
             }}
             >
-            </Direction>:null}
+               
+            </Direction>}
       
         </MapView>
           <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Number.isNaN(Number.parseFloat(distance))? 0:Number.parseFloat(distance).toFixed(2)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
