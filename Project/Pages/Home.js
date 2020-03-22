@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, View, Text,TextInput,StyleSheet,
-  PermissionsAndroid, TouchableHighlightBase,Picker,Image,SafeAreaView,FlatList,ScrollView} from 'react-native';
+  PermissionsAndroid, TouchableHighlightBase,Picker,Image,SafeAreaView,FlatList,ScrollView,
+TouchableOpacity} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import MapView,{Polyline, PROVIDER_GOOGLE,Marker,Callout} from 'react-native-maps';
 import Sci from '../database/building/buildingSci.json';
@@ -28,6 +29,7 @@ import busStop3 from '../database/busPark/busPark3.json';
 import busStop4 from '../database/busPark/busPark4.json';
 import busStop5 from '../database/busPark/busPark5.json';
 import geolib,{getPreciseDistance,getDistance,convertDistance,getCenter} from 'geolib';
+import SearchInput ,{createFilter} from 'react-native-search-filter';
 
 
 async function requestLocationPermission() {
@@ -65,7 +67,7 @@ export default class HomeScreen extends React.Component {
       Geolocation.getCurrentPosition(
           (position) => {
             const {myLocation} = this.state
-              // console.log(position);
+         
               console.log(position.coords.latitude)
               console.log(position.coords.longitude)
               this.setState({myLocation:{latitude:position.coords.latitude,
@@ -88,8 +90,6 @@ export default class HomeScreen extends React.Component {
   
       if(prevState.change){
         if(prevState.FacultyOrigin !== this.state.FacultyOrigin){
-          
-          console.log('faculty origin change')
           if(this.state.FacultyOrigin === "คณะเกษตร"){
             //this.setState({FacultyValueOrigin:Agr})
             this.setState({FacultyValue:Agr})
@@ -175,7 +175,7 @@ export default class HomeScreen extends React.Component {
        
         }
        if(prevState.FacultyDestination !== this.state.FacultyDestination){
-        console.log('faculty Destination change')
+     
     
         if(this.state.FacultyDestination === "คณะเกษตร"){
           //this.setState({FacultyValueDestination:Agr})
@@ -277,22 +277,22 @@ export default class HomeScreen extends React.Component {
         if(prevState.line !== this.state.line){
           const {Waypoints,NameWaypoints,coordinate} = this.state
           if(this.state.line === "สาย 1"){
-            console.log('line 1')
+       
             this.setState({BusStopLine:busStop1})
             this.setState({LineColor:"#0ce8f7"})
           }
           else if(this.state.line === "สาย 3"){
-            console.log('line 3')
+        
             this.setState({BusStopLine:busStop3})
             this.setState({LineColor:"#d91fed"})
           }
           else if(this.state.line === "สาย 5"){
-            console.log('line 5')
+          
             this.setState({BusStopLine:busStop5})
             this.setState({LineColor:"#f58f0a"})
           } 
     
-          console.log('after line condition')
+        
         }
       this.setState({change:false})
       }
@@ -328,7 +328,10 @@ export default class HomeScreen extends React.Component {
       FirstFromDes:false,
       request:false,
       walkToOri:[],
-      walkToDes:[]
+      walkToDes:[],
+      listItemOri:false,
+      listItemDes:false,
+      OriDesComponentH:null
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -371,12 +374,12 @@ export default class HomeScreen extends React.Component {
     const {coordinate,TextOrigin,TextDestination,myLocation,FirstFromDes} = this.state
       if(bool && TextOrigin=== 'ตำแหน่งของตัวเอง'){
         if(coordinate.length === 0){
-          console.log('Search condition 1.1.1')
+          
           coordinate.push(myLocation)
           this.setState({FirstFromDes:false})
         }
         else{
-          console.log('Search condition 1.1.2')
+         
           if(coordinate.length === 1 ){
            if(FirstFromDes)
             {coordinate.splice(0,0,myLocation)}
@@ -394,7 +397,7 @@ export default class HomeScreen extends React.Component {
       else if (!bool && TextDestination === 'ตำแหน่งของตัวเอง'){
         if(coordinate.length === 1){
           
-          console.log('Search condition 1.2.1')
+        
           if(!FirstFromDes)
           {coordinate.push(myLocation)}
           else{
@@ -408,7 +411,7 @@ export default class HomeScreen extends React.Component {
             this.setState({FirstFromDes:true})
           }
           else{
-            console.log('Search condition 1.2.2')
+           
             coordinate.fill(myLocation,1,2)
         }
          
@@ -550,7 +553,7 @@ export default class HomeScreen extends React.Component {
       else if(coordinate.length === 1){
         if(!FirstFromDes){coordinate.push(e.nativeEvent.coordinate)}
         else{coordinate.fill(e.nativeEvent.coordinate),0,1}
-        console.log('this condition')
+        
       }
       else if(coordinate.length === 0){
         coordinate.push(e.nativeEvent.coordinate)
@@ -565,10 +568,14 @@ export default class HomeScreen extends React.Component {
     this.setState({BusStopLine:null})
   }
   render() {
+    const KEY_TO_FILTERS = ['name']
+    
     const {coordinate,time,distOrigin,distance,TextOrigin,
       TextDestination,TextColor,Opacity,Waypoints,NameWaypoints,line,LineColor,countDes,
     countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination
-  ,walkToOri,walkToDes} = this.state
+  ,walkToOri,walkToDes,listItemOri,listItemDes} = this.state
+  const filterNameOrigin= AllBuilding.building.filter(createFilter(TextOrigin,KEY_TO_FILTERS))
+  const filterNameDes = AllBuilding.building.filter(createFilter(TextDestination,KEY_TO_FILTERS))
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
   ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
 "คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
@@ -579,28 +586,28 @@ if(!this.state.change){
   this.setState({change:true})
   this.setState({prevTextOrigin:this.state.TextOrigin})
   this.setState({prevTextDestination:this.state.TextDestination})
-  
   this.getBusStop()
   this.setState({request:true})
+
 }
 
 else if(this.state.prevTextOrigin !== this.state.TextOrigin){
- 
+  this.setState({listItemOri:false})
   var boolOrigin = false
   AllBuilding.building.filter((item)=>{
-  
     if(item.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' 
     || this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
-      console.log('text origin condition 1')
-      this.setState({countOrigin:0})
+      
+      this.setState({countOrigin:0,listItemOri:true})
       boolOrigin = true
     }
+  
   })
   if(!boolOrigin && countOrigin <1){
     coordinate.shift()
     this.setState({countOrigin:1})
   }
-  console.log('change Textorigin')
+ 
   if(this.state.FacultyOrigin === "คณะเกษตร"){
     this.setState({FacultyValueOrigin:Agr})
     console.log('คณะเกษตร')
@@ -681,12 +688,13 @@ else if(this.state.prevTextOrigin !== this.state.TextOrigin){
   }
 }
 else if(this.state.prevTextDestination !== this.state.TextDestination){
+  this.setState({listItemDes:false})
   var boolDes = false
  AllBuilding.building.filter((item)=>{
     if(item.name === this.state.TextDestination || this.state.TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' 
     || this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
-      console.log('text Des condition 1')
-      this.setState({countDes:0})
+      
+      this.setState({countDes:0,listItemDes:true})
       boolDes = true
     }
   })
@@ -694,7 +702,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
     coordinate.pop()
     this.setState({countDes:1})
   }
-  console.log('change Textdestination')
+ 
   if(this.state.FacultyDestination === "คณะเกษตร"){
     this.setState({FacultyValueDestination:Agr})
   
@@ -849,17 +857,6 @@ else {
         }}
         placeholder="Type Origin or click on the map"
       />
-      {/* {AllBuilding.building.filter((item,index)=>{
-        if(item.name === TextOrigin){
-        return (
-          <View>
-        <FlatList data={item.name} 
-        renderItem={(item) => 
-        <Text>{item}</Text>}/>
-        </View>
-          )
-        }
-      })} */}
       <TextInput
         onChangeText={TextDestination => {
           this.setState({TextDestination})
@@ -880,10 +877,10 @@ else {
         placeholder="Type Destination or click on the map"
         // editable={TextOrigin!=="" ? true:false}
       />
-      <Button onPress={this.DisplayAll
+      {(TextOrigin !== "" && !listItemOri) || (TextDestination !== "" && !listItemDes) ? null:<Button onPress={this.DisplayAll
       } title="ค้นหา" 
       // disabled={true}
-      />
+      />}
         </View>
         <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%',left:'50%'}}>
               <Picker
@@ -997,8 +994,34 @@ else {
           ))}
           </ScrollView>
           </View>
-        
-  
+          {TextOrigin !== "" && !listItemOri ?
+        <ScrollView style={{position:'absolute',top:140,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:'35%'}}>
+       {filterNameOrigin.map((item,index) => {
+         return (
+           <View style={{flex:1}}>
+           <TouchableOpacity onPress={() => this.setState({TextOrigin:item.name})} key={index}>
+             <View>
+         <Text style={{padding:'3%'}}>{item.name}</Text>
+             </View>
+           </TouchableOpacity>
+           </View>
+         )
+       })}
+       </ScrollView>
+       :null}
+            {TextDestination !== "" && !listItemDes?
+        <ScrollView style={{position:'absolute',top:180,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:'35%'}}>
+       {filterNameDes.map((item,index) => {
+         return (
+           <TouchableOpacity onPress={() => this.setState({TextDestination:item.name})} key={index}>
+             <View>
+         <Text style={{padding:'3%'}}>{item.name}</Text>
+             </View>
+           </TouchableOpacity>
+         )
+       })}
+       </ScrollView>
+       :null}
       </View>
     );
   }
