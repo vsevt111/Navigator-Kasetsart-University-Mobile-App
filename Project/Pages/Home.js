@@ -290,10 +290,32 @@ export default class HomeScreen extends React.Component {
           
             this.setState({BusStopLine:busStop5})
             this.setState({LineColor:"#f58f0a"})
-          } 
-    
-        
+          }
         }
+        if(prevState.TextOrigin !== this.state.TextOrigin){
+          AllBuilding.building.filter((ele,index)=>{
+            if(ele.name === this.state.TextOrigin){
+              this.setState({deleOri:true})
+            }
+          })
+          if(this.state.deleOri){
+            this.setState({deleOri:false})
+            this.state.coordinate.shift()
+          }
+      
+        }
+        if(prevState.TextDestination !== this.state.TextDestination){
+          AllBuilding.building.filter(ele =>{
+            if(ele.name === this.state.TextDestination){
+              this.setState({deleDes:true})
+            }
+          })
+          if(this.state.deleDes){
+            this.setState({deleDes:false})
+            this.state.coordinate.pop()
+          }
+        }
+        
       this.setState({change:false})
       }
 }
@@ -331,7 +353,8 @@ export default class HomeScreen extends React.Component {
       walkToDes:[],
       listItemOri:false,
       listItemDes:false,
-      OriDesComponentH:null
+      deleOri:false,
+      deleDes:false
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -573,7 +596,7 @@ export default class HomeScreen extends React.Component {
     const {coordinate,time,distOrigin,distance,TextOrigin,
       TextDestination,TextColor,Opacity,Waypoints,NameWaypoints,line,LineColor,countDes,
     countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination
-  ,walkToOri,walkToDes,listItemOri,listItemDes} = this.state
+  ,walkToOri,walkToDes,listItemOri,listItemDes,deleOri,deleDes} = this.state
   const filterNameOrigin= AllBuilding.building.filter(createFilter(TextOrigin,KEY_TO_FILTERS))
   const filterNameDes = AllBuilding.building.filter(createFilter(TextDestination,KEY_TO_FILTERS))
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
@@ -582,31 +605,32 @@ export default class HomeScreen extends React.Component {
 const Arrayline =["สาย 1","สาย 3","สาย 5"]
 
 if(!this.state.change){
-  const{coordinate,changeOrigin,myLocation,Waypoints} = this.state
+  const{coordinate,changeOrigin,myLocation,Waypoints,deleOri} = this.state
   this.setState({change:true})
   this.setState({prevTextOrigin:this.state.TextOrigin})
   this.setState({prevTextDestination:this.state.TextDestination})
   this.getBusStop()
   this.setState({request:true})
+  // console.log(deleOri)
 
 }
 
 else if(this.state.prevTextOrigin !== this.state.TextOrigin){
   this.setState({listItemOri:false})
-  var boolOrigin = false
+  var boolDeleOrigin = false
   AllBuilding.building.filter((item)=>{
     if(item.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' 
     || this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
       
       this.setState({countOrigin:0,listItemOri:true})
-      boolOrigin = true
+      boolDeleOrigin = true
     }
   
   })
-  if(!boolOrigin && countOrigin <1){
-    coordinate.shift()
-    this.setState({countOrigin:1})
-  }
+  // if(boolDeleOrigin && countOrigin <1){
+  //   coordinate.shift()
+  //   this.setState({countOrigin:1})
+  // }
  
   if(this.state.FacultyOrigin === "คณะเกษตร"){
     this.setState({FacultyValueOrigin:Agr})
@@ -689,19 +713,19 @@ else if(this.state.prevTextOrigin !== this.state.TextOrigin){
 }
 else if(this.state.prevTextDestination !== this.state.TextDestination){
   this.setState({listItemDes:false})
-  var boolDes = false
+  var boolDeleDes = false
  AllBuilding.building.filter((item)=>{
     if(item.name === this.state.TextDestination || this.state.TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' 
     || this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
       
       this.setState({countDes:0,listItemDes:true})
-      boolDes = true
+      boolDeleDes = true
     }
   })
-  if(!boolDes && countDes < 1){
-    coordinate.pop()
-    this.setState({countDes:1})
-  }
+  // if(boolDeleDes && countDes < 1){
+  //   coordinate.pop()
+  //   this.setState({countDes:1})
+  // }
  
   if(this.state.FacultyDestination === "คณะเกษตร"){
     this.setState({FacultyValueDestination:Agr})
@@ -877,10 +901,10 @@ else {
         placeholder="Type Destination or click on the map"
         // editable={TextOrigin!=="" ? true:false}
       />
-      {(TextOrigin !== "" && !listItemOri) || (TextDestination !== "" && !listItemDes) ? null:<Button onPress={this.DisplayAll
+      <Button onPress={this.DisplayAll
       } title="ค้นหา" 
       // disabled={true}
-      />}
+      />
         </View>
         <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%',left:'50%'}}>
               <Picker
@@ -912,15 +936,11 @@ else {
         >
           {this.state.coordinate.map((coor,index)=>(
             <Marker coordinate={coor} key={index} >
-              {/* {index === 0 && coordinate.length === 2 ? <Callout>
-                <Text>index 0{this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ? this.state.TextOrigin:'สถานที่ต้นทาง'}</Text>
-                </Callout>:<Callout >
-                  <Text>index 1{this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text>
-                  </Callout>} */}
-              {coordinate.length === 2 && index === 0 && <Callout>
+              {/* {coordinate.length === 2 && index === 0 && <Callout>
               <Text>{this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ? this.state.TextOrigin:'สถานที่ต้นทาง'}</Text></Callout>}
               {coordinate.length === 2 && index === 1 && <Callout><Text>
-                {this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text></Callout>}
+                {this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text></Callout>} */}
+                <Callout>{coordinate.length === 2 && index === 0 ? <Text>{TextOrigin}</Text>:<Text>{TextDestination}</Text>}</Callout>
             </Marker>
           ))}
 
@@ -994,22 +1014,20 @@ else {
           ))}
           </ScrollView>
           </View>
-          {TextOrigin !== "" && !listItemOri ?
+          {TextOrigin !== "" && !listItemOri && changeOrigin?
         <ScrollView style={{position:'absolute',top:140,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:'35%'}}>
        {filterNameOrigin.map((item,index) => {
          return (
-           <View style={{flex:1}}>
            <TouchableOpacity onPress={() => this.setState({TextOrigin:item.name})} key={index}>
              <View>
          <Text style={{padding:'3%'}}>{item.name}</Text>
              </View>
            </TouchableOpacity>
-           </View>
          )
        })}
        </ScrollView>
        :null}
-            {TextDestination !== "" && !listItemDes?
+        {TextDestination !== "" && !listItemDes && !changeOrigin?
         <ScrollView style={{position:'absolute',top:180,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:'35%'}}>
        {filterNameDes.map((item,index) => {
          return (
@@ -1022,6 +1040,7 @@ else {
        })}
        </ScrollView>
        :null}
+     
       </View>
     );
   }
