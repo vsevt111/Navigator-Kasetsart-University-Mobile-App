@@ -63,6 +63,7 @@ export default class HomeScreen extends React.Component {
   
   componentDidMount(){
     requestLocationPermission();
+  
     if (requestLocationPermission()) {
       Geolocation.getCurrentPosition(
           (position) => {
@@ -87,7 +88,7 @@ export default class HomeScreen extends React.Component {
     requestLocationPermission();
   }
   componentDidUpdate(prevProp,prevState){
-  
+    const {TextOrigin,TextDestination} = this.state
       if(prevState.change){
         if(prevState.FacultyOrigin !== this.state.FacultyOrigin){
           if(this.state.FacultyOrigin === "คณะเกษตร"){
@@ -300,6 +301,7 @@ export default class HomeScreen extends React.Component {
           })
           if(this.state.deleOri){
             this.setState({deleOri:false})
+            this.state.NameOfCoor.shift()
             this.state.coordinate.shift()
           }
       
@@ -312,10 +314,11 @@ export default class HomeScreen extends React.Component {
           })
           if(this.state.deleDes){
             this.setState({deleDes:false})
+            this.state.NameOfCoor.pop()
             this.state.coordinate.pop()
           }
         }
-        
+      
       this.setState({change:false})
       }
 }
@@ -354,7 +357,8 @@ export default class HomeScreen extends React.Component {
       listItemOri:false,
       listItemDes:false,
       deleOri:false,
-      deleDes:false
+      deleDes:false,
+      NameOfCoor:[]
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -364,6 +368,7 @@ export default class HomeScreen extends React.Component {
   }
 
   DisplayAll(){
+    
     const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin,coordinate} = this.state
     this.Search(TextOrigin,true)
     this.Search(TextDestination,false)
@@ -387,17 +392,17 @@ export default class HomeScreen extends React.Component {
       latitudeDelta: latitudeDelta,
       longitudeDelta: longitudeDelta
     }
-
+   
     this.mapRef.animateToRegion(region,250)
    
   }
  
   Search(text,bool){
     const texts = text.toUpperCase()
-    const {coordinate,TextOrigin,TextDestination,myLocation,FirstFromDes} = this.state
+    const {coordinate,TextOrigin,TextDestination,myLocation,FirstFromDes,NameOfCoor} = this.state
       if(bool && TextOrigin=== 'ตำแหน่งของตัวเอง'){
         if(coordinate.length === 0){
-          
+          NameOfCoor.push('ตำแหน่งของตัวเอง')
           coordinate.push(myLocation)
           this.setState({FirstFromDes:false})
         }
@@ -405,37 +410,44 @@ export default class HomeScreen extends React.Component {
          
           if(coordinate.length === 1 ){
            if(FirstFromDes)
-            {coordinate.splice(0,0,myLocation)}
+            {coordinate.splice(0,0,myLocation)
+            NameOfCoor.splice(0,0,'ตำแหน่งของตัวเอง')}
             else{
               coordinate.fill(myLocation,0,1)
+              NameOfCoor.fill('ตำแหน่งของตัวเอง',0,1)
             }
             this.setState({FirstFromDes:false})
           }
           else{
             coordinate.fill(myLocation,0,1)
+            NameOfCoor.fill('ตำแหน่งของตัวเอง',0,1)
           }
         }
-        console.log(coordinate)
+      
       }
       else if (!bool && TextDestination === 'ตำแหน่งของตัวเอง'){
         if(coordinate.length === 1){
           
         
           if(!FirstFromDes)
-          {coordinate.push(myLocation)}
+          {coordinate.push(myLocation)
+          NameOfCoor.push('ตำแหน่งของตัวเอง')}
           else{
             coordinate.fill(myLocation,0,1)
+            NameOfCoor.fill('ตำแหน่งของตัวเอง',0,1)
           }
          
         }
         else{
           if(coordinate.length === 0){
             coordinate.push(myLocation)
+            NameOfCoor.push('ตำแหน่งของตัวเอง')
             this.setState({FirstFromDes:true})
           }
           else{
            
             coordinate.fill(myLocation,1,2)
+            NameOfCoor.fill('ตำแหน่งของตัวเอง',1,2)
         }
          
         }
@@ -446,15 +458,18 @@ export default class HomeScreen extends React.Component {
         if(TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' && bool){
           if(coordinate.length === 0){
             coordinate.push(item.coordinate)
+            NameOfCoor.push(item.name)
           }
           else{
             const {FirstFromDes} = this.state
             if(FirstFromDes && coordinate.length === 1){
               coordinate.splice(0,0,item.coordinate)
+              NameOfCoor.splice(0,0,item.name)
               this.setState({FirstFromDes:false})
             }
             else{
               coordinate.fill(item.coordinate,0,1)
+              NameOfCoor.fill(item.name,0,1)
             }
           }
         }
@@ -463,20 +478,26 @@ export default class HomeScreen extends React.Component {
           if(!FirstFromDes)
           {
             coordinate.push(item.coordinate)
+            NameOfCoor.push(item.name)
           }
           else{
             coordinate.fill(item.coordinate,0,1)
+            NameOfCoor.fill(item.name,0,1)
           }
         }
         else if(coordinate.length === 2){
+          NameOfCoor.fill(item.name,1,2)
           coordinate.fill(item.coordinate,1,2)
         }
         else if(coordinate.length === 0){
+          NameOfCoor.push(item.name)
           coordinate.push(item.coordinate)
           this.setState({FirstFromDes:true})
         }
       }
+      this.setState({NameOfCoor})
       this.setState({coordinate})
+     
         return item
       }
     })
@@ -535,10 +556,6 @@ export default class HomeScreen extends React.Component {
       })
     }
   }
-  walkToOri.push(coordinate[0])
-  walkToOri.push(Waypoints[0])
-  walkToDes.push(Waypoints[Waypoints.length-1])
-  walkToDes.push(coordinate[1])
   this.setState({walkToOri,walkToDes})
   this.setState({Waypoints})
   this.setState({NameWaypoints})
@@ -548,22 +565,27 @@ export default class HomeScreen extends React.Component {
 
   }
   handlePressOnMap(e){
-    const {TextOrigin,TextDestination,changeOrigin,coordinate,FirstFromDes} =this.state
+    const {TextOrigin,TextDestination,changeOrigin,coordinate,FirstFromDes,NameOfCoor} =this.state
     if(changeOrigin){
       if(coordinate.length === 1 ){
         if(!FirstFromDes){
         coordinate.shift()
+        NameOfCoor.shift()
         coordinate.push(e.nativeEvent.coordinate)
+        NameOfCoor.push('สถานที่ต้นทาง')
       }
       else{
         coordinate.splice(0,0,e.nativeEvent.coordinate)
+        NameOfCoor.splice(0,0,'สถานที่ต้นทาง')
         this.setState({FirstFromDes:false})
       }
       }
       else if(coordinate.length === 2){
+        NameOfCoor.fill('สถานที่ต้นทาง',0,1)
         coordinate.fill(e.nativeEvent.coordinate,0,1)
       }
       else if(coordinate.length === 0){
+        NameOfCoor.push('สถานที่ต้นทาง')
         coordinate.push(e.nativeEvent.coordinate)
       }
       this.setState({TextOrigin:'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'})
@@ -571,14 +593,23 @@ export default class HomeScreen extends React.Component {
     else{
       if(coordinate.length === 2){
         coordinate.pop()
+        NameOfCoor.pop()
         coordinate.push(e.nativeEvent.coordinate)
+        NameOfCoor.push('สถานที่ปลายทาง')
       }
       else if(coordinate.length === 1){
-        if(!FirstFromDes){coordinate.push(e.nativeEvent.coordinate)}
-        else{coordinate.fill(e.nativeEvent.coordinate),0,1}
+        if(!FirstFromDes){
+          NameOfCoor.push('สถานที่ปลายทาง')
+          coordinate.push(e.nativeEvent.coordinate)
+        }
+        else{
+          NameOfCoor.fill('สถานที่ปลายทาง',0,1)
+          coordinate.fill(e.nativeEvent.coordinate,0,1)
+        }
         
       }
       else if(coordinate.length === 0){
+        NameOfCoor.push('สถานที่ปลายทาง')
         coordinate.push(e.nativeEvent.coordinate)
         this.setState({FirstFromDes:true})
       }
@@ -587,16 +618,13 @@ export default class HomeScreen extends React.Component {
     this.getBusStop()
   }
 
-  resetRequest(){
-    this.setState({BusStopLine:null})
-  }
   render() {
     const KEY_TO_FILTERS = ['name']
     
     const {coordinate,time,distOrigin,distance,TextOrigin,
       TextDestination,TextColor,Opacity,Waypoints,NameWaypoints,line,LineColor,countDes,
     countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination
-  ,walkToOri,walkToDes,listItemOri,listItemDes,deleOri,deleDes} = this.state
+  ,walkToOri,walkToDes,listItemOri,listItemDes,deleOri,deleDes,NameOfCoor} = this.state
   const filterNameOrigin= AllBuilding.building.filter(createFilter(TextOrigin,KEY_TO_FILTERS))
   const filterNameDes = AllBuilding.building.filter(createFilter(TextDestination,KEY_TO_FILTERS))
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
@@ -611,7 +639,7 @@ if(!this.state.change){
   this.setState({prevTextDestination:this.state.TextDestination})
   this.getBusStop()
   this.setState({request:true})
-  // console.log(deleOri)
+
 
 }
 
@@ -729,7 +757,6 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
  
   if(this.state.FacultyDestination === "คณะเกษตร"){
     this.setState({FacultyValueDestination:Agr})
-  
     console.log('คณะเกษตรปลายทาง')
   }
  
@@ -930,27 +957,22 @@ else {
           latitudeDelta: 0.0122,
           longitudeDelta: 0.0021
         }}
-        
+        toolbarEnabled={false}
         onPress={this.handlePressOnMap}
         showsUserLocation={true}
         >
           {this.state.coordinate.map((coor,index)=>(
-            <Marker coordinate={coor} key={index} >
-              {/* {coordinate.length === 2 && index === 0 && <Callout>
-              <Text>{this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ? this.state.TextOrigin:'สถานที่ต้นทาง'}</Text></Callout>}
-              {coordinate.length === 2 && index === 1 && <Callout><Text>
-                {this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'? this.state.TextDestination:'สถานที่ปลายทาง'}</Text></Callout>} */}
-                <Callout>{coordinate.length === 2 && index === 0 ? <Text>{TextOrigin}</Text>:<Text>{TextDestination}</Text>}</Callout>
+            <Marker coordinate={coor} key={index} title={NameOfCoor[index]} ref={el =>(this.MarkRef=el)}>
+              
             </Marker>
           ))}
-
-{/* {BusStopLine !== null && this.state.request && <Direction
+        
+            {BusStopLine !== null && this.state.request && coordinate.length === 2 && <Direction
             origin = {coordinate[0]}
-            destination = {walkToOri[0]}
+            destination = {Waypoints[0]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
             strokeColor={LineColor}
-        
             mode={'WALKING'}
             // optimizeWaypoints={true}
             // splitWaypoints={true}
@@ -962,24 +984,24 @@ else {
               console.log(`Distance: ${result.distance} km`)
               console.log(`Duration: ${result.duration} minOrigin .`)
               console.log('direction 1')
-              this.setState({time:time+result.duration})
-              this.setState({distance:distance+result.distance})
+              this.setState({time:result.duration})
+              this.setState({distance:result.distance})
             }}
             onError={error=>{
               console.log(error)
             }}
             >
                
-            </Direction>} */}
-
-           {BusStopLine !== null && this.state.request &&
+            </Direction>}
+          
+           {BusStopLine !== null && this.state.request && coordinate.length === 2 &&
            <Direction
-            origin = {coordinate[0]}
-            destination = {coordinate[1]}
+            origin = {Waypoints[0]}
+            destination = {Waypoints[Waypoints.length-1]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
             strokeColor={LineColor}
-            waypoints = {Waypoints}
+            waypoints = {Waypoints.slice(1,Waypoints.length-1)}
             // mode={'WALKING'}
             // optimizeWaypoints={true}
             // splitWaypoints={true}
@@ -991,6 +1013,34 @@ else {
               console.log(`Distance: ${result.distance} km`)
               console.log(`Duration: ${result.duration} minOrigin .`)
               console.log('direction 2')
+              this.setState({time:result.duration})
+              this.setState({distance:result.distance})
+            }}
+            onError={error=>{
+              console.log(error)
+            }}
+            >
+               
+            </Direction>}
+
+{BusStopLine !== null && this.state.request && coordinate.length === 2 && <Direction
+            origin = {Waypoints[Waypoints.length - 1]}
+            destination = {coordinate[1]}
+            apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+            strokeWidth={4}
+            strokeColor={LineColor}
+            mode={'WALKING'}
+            // optimizeWaypoints={true}
+            // splitWaypoints={true}
+            // resetOnChange={true}
+            onStart={(params) => {
+              console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
+            }}
+            onReady ={result =>{
+              const {time,distance} = this.state
+              console.log(`Distance: ${result.distance} km`)
+              console.log(`Duration: ${result.duration} min .`)
+              console.log('direction 3')
               this.setState({time:result.duration})
               this.setState({distance:result.distance})
             }}
