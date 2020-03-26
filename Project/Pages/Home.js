@@ -352,8 +352,7 @@ export default class HomeScreen extends React.Component {
       countDes:0,
       FirstFromDes:false,
       request:false,
-      walkToOri:[],
-      walkToDes:[],
+      BusStopEqual:false,
       listItemOri:false,
       listItemDes:false,
       deleOri:false,
@@ -364,7 +363,9 @@ export default class HomeScreen extends React.Component {
     this.DisplayAll = this.DisplayAll.bind(this);
     this.handlePressOnMap = this.handlePressOnMap.bind(this);
     this.getBusStop = this.getBusStop.bind(this);
-   
+    this.updateTime= this.updateTime.bind(this);
+    this.optimalRoute = this.optimalRoute.bind(this);
+    this.NestedMethodTest = this.NestedMethodTest.bind(this);
   }
 
   DisplayAll(){
@@ -427,8 +428,6 @@ export default class HomeScreen extends React.Component {
       }
       else if (!bool && TextDestination === 'ตำแหน่งของตัวเอง'){
         if(coordinate.length === 1){
-          
-        
           if(!FirstFromDes)
           {coordinate.push(myLocation)
           NameOfCoor.push('ตำแหน่งของตัวเอง')}
@@ -506,7 +505,7 @@ export default class HomeScreen extends React.Component {
   }
   getBusStop(){
     // console.log('getBusStop() method',this.state.BusStopLine)
-    const {coordinate,Waypoints,NameWaypoints,BusStopLine,line,walkToDes,walkToOri} = this.state
+    const {coordinate,Waypoints,NameWaypoints,BusStopLine,line} = this.state
     Waypoints.splice(0,Waypoints.length)
     NameWaypoints.splice(0,NameWaypoints.length)
     if(coordinate.length === 2)
@@ -520,16 +519,23 @@ export default class HomeScreen extends React.Component {
       BusStopLine.markers.map((item,index)=>{
         const distOrigin = getPreciseDistance(coordinate[0],item.coordinate)
         const kiloOrigin = convertDistance(distOrigin,'km')
-        if(minOrigin  > kiloOrigin){
+        if(minOrigin  >= kiloOrigin){
           minOrigin =kiloOrigin
           indexOrigin = index
         }
         if(coordinate.length === 2){
           const distDes = getPreciseDistance(coordinate[1],item.coordinate)
           const kiloDes = convertDistance(distDes,'km')
-          if(minDes > kiloDes){
-            minDes = kiloDes
-            indexDes = index
+          if(minDes >= kiloDes){
+            if(minDes !== kiloDes){
+              minDes=kiloDes
+              indexDes = index
+            }
+            else{
+              if(indexOrigin < index){
+                indexDes=index
+              }
+            }
           }
         }
     })}
@@ -542,6 +548,7 @@ export default class HomeScreen extends React.Component {
         NameWaypoints.push(ele.name)
         Waypoints.push(ele.coordinate)
       })
+      this.setState({BusStopEqual:false})
     }
     else if(indexOrigin > indexDes){
       const busStopFirst = BusStopLine.markers.slice(indexOrigin)
@@ -554,16 +561,52 @@ export default class HomeScreen extends React.Component {
         NameWaypoints.push(ele.name)
         Waypoints.push(ele.coordinate)
       })
+      this.setState({BusStopEqual:false})
     }
+  
   }
-  this.setState({walkToOri,walkToDes})
+  else if(indexOrigin === indexDes){
+    this.setState({BusStopEqual:true})
+  }
+ 
   this.setState({Waypoints})
   this.setState({NameWaypoints})
   }
   
   optimalRoute(){
-
+    const {coordinate,Waypoints,LineColor} = this.state
+    return(
+      <Direction
+            origin = {coordinate[0]}
+            destination = {Waypoints[0]}
+            apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+            strokeWidth={4}
+            strokeColor={LineColor}
+            mode={'WALKING'}
+            // optimizeWaypoints={true}
+            // splitWaypoints={true}
+            // resetOnChange={true}
+            onStart={(params) => {
+              console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
+            }}
+            onReady ={result =>{
+              console.log(`Distance: ${result.distance} km`)
+              console.log(`Duration: ${result.duration} minOrigin .`)
+              console.log('return direction component in method')
+              this.updateTime(result.duration,result.distance)
+            }}
+            onError={error=>{
+              console.log(error)
+            }}
+            />
+    )
   }
+
+  NestedMethodTest(){
+    this.getBusStop()
+    this.optimalRoute()
+  }
+
   handlePressOnMap(e){
     const {TextOrigin,TextDestination,changeOrigin,coordinate,FirstFromDes,NameOfCoor} =this.state
     if(changeOrigin){
@@ -618,13 +661,18 @@ export default class HomeScreen extends React.Component {
     this.getBusStop()
   }
 
+  updateTime(times,distances){
+    const {time,distance} =this.state
+    this.setState({time:time+times,distance:distance+distances})
+  }
+
   render() {
     const KEY_TO_FILTERS = ['name']
     
     const {coordinate,time,distOrigin,distance,TextOrigin,
       TextDestination,TextColor,Opacity,Waypoints,NameWaypoints,line,LineColor,countDes,
     countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination
-  ,walkToOri,walkToDes,listItemOri,listItemDes,deleOri,deleDes,NameOfCoor} = this.state
+  ,listItemOri,listItemDes,deleOri,deleDes,NameOfCoor,BusStopEqual} = this.state
   const filterNameOrigin= AllBuilding.building.filter(createFilter(TextOrigin,KEY_TO_FILTERS))
   const filterNameDes = AllBuilding.building.filter(createFilter(TextDestination,KEY_TO_FILTERS))
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
@@ -938,7 +986,7 @@ else {
     selectedValue={line === null ? 'เลือกสายที่ใช้':line}
     style={{height:50}}
     onValueChange={(itemValue,itemIndex)=>{
-      this.setState({line:itemValue,request:false})
+      this.setState({line:itemValue,request:false,time:null,distance:null})
       if(itemValue === 'เลือกสายที่ใช้'){
         this.setState({BusStopLine:null,line:null})
       }
@@ -962,12 +1010,12 @@ else {
         showsUserLocation={true}
         >
           {this.state.coordinate.map((coor,index)=>(
-            <Marker coordinate={coor} key={index} title={NameOfCoor[index]} ref={el =>(this.MarkRef=el)}>
+            <Marker coordinate={coor} key={index} title={coordinate.length === 2? NameOfCoor[index]:null} ref={el =>(this.MarkRef=el)}>
               
             </Marker>
           ))}
         
-            {BusStopLine !== null && this.state.request && coordinate.length === 2 && <Direction
+            { this.state.request && coordinate.length === 2  && <Direction
             origin = {coordinate[0]}
             destination = {Waypoints[0]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
@@ -984,8 +1032,7 @@ else {
               console.log(`Distance: ${result.distance} km`)
               console.log(`Duration: ${result.duration} minOrigin .`)
               console.log('direction 1')
-              this.setState({time:result.duration})
-              this.setState({distance:result.distance})
+              this.updateTime(result.duration,result.distance)
             }}
             onError={error=>{
               console.log(error)
@@ -994,7 +1041,7 @@ else {
                
             </Direction>}
           
-           {BusStopLine !== null && this.state.request && coordinate.length === 2 &&
+           { this.state.request && coordinate.length === 2 &&
            <Direction
             origin = {Waypoints[0]}
             destination = {Waypoints[Waypoints.length-1]}
@@ -1013,8 +1060,7 @@ else {
               console.log(`Distance: ${result.distance} km`)
               console.log(`Duration: ${result.duration} minOrigin .`)
               console.log('direction 2')
-              this.setState({time:result.duration})
-              this.setState({distance:result.distance})
+              this.updateTime(result.duration,result.distance)
             }}
             onError={error=>{
               console.log(error)
@@ -1023,8 +1069,8 @@ else {
                
             </Direction>}
 
-{BusStopLine !== null && this.state.request && coordinate.length === 2 && <Direction
-            origin = {Waypoints[Waypoints.length - 1]}
+{/* {BusStopEqual && <Direction
+            origin = {coordinate[0]}
             destination = {coordinate[1]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
@@ -1040,7 +1086,7 @@ else {
               const {time,distance} = this.state
               console.log(`Distance: ${result.distance} km`)
               console.log(`Duration: ${result.duration} min .`)
-              console.log('direction 3')
+              console.log('special condition direction 4')
               this.setState({time:result.duration})
               this.setState({distance:result.distance})
             }}
@@ -1049,8 +1095,36 @@ else {
             }}
             >
                
+            </Direction>} */}
+
+            {this.state.request && coordinate.length === 2 && <Direction
+            origin = {Waypoints[Waypoints.length - 1]}
+            destination = {coordinate[1]}
+            apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+            strokeWidth={4}
+            strokeColor={LineColor}
+            mode={'WALKING'}
+            // optimizeWaypoints={true}
+            // splitWaypoints={true}
+            // resetOnChange={true}
+            onStart={(params) => {
+              console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
+            }}
+            onReady ={result =>{
+              
+              console.log(`Distance: ${result.distance} km`)
+              console.log(`Duration: ${result.duration} min .`)
+              console.log('direction 3')
+              this.updateTime(result.duration,result.distance)
+            }}
+            onError={error=>{
+              console.log(error)
+            }}
+            >
             </Direction>}
-      
+            {/* {this.optimalRoute()} */}
+          
+   
         </MapView>
           <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Number.isNaN(Number.parseFloat(distance))? 0:Number.parseFloat(distance).toFixed(2)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
           <View style={NameWaypoints.length === 0 ? {height:'0%'}:{height:'12%'}}>
