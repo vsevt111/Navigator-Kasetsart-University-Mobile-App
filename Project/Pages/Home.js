@@ -30,6 +30,7 @@ import busStop4 from '../database/busPark/busPark4.json';
 import busStop5 from '../database/busPark/busPark5.json';
 import geolib,{getPreciseDistance,getDistance,convertDistance,getCenter} from 'geolib';
 import SearchInput ,{createFilter} from 'react-native-search-filter';
+import busStopAll from '../database/busPark/busParkAll.json';
 
 
 async function requestLocationPermission() {
@@ -62,8 +63,8 @@ async function requestLocationPermission() {
 export default class HomeScreen extends React.Component {
   
   componentDidMount(){
-    requestLocationPermission();
-  
+    requestLocationPermission()
+    this.mapRef.setMapBoundaries({latitude:13.853065,longitude:100.577247},{latitude:13.847937,longitude:100.564641})
     if (requestLocationPermission()) {
       Geolocation.getCurrentPosition(
           (position) => {
@@ -687,7 +688,7 @@ if(!this.state.change){
   this.setState({prevTextDestination:this.state.TextDestination})
   this.getBusStop()
   this.setState({request:true})
-
+  console.log(busStopAll[0].markers[0])
 
 }
 
@@ -1008,6 +1009,7 @@ else {
         toolbarEnabled={false}
         onPress={this.handlePressOnMap}
         showsUserLocation={true}
+        minZoomLevel={15}
         >
           {this.state.coordinate.map((coor,index)=>(
             <Marker coordinate={coor} key={index} title={coordinate.length === 2? NameOfCoor[index]:null} ref={el =>(this.MarkRef=el)}>
@@ -1033,6 +1035,7 @@ else {
               console.log(`Duration: ${result.duration} minOrigin .`)
               console.log('direction 1')
               this.updateTime(result.duration,result.distance)
+            
             }}
             onError={error=>{
               console.log(error)
@@ -1061,6 +1064,7 @@ else {
               console.log(`Duration: ${result.duration} minOrigin .`)
               console.log('direction 2')
               this.updateTime(result.duration,result.distance)
+              // this.setState({request:false})
             }}
             onError={error=>{
               console.log(error)
