@@ -313,7 +313,7 @@ export default class HomeScreen extends React.Component {
             
             this.state.NameOfCoor.shift()
             this.state.coordinate.shift()
-            this.setState({deleOri:false})
+            this.setState({deleOri:false,line:'เส้นทางที่แนะนำ'})
           }
       
         }
@@ -328,7 +328,7 @@ export default class HomeScreen extends React.Component {
             
             this.state.NameOfCoor.pop()
             this.state.coordinate.pop()
-            this.setState({deleDes:false})
+            this.setState({deleDes:false,line:'เส้นทางที่แนะนำ'})
           }
         }
       
@@ -376,8 +376,6 @@ export default class HomeScreen extends React.Component {
       InLine3:false,
       InLine5:false,
       choiceLine:['เส้นทางที่แนะนำ'],
-      optimizeWaypoints:[],
-      optimizeNameWay:[],
       symbol:null
     };
     this.Search = this.Search.bind(this);
@@ -394,7 +392,7 @@ export default class HomeScreen extends React.Component {
 
   DisplayAll(){
     
-    this.setState({time:null,distance:null,request:false})
+    this.setState({time:null,distance:null,request:false,BusStopEqual:false})
     const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin,coordinate,OptimalLine} = this.state
     
     if(TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'){
@@ -537,9 +535,12 @@ export default class HomeScreen extends React.Component {
   }
   getBusStop(lines=null){
     // console.log('getBusStop() method',this.state.BusStopLine)
-    const {coordinate,Waypoints,NameWaypoints,BusStopLine,line} = this.state
+    
+    const {coordinate,Waypoints,NameWaypoints,BusStopLine,line,BusStopEqual} = this.state
+    this.setState({BusStopEqual:false})
     Waypoints.splice(0,Waypoints.length)
     NameWaypoints.splice(0,NameWaypoints.length)
+    
     if(coordinate.length === 2)
   {  
     var minOrigin  = 999
@@ -547,8 +548,12 @@ export default class HomeScreen extends React.Component {
     var indexOrigin = 0
     var indexDes = 0
    
+    var sumDist =0
+    var calculateCheckPoint = false
+    var calculateIndex = false
+   
   }
-    if(coordinate.length >=1 && (BusStopLine !== null || lines !== null)){
+    if(coordinate.length >=1 && (BusStopLine !== null || lines !== null) ){
       
       BusStopLine.markers.map((item,index)=>{
         const distOrigin = getPreciseDistance(coordinate[0],item.coordinate)
@@ -572,10 +577,11 @@ export default class HomeScreen extends React.Component {
             }
           }
         }
+        calculateIndex = true
     })}
     // console.log('minimumOrigin: '+minOrigin  +' IndexOrigin: '+indexOrigin)
     // console.log('minimumDes: '+minDes+' IndexDes: '+indexDes)
-    if(coordinate.length===2){
+    if(coordinate.length===2 && calculateIndex){
       if(indexOrigin < indexDes){
       const busStop = BusStopLine.markers.slice(indexOrigin,indexDes+1)
       busStop.map((ele,index) =>{
@@ -596,54 +602,106 @@ export default class HomeScreen extends React.Component {
         Waypoints.push(ele.coordinate)
       })
     }
+    else if(indexOrigin === indexDes){
+      console.log('last condition in getBusStop')
+      this.setState({LineColor:'#05f709'})
+      this.setState({BusStopEqual:true})
+    }
+    calculateCheckPoint=true
+   
   }
-  // else if(indexOrigin === indexDes){
-  //   this.setState({BusStopEqual:true})
-  // }
- 
+  if(line === "เส้นทางที่แนะนำ" && calculateCheckPoint){
+   
+    var DistFromMyloc = convertDistance(getPreciseDistance(coordinate[0],coordinate[1]),'km')
+    Waypoints.map((ele,index)=>{
+      if(index>=1){
+        sumDist+=convertDistance(getPreciseDistance(Waypoints[index-1],Waypoints[index]),'km')
+      }
+    })
+    if((DistFromMyloc+1 < sumDist) && (DistFromMyloc <= 0.65)){
+      
+      NameWaypoints.splice(0,NameWaypoints.length)
+      this.setState({LineColor:'#05f709'})
+      this.setState({BusStopEqual:true})
+      Waypoints.splice(0,Waypoints.length)
+    }
+   
+  }
+  // console.log('Distance all busStop : '+sumDist+' distance between origin and des : '+DistFromMyloc)
   this.setState({Waypoints})
   this.setState({NameWaypoints})
   }
   
   optimalRoute(){
-    const {coordinate,optimizeNameWay,optimizeWaypoints,line,BusStopLine} = this.state
+    const {coordinate,line,BusStopLine,BusStopEqual,
+    Waypoints} = this.state
     var lines = null
-    var min = 999
+    // var arraySum =[]
+    var sum = 9999
     if(coordinate.length === 2){
       busStopAll.map((coor)=>{
+        var min =999
+        var max =0
+        // var sumDist= 0
+        // optimizeWaypoints.splice(0,optimizeWaypoints.length)
       coor.markers.map((ele,index)=>{
         const distance = getPreciseDistance(coordinate[0],ele.coordinate)
         const convToKm = convertDistance(distance,'km')
         if(min > convToKm){
           min = convToKm
-          lines = coor.line
         }
+        if(max < convToKm){
+          max=convToKm
+        }
+        // optimizeWaypoints.push(ele.coordinate)
+        // if(index>=1 && optimizeWaypoints.length >=2){
+        //   const busStopDist= getPreciseDistance(optimizeWaypoints[index-1],optimizeWaypoints[index])
+        //   sumDist+=convertDistance(busStopDist,'km')
+        // }
       })
+      // arraySum.push(sumDist)
+      if(sum > min+max){
+        sum=min+max
+        lines=coor.line
+      }
     })
   }
-  if(line === 'เส้นทางที่แนะนำ'){
+
+  if(line === 'เส้นทางที่แนะนำ' && !BusStopEqual ){
+    
     if(lines === 'สาย 1'){
+      // if(distFromMyloc+0.5 < arraySum[0]){
+      //   this.setState({BusStopEqual:true})
+      // }
       this.setState({BusStopLine:busStop1})
       this.setState({LineColor:"#0ce8f7"})
       this.setState({symbol:symbol1})
     }
     else if(lines === 'สาย 3'){
+      // if(distFromMyloc+0.5 < arraySum[1]){
+      //   this.setState({BusStopEqual:true})
+      // }
+     
       this.setState({BusStopLine:busStop3})
       this.setState({symbol:symbol3})
       this.setState({LineColor:"#d91fed"})
     }
     else if(lines === 'สาย 5'){
+      // if(distFromMyloc+0.5 < arraySum[2]){
+      //   this.setState({BusStopEqual:true})
+      // }
+      
       this.setState({BusStopLine:busStop5})
       this.setState({symbol:symbol5})
       this.setState({LineColor:"#f58f0a"})
     }
   }
-  
+  console.log(BusStopEqual,lines)
   this.getBusStop()
   }
 
   handlePressOnMap(e){
-    this.setState({time:null,distance:null})
+    this.setState({time:null,distance:null,request:false,BusStopEqual:false,line:'เส้นทางที่แนะนำ'})
     const {TextOrigin,TextDestination,changeOrigin,coordinate,FirstFromDes,NameOfCoor,
     BusStopLine} =this.state
   
@@ -1117,7 +1175,8 @@ else {
         minZoomLevel={15}
         >
           {this.state.coordinate.map((coor,index)=>(
-            <Marker coordinate={coor} key={index} title={coordinate.length === 2 ? NameOfCoor[index]:null} ref={el =>(this.MarkRef=el)}>
+            <Marker coordinate={coor} key={index} title={coordinate.length === 2 ? NameOfCoor[index]:null} ref={el =>(this.MarkRef=el)}
+            >
               
             </Marker>
 
@@ -1141,7 +1200,7 @@ else {
        
         {request && coordinate.length === 2 && <Direction
             origin = {coordinate[0]}
-            destination = {Waypoints[0]}
+            destination = {BusStopEqual ? coordinate[1]:Waypoints[0]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
             strokeColor={LineColor}
@@ -1163,7 +1222,7 @@ else {
             }}
             >
             </Direction>}
-           {request && coordinate.length === 2 && <Direction
+           {request && coordinate.length === 2 && !BusStopEqual && <Direction
             origin = {Waypoints[0]}
             destination = {Waypoints[Waypoints.length-1]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
@@ -1188,7 +1247,7 @@ else {
             }}
             >
             </Direction>}
-           {request && coordinate.length === 2 && <Direction
+           {request && coordinate.length === 2 && !BusStopEqual && <Direction
             origin = {Waypoints[Waypoints.length - 1]}
             destination = {coordinate[1]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
