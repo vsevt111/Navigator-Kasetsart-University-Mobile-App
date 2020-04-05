@@ -178,12 +178,8 @@ export default class HomeScreen extends React.Component {
             this.setState({FacultyValue:Forest})
             console.log('คณะวนศาสตร์')
           }
-        
-       
         }
        if(prevState.FacultyDestination !== this.state.FacultyDestination){
-     
-    
         if(this.state.FacultyDestination === "คณะเกษตร"){
           //this.setState({FacultyValueDestination:Agr})
           this.setState({FacultyValue:Agr})
@@ -376,7 +372,9 @@ export default class HomeScreen extends React.Component {
       InLine3:false,
       InLine5:false,
       choiceLine:['เส้นทางที่แนะนำ'],
-      symbol:null
+      symbol:null,
+      filterOriLen:null,
+      filterDesLen:null
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -696,7 +694,7 @@ export default class HomeScreen extends React.Component {
       this.setState({LineColor:"#f58f0a"})
     }
   }
-  console.log(BusStopEqual,lines)
+  // console.log(BusStopEqual,lines)
   this.getBusStop()
   }
 
@@ -842,7 +840,7 @@ export default class HomeScreen extends React.Component {
       TextDestination,TextColor,Opacity,Waypoints,NameWaypoints,line,LineColor,countDes,
     countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination
   ,listItemOri,listItemDes,deleOri,deleDes,NameOfCoor,BusStopEqual,
-OptimalLine,request,choiceLine} = this.state
+OptimalLine,request,choiceLine,filterOriLen,filterDesLen} = this.state
   const filterNameOrigin= AllBuilding.building.filter(createFilter(TextOrigin,KEY_TO_FILTERS))
   const filterNameDes = AllBuilding.building.filter(createFilter(TextDestination,KEY_TO_FILTERS))
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
@@ -858,7 +856,24 @@ if(!this.state.change){
   this.getBusStop()
   this.setState({request:true})
   this.optimalRoute()
-  
+  // console.log(filterNameOrigin.length,filterNameDes.length)
+  if(filterNameOrigin.length >= 6  && filterNameOrigin.length !== 89){
+    // console.log('condition in change 1')
+    this.setState({filterOriLen:'35%'})
+  }
+  else if(filterNameOrigin.length < 6 ){
+    // console.log('condition in change 2')
+    this.setState({filterOriLen:null})
+  }
+  if(filterNameDes.length >= 6 && filterNameDes.length !== 89){
+    // console.log('condition in change 3')
+    this.setState({filterDesLen:'35%'})
+  }
+  else if(filterNameDes.length < 6){
+    // console.log('condition in change 4')
+    this.setState({filterDesLen:null})
+  }
+  // console.log(filterOriLen,filterDesLen)
 }
 
 else if(this.state.prevTextOrigin !== this.state.TextOrigin){
@@ -1095,8 +1110,9 @@ this.setState({TextOrigin:itemValue})
 else {
   this.setState({TextDestination:itemValue})
 }
+console.log(itemValue)
 }}>
-  <item label='กรุณาเลือกสถานที่' value ='กรุณาเลือกสถานที่'/>
+  {/* <item label='กรุณาเลือกสถานที่' value ='กรุณาเลือกสถานที่'/> */}
   <item label='ตำแหน่งของตัวเอง' value ='ตำแหน่งของตัวเอง'/>
   {this.state.FacultyValue.building.map((building) =>(
     <item label={building.name} value={building.name} key={building.name}/>
@@ -1286,7 +1302,7 @@ else {
           </ScrollView>
           </View>
           {TextOrigin !== "" && !listItemOri && changeOrigin?
-        <ScrollView style={{position:'absolute',top:140,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:'35%'}}>
+        <ScrollView style={{position:'absolute',top:140,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:filterOriLen}}>
        {filterNameOrigin.map((item,index) => {
          return (
            <TouchableOpacity onPress={() => this.setState({TextOrigin:item.name})} key={index}>
@@ -1299,7 +1315,7 @@ else {
        </ScrollView>
        :null}
         {TextDestination !== "" && !listItemDes && !changeOrigin?
-        <ScrollView style={{position:'absolute',top:180,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:'35%'}}>
+        <ScrollView style={{position:'absolute',top:180,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:filterDesLen}}>
        {filterNameDes.map((item,index) => {
          return (
            <TouchableOpacity onPress={() => this.setState({TextDestination:item.name})} key={index}>
