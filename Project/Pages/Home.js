@@ -74,7 +74,6 @@ export default class HomeScreen extends React.Component {
       Geolocation.getCurrentPosition(
           (position) => {
             const {myLocation} = this.state
-         
               console.log(position.coords.latitude)
               console.log(position.coords.longitude)
               this.setState({myLocation:{latitude:position.coords.latitude,
@@ -299,11 +298,13 @@ export default class HomeScreen extends React.Component {
         if(prevState.TextOrigin !== this.state.TextOrigin){
       
           AllBuilding.building.filter((ele,index)=>{
-            if(ele.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'){
+            if(ele.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ||
+            this.state.TextOrigin==='ตำแหน่งของตัวเอง'){
               this.setState({deleOri:true})
             }
           })
-          if(this.state.deleOri && this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'){
+          if(this.state.deleOri && this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' && 
+          this.state.TextOrigin!== 'ตำแหน่งของตัวเอง'){
             this.state.NameOfCoor.shift()
             this.state.coordinate.shift()
             this.setState({deleOri:false,line:'เส้นทางที่แนะนำ'})
@@ -313,11 +314,13 @@ export default class HomeScreen extends React.Component {
         if(prevState.TextDestination !== this.state.TextDestination){
       
           AllBuilding.building.filter(ele =>{
-            if(ele.name === this.state.TextDestination || this.state.TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
+            if(ele.name === this.state.TextDestination || this.state.TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' ||
+            this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
               this.setState({deleDes:true})
             }
           })
-          if(this.state.deleDes && this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
+          if(this.state.deleDes && this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' &&
+          this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
             
             this.state.NameOfCoor.pop()
             this.state.coordinate.pop()
@@ -385,7 +388,8 @@ export default class HomeScreen extends React.Component {
       filterDesLen:null,
       requestDir1:false,
       requestDir2:false,
-      requestDir3:false
+      requestDir3:false,
+      modalVisible:false
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -440,15 +444,18 @@ export default class HomeScreen extends React.Component {
  
   Search(text,bool){
     const texts = text.toUpperCase()
-    const {coordinate,TextOrigin,TextDestination,myLocation,FirstFromDes,NameOfCoor} = this.state
-      if(bool && TextOrigin=== 'ตำแหน่งของตัวเอง'){
+    const {coordinate,TextOrigin,TextDestination,myLocation,FirstFromDes,NameOfCoor,
+    modalVisible} = this.state
+    this.MyLocInUni()
+      if(bool && text === 'ตำแหน่งของตัวเอง'){
+
+        console.log("search() condition TextOrigin")
         if(coordinate.length === 0){
           NameOfCoor.push('ตำแหน่งของตัวเอง')
           coordinate.push(myLocation)
           this.setState({FirstFromDes:false})
         }
         else{
-         
           if(coordinate.length === 1 ){
            if(FirstFromDes)
             {coordinate.splice(0,0,myLocation)
@@ -466,7 +473,7 @@ export default class HomeScreen extends React.Component {
         }
       
       }
-      else if (!bool && TextDestination === 'ตำแหน่งของตัวเอง'){
+      else if (!bool && text === 'ตำแหน่งของตัวเอง' ){
         if(coordinate.length === 1){
           if(!FirstFromDes)
           {coordinate.push(myLocation)
@@ -484,17 +491,17 @@ export default class HomeScreen extends React.Component {
             this.setState({FirstFromDes:true})
           }
           else{
-           
             coordinate.fill(myLocation,1,2)
             NameOfCoor.fill('ตำแหน่งของตัวเอง',1,2)
         }
          
         }
       }
-    else{
+    else if(text !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ){
     AllBuilding.building.filter(item => {
       if(item.name === texts){
-        if(TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' && bool){
+      
+        if(bool){
           if(coordinate.length === 0){
             coordinate.push(item.coordinate)
             NameOfCoor.push(item.name)
@@ -506,13 +513,14 @@ export default class HomeScreen extends React.Component {
               NameOfCoor.splice(0,0,item.name)
               this.setState({FirstFromDes:false})
             }
-            else if(coordinate.length === 2){
+          
+            else if(coordinate.length === 2 || (!FirstFromDes && coordinate.length === 1)){
               coordinate.fill(item.coordinate,0,1)
               NameOfCoor.fill(item.name,0,1)
             }
           }
         }
-      if(TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' && !bool){
+      if(!bool){
         if(coordinate.length === 1){
           if(!FirstFromDes)
           {
@@ -849,8 +857,8 @@ export default class HomeScreen extends React.Component {
     return !isPointInPolygon(coordinate,InLine3)
   }
 
-  MyLocInUni(coordinate){
-    const {TextOrigin,TextDestination} = this.state
+  MyLocInUni(){
+    const {TextOrigin,TextDestination,myLocation} = this.state
     if(TextOrigin === 'ตำแหน่งของตัวเอง' || TextDestination === 'ตำแหน่งของตัวเอง')
     {
       const InUni=[
@@ -861,7 +869,8 @@ export default class HomeScreen extends React.Component {
       {latitude:13.856236,longitude:100.579189},
       {latitude:13.856830,longitude:100.575404}
     ]
-    return isPointInPolygon(coordinate,InUni)
+    this.setState({modalVisible:true})
+    return isPointInPolygon(myLocation,InUni)
   }
   else{
     return false
@@ -885,7 +894,6 @@ export default class HomeScreen extends React.Component {
     }
   }
 
-
   render() {
     const KEY_TO_FILTERS = ['name']
     
@@ -894,7 +902,7 @@ export default class HomeScreen extends React.Component {
     countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination
   ,listItemOri,listItemDes,deleOri,deleDes,NameOfCoor,BusStopEqual,
 OptimalLine,request,choiceLine,filterOriLen,filterDesLen,requestDir1,
-requestDir2,requestDir3} = this.state
+requestDir2,requestDir3,myLocation,modalVisible} = this.state
   const filterNameOrigin= AllBuilding.building.filter(createFilter(TextOrigin,KEY_TO_FILTERS))
   const filterNameDes = AllBuilding.building.filter(createFilter(TextDestination,KEY_TO_FILTERS))
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
@@ -903,7 +911,7 @@ requestDir2,requestDir3} = this.state
 const Arrayline =["เส้นทางที่แนะนำ","สาย 1","สาย 3","สาย 5"]
 
 if(!this.state.change){
-  const{time,coordinate} = this.state
+  const{time,coordinate,TextOrigin,TextDestination} = this.state
   this.setState({change:true})
   this.setState({prevTextOrigin:this.state.TextOrigin})
   this.setState({prevTextDestination:this.state.TextDestination})
@@ -1382,15 +1390,15 @@ console.log(itemValue)
        </ScrollView>
        :null}
       
-       {/* <Modal
+       <Modal
         animationType="slide"
         transparent={true}
-        visible={this.MyLocInUni(coordinate[0])}
+        visible={modalVisible}
         onRequestClose={() => {
           Alert.alert("Modal has been closed.");
         }}
+        // style={{position:'absolute',zIndex:1}}
       >
-
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>ตำแหน่งของท่านไม่ได้อยู่ในเขตมหาวิทยาลัย</Text>
@@ -1398,14 +1406,14 @@ console.log(itemValue)
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {
-                setModalVisible(!modalVisible);
+                this.setState({modalVisible:false})
               }}
             >
               <Text style={styles.textStyle}>Close</Text>
             </TouchableHighlight>
           </View>
         </View>
-      </Modal> */}
+      </Modal>
      
       </View>
     );
