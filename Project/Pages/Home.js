@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, View, Text,TextInput,StyleSheet,
   PermissionsAndroid, TouchableHighlightBase,Picker,Image,SafeAreaView,FlatList,ScrollView,
-TouchableOpacity} from 'react-native';
+TouchableOpacity,Modal,TouchableHighlight} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import MapView,{Polyline, PROVIDER_GOOGLE,Marker,Callout} from 'react-native-maps';
 import Sci from '../database/building/buildingSci.json';
@@ -276,7 +276,6 @@ export default class HomeScreen extends React.Component {
           console.log('คณะเทคนิคการสัตวแพทย์รปลายทาง')
         }
        }
-        
         if(prevState.line !== this.state.line){
           if(this.state.line === "สาย 1"){
             this.setState({BusStopLine:busStop1})
@@ -293,20 +292,18 @@ export default class HomeScreen extends React.Component {
             this.setState({symbol:symbol5})
             this.setState({LineColor:"#f58f0a"})
           }
-
           else {
             this.setState({BusStopLine:null})
           }
         }
         if(prevState.TextOrigin !== this.state.TextOrigin){
-          
+      
           AllBuilding.building.filter((ele,index)=>{
             if(ele.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'){
               this.setState({deleOri:true})
             }
           })
           if(this.state.deleOri && this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'){
-            
             this.state.NameOfCoor.shift()
             this.state.coordinate.shift()
             this.setState({deleOri:false,line:'เส้นทางที่แนะนำ'})
@@ -314,7 +311,7 @@ export default class HomeScreen extends React.Component {
       
         }
         if(prevState.TextDestination !== this.state.TextDestination){
-          
+      
           AllBuilding.building.filter(ele =>{
             if(ele.name === this.state.TextDestination || this.state.TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
               this.setState({deleDes:true})
@@ -327,7 +324,18 @@ export default class HomeScreen extends React.Component {
             this.setState({deleDes:false,line:'เส้นทางที่แนะนำ'})
           }
         }
-      
+        // console.log('requestDir1 : '+prevState.requestDir1,this.state.requestDir1)
+        // console.log('requestDir2 : '+prevState.requestDir2,this.state.requestDir2)
+        // console.log('requestDir3 : '+prevState.requestDir3,this.state.requestDir3)
+      if(this.state.requestDir1){
+          this.setState({requestDir1:false})
+        }
+      if(this.state.requestDir2){
+        this.setState({requestDir2:false})
+      }
+      if(this.state.requestDir3){
+        this.setState({requestDir3:false})
+      }
       this.setState({change:false})
       }
 }
@@ -374,7 +382,10 @@ export default class HomeScreen extends React.Component {
       choiceLine:['เส้นทางที่แนะนำ'],
       symbol:null,
       filterOriLen:null,
-      filterDesLen:null
+      filterDesLen:null,
+      requestDir1:false,
+      requestDir2:false,
+      requestDir3:false
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -386,6 +397,7 @@ export default class HomeScreen extends React.Component {
     this.InLine1 = this.InLine1.bind(this);
     this.InLine3 = this.InLine3.bind(this);
     this.modifyChoiceLine = this.modifyChoiceLine.bind(this);
+    this.MyLocInUni = this.MyLocInUni.bind(this);
   }
 
   DisplayAll(){
@@ -545,14 +557,13 @@ export default class HomeScreen extends React.Component {
     var minDes = 999
     var indexOrigin = 0
     var indexDes = 0
-   
+    var getIndexDes = false
+    var getIndexOri = false
     var sumDist =0
     var calculateCheckPoint = false
     var calculateIndex = false
-   
   }
     if(coordinate.length >=1 && (BusStopLine !== null || lines !== null) ){
-      
       BusStopLine.markers.map((item,index)=>{
         const distOrigin = getPreciseDistance(coordinate[0],item.coordinate)
         const kiloOrigin = convertDistance(distOrigin,'km')
@@ -560,23 +571,46 @@ export default class HomeScreen extends React.Component {
           minOrigin =kiloOrigin
           indexOrigin = index
         }
-        if(coordinate.length === 2){
-          const distDes = getPreciseDistance(coordinate[1],item.coordinate)
-          const kiloDes = convertDistance(distDes,'km')
-          if(minDes >= kiloDes){
-            if(minDes !== kiloDes){
-              minDes=kiloDes
-              indexDes = index
-            }
-            else{
-              if(indexOrigin < index){
-                indexDes=index
-              }
-            }
+        if(index === BusStopLine.markers.length-1){
+          getIndexOri = true
+        }
+    })
+    if(coordinate.length === 2 && getIndexOri){
+      BusStopLine.markers.map((item,index)=>
+      {var indexs
+      const {BusStopLine} = this.state
+      const distDes = getPreciseDistance(coordinate[1],item.coordinate)
+      const kiloDes = convertDistance(distDes,'km')
+     
+      if(index === BusStopLine.markers.length-1){
+        indexs = 0
+      }
+      else{
+        indexs = index
+      }
+      const BusStop = BusStopLine.markers[indexs+1].coordinate
+      const distBusForward = convertDistance(getPreciseDistance(coordinate[1],BusStop),'km')
+      // console.log('kiloDes : '+kiloDes)
+      if(minDes >= kiloDes || kiloDes <=0.3){
+        if(minDes !== kiloDes && !getIndexDes){
+          minDes=kiloDes
+          indexDes = index
+          if(kiloDes <= 0.3 && distBusForward > kiloDes && indexDes > indexOrigin){
+         
+            getIndexDes = true
           }
         }
-        calculateIndex = true
+        else{
+          if(indexOrigin < index && !getIndexDes){
+            indexDes=index
+        
+          }
+        } 
+      }
     })}
+    // console.log('minDes : '+minDes)
+    calculateIndex = true
+  }
     // console.log('minimumOrigin: '+minOrigin  +' IndexOrigin: '+indexOrigin)
     // console.log('minimumDes: '+minDes+' IndexDes: '+indexDes)
     if(coordinate.length===2 && calculateIndex){
@@ -601,7 +635,6 @@ export default class HomeScreen extends React.Component {
       })
     }
     else if(indexOrigin === indexDes){
-      console.log('last condition in getBusStop')
       this.setState({LineColor:'#05f709'})
       this.setState({BusStopEqual:true})
     }
@@ -617,7 +650,6 @@ export default class HomeScreen extends React.Component {
       }
     })
     if((DistFromMyloc+1 < sumDist) && (DistFromMyloc <= 0.65)){
-      
       NameWaypoints.splice(0,NameWaypoints.length)
       this.setState({LineColor:'#05f709'})
       this.setState({BusStopEqual:true})
@@ -643,13 +675,15 @@ export default class HomeScreen extends React.Component {
         // var sumDist= 0
         // optimizeWaypoints.splice(0,optimizeWaypoints.length)
       coor.markers.map((ele,index)=>{
-        const distance = getPreciseDistance(coordinate[0],ele.coordinate)
-        const convToKm = convertDistance(distance,'km')
+        const distanceFromOri = getPreciseDistance(coordinate[0],ele.coordinate)
+        const convToKm = convertDistance(distanceFromOri,'km')
+        const distanceFromDes = getPreciseDistance(coordinate[1],ele.coordinate)
+        const convToKmDes = convertDistance(distanceFromDes,'km')
         if(min > convToKm){
           min = convToKm
         }
         if(max < convToKm){
-          max=convToKm
+          max=convToKmDes
         }
         // optimizeWaypoints.push(ele.coordinate)
         // if(index>=1 && optimizeWaypoints.length >=2){
@@ -730,7 +764,7 @@ export default class HomeScreen extends React.Component {
       this.setState({TextOrigin:'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'})
       
     }
-    else{
+    else if(!changeOrigin ){
       if(coordinate.length === 2){
       
         coordinate.pop()
@@ -815,6 +849,25 @@ export default class HomeScreen extends React.Component {
     return !isPointInPolygon(coordinate,InLine3)
   }
 
+  MyLocInUni(coordinate){
+    const {TextOrigin,TextDestination} = this.state
+    if(TextOrigin === 'ตำแหน่งของตัวเอง' || TextDestination === 'ตำแหน่งของตัวเอง')
+    {
+      const InUni=[
+      {latitude:13.855717,longitude:100.565578},
+      {latitude:13.847476,longitude:100.561143},
+      {latitude:13.839457,longitude:100.575787},
+      {latitude:13.852970,longitude:100.583739},
+      {latitude:13.856236,longitude:100.579189},
+      {latitude:13.856830,longitude:100.575404}
+    ]
+    return isPointInPolygon(coordinate,InUni)
+  }
+  else{
+    return false
+  }
+  }
+
   modifyChoiceLine(array){
     const {coordinate} = this.state
     
@@ -840,7 +893,8 @@ export default class HomeScreen extends React.Component {
       TextDestination,TextColor,Opacity,Waypoints,NameWaypoints,line,LineColor,countDes,
     countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination
   ,listItemOri,listItemDes,deleOri,deleDes,NameOfCoor,BusStopEqual,
-OptimalLine,request,choiceLine,filterOriLen,filterDesLen} = this.state
+OptimalLine,request,choiceLine,filterOriLen,filterDesLen,requestDir1,
+requestDir2,requestDir3} = this.state
   const filterNameOrigin= AllBuilding.building.filter(createFilter(TextOrigin,KEY_TO_FILTERS))
   const filterNameDes = AllBuilding.building.filter(createFilter(TextDestination,KEY_TO_FILTERS))
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
@@ -1186,7 +1240,7 @@ console.log(itemValue)
           longitudeDelta: 0.0021
         }}
         toolbarEnabled={false}
-        onPress={this.handlePressOnMap}
+        onPress={(!requestDir1 && !requestDir2 && !requestDir3) ? this.handlePressOnMap:null}
         showsUserLocation={true}
         minZoomLevel={15}
         >
@@ -1212,15 +1266,12 @@ console.log(itemValue)
               )
             }
           }):null}
-
-       
         {request && coordinate.length === 2 && <Direction
             origin = {coordinate[0]}
             destination = {BusStopEqual ? coordinate[1]:Waypoints[0]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
             strokeColor={LineColor}
-         
             mode={'WALKING'}
             // optimizeWaypoints={true}
             // splitWaypoints={true}
@@ -1232,6 +1283,7 @@ console.log(itemValue)
             
               console.log('direction 1')
               this.updateTime(result.duration,result.distance)
+              this.setState({requestDir1:true})
             }}
             onError={error=>{
               console.log(error)
@@ -1257,6 +1309,7 @@ console.log(itemValue)
               console.log('direction 2')
               this.updateTime(result.duration,result.distance)
               // this.setState({request:false})
+              this.setState({requestDir2:true})
             }}
             onError={error=>{
               console.log(error)
@@ -1280,6 +1333,7 @@ console.log(itemValue)
            
               console.log('direction 3')
               this.updateTime(result.duration,result.distance)
+              this.setState({requestDir3:true})
             }}
             onError={error=>{
               console.log(error)
@@ -1327,6 +1381,31 @@ console.log(itemValue)
        })}
        </ScrollView>
        :null}
+      
+       {/* <Modal
+        animationType="slide"
+        transparent={true}
+        visible={this.MyLocInUni(coordinate[0])}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+        }}
+      >
+
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>ตำแหน่งของท่านไม่ได้อยู่ในเขตมหาวิทยาลัย</Text>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.textStyle}>Close</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal> */}
      
       </View>
     );
@@ -1343,18 +1422,40 @@ const COLORS = [
 ];
 
 const styles = StyleSheet.create({
-  page: {
+  centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5FCFF"
+    marginTop: 22
   },
-  container: {
-    height: 300,
-    width: 300,
-    backgroundColor: "tomato"
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
   },
-  map: {
-    flex: 3
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
   }
 });
