@@ -78,7 +78,15 @@ export default class HomeScreen extends React.Component {
               console.log(position.coords.longitude)
               this.setState({myLocation:{latitude:position.coords.latitude,
                 longitude:position.coords.longitude}})
-            
+              if(this.InUniversity({latitude:position.coords.latitude,longitude:
+              position.coords.longitude})){
+                console.log('condition in componentdidmount 1')
+                this.setState({myLocInUni:true})
+              }
+              else{
+                console.log('condition in componentdidmount 2')
+                this.setState({myLocInUni:false})
+              }
           },
           (error) => {
               // See error code charts below.
@@ -99,6 +107,7 @@ export default class HomeScreen extends React.Component {
           if(this.state.FacultyOrigin === "คณะเกษตร"){
             //this.setState({FacultyValueOrigin:Agr})
             this.setState({FacultyValue:Agr})
+        
             console.log('คณะเกษตร')
           }
           
@@ -177,6 +186,7 @@ export default class HomeScreen extends React.Component {
             this.setState({FacultyValue:Forest})
             console.log('คณะวนศาสตร์')
           }
+          
         }
        if(prevState.FacultyDestination !== this.state.FacultyDestination){
         if(this.state.FacultyDestination === "คณะเกษตร"){
@@ -296,20 +306,21 @@ export default class HomeScreen extends React.Component {
           }
         }
         if(prevState.TextOrigin !== this.state.TextOrigin){
-      
+          const {modalVisible,coordinate} = this.state
           AllBuilding.building.filter((ele,index)=>{
             if(ele.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ||
-            this.state.TextOrigin==='ตำแหน่งของตัวเอง'){
+            this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
+             
               this.setState({deleOri:true})
             }
           })
-          if(this.state.deleOri && this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' && 
-          this.state.TextOrigin!== 'ตำแหน่งของตัวเอง'){
+          if(this.state.deleOri && (this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' || 
+          this.state.TextOrigin !== 'ตำแหน่งของตัวเอง')){
+           
             this.state.NameOfCoor.shift()
             this.state.coordinate.shift()
             this.setState({deleOri:false,line:'เส้นทางที่แนะนำ'})
           }
-      
         }
         if(prevState.TextDestination !== this.state.TextDestination){
       
@@ -319,8 +330,8 @@ export default class HomeScreen extends React.Component {
               this.setState({deleDes:true})
             }
           })
-          if(this.state.deleDes && this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' &&
-          this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
+          if(this.state.deleDes && (this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' ||
+          this.state.TextDestination !== 'ตำแหน่งของตัวเอง')){
             
             this.state.NameOfCoor.pop()
             this.state.coordinate.pop()
@@ -389,7 +400,9 @@ export default class HomeScreen extends React.Component {
       requestDir1:false,
       requestDir2:false,
       requestDir3:false,
-      modalVisible:false
+      modalVisible:false,
+      changeInCheck :false,
+      myLocInUni:null
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -401,20 +414,20 @@ export default class HomeScreen extends React.Component {
     this.InLine1 = this.InLine1.bind(this);
     this.InLine3 = this.InLine3.bind(this);
     this.modifyChoiceLine = this.modifyChoiceLine.bind(this);
-    this.MyLocInUni = this.MyLocInUni.bind(this);
+    this.InUniversity = this.InUniversity.bind(this);
+    // this.checkMyLocInUni = this.checkMyLocInUni.bind(this);
   }
 
   DisplayAll(){
     
     this.setState({time:null,distance:null,request:false,BusStopEqual:false})
-    const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin,coordinate,OptimalLine} = this.state
+    const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin,coordinate,modalVisible,
+    myLocation,myLocInUni} = this.state
     
     if(TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'){
-     
       this.Search(TextOrigin,true)
     }
     if(TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
-    
       this.Search(TextDestination,false)
     }
     // console.log(this.InLine5(coordinate[0]))
@@ -440,27 +453,32 @@ export default class HomeScreen extends React.Component {
     }
     this.mapRef.animateToRegion(region,250)
     this.modifyChoiceLine(['เส้นทางที่แนะนำ'])
+   
   }
  
   Search(text,bool){
     const texts = text.toUpperCase()
     const {coordinate,TextOrigin,TextDestination,myLocation,FirstFromDes,NameOfCoor,
-    modalVisible} = this.state
-    this.MyLocInUni()
+    modalVisible,myLocInUni} = this.state
+    var FirstFromClickDes = false
       if(bool && text === 'ตำแหน่งของตัวเอง'){
-
-        console.log("search() condition TextOrigin")
-        if(coordinate.length === 0){
+        if(TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
+          FirstFromClickDes =true
+        }
+        if(coordinate.length === 0 ){
           NameOfCoor.push('ตำแหน่งของตัวเอง')
           coordinate.push(myLocation)
           this.setState({FirstFromDes:false})
         }
         else{
           if(coordinate.length === 1 ){
-           if(FirstFromDes)
-            {coordinate.splice(0,0,myLocation)
-            NameOfCoor.splice(0,0,'ตำแหน่งของตัวเอง')}
-            else{
+           if(FirstFromClickDes)
+            {
+            coordinate.splice(0,0,myLocation)
+            NameOfCoor.splice(0,0,'ตำแหน่งของตัวเอง')
+          }
+            else if(!FirstFromDes){
+             
               coordinate.fill(myLocation,0,1)
               NameOfCoor.fill('ตำแหน่งของตัวเอง',0,1)
             }
@@ -471,9 +489,9 @@ export default class HomeScreen extends React.Component {
             NameOfCoor.fill('ตำแหน่งของตัวเอง',0,1)
           }
         }
-      
       }
-      else if (!bool && text === 'ตำแหน่งของตัวเอง' ){
+      else if (!bool && text === 'ตำแหน่งของตัวเอง'){
+    
         if(coordinate.length === 1){
           if(!FirstFromDes)
           {coordinate.push(myLocation)
@@ -500,7 +518,6 @@ export default class HomeScreen extends React.Component {
     else if(text !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ){
     AllBuilding.building.filter(item => {
       if(item.name === texts){
-      
         if(bool){
           if(coordinate.length === 0){
             coordinate.push(item.coordinate)
@@ -702,7 +719,15 @@ export default class HomeScreen extends React.Component {
       // arraySum.push(sumDist)
       if(sum > min+max){
         sum=min+max
-        lines=coor.line
+      
+        if(coor.line === 'สาย 1' && (this.InLine1(coordinate[0]) || this.InLine1(coordinate[1])))
+        {lines=coor.line}
+        else if(coor.line === 'สาย 3' && (this.InLine3(coordinate[0]) || this.InLine3(coordinate[1]))){
+          lines=coor.line
+        }
+        else if(coor.line === 'สาย 5' && (this.InLine5(coordinate[0]) && this.InLine5(coordinate[1]))){
+          lines=coor.line
+        }
       }
     })
   }
@@ -743,9 +768,9 @@ export default class HomeScreen extends React.Component {
   handlePressOnMap(e){
     this.setState({time:null,distance:null,request:false,BusStopEqual:false,line:'เส้นทางที่แนะนำ'})
     const {TextOrigin,TextDestination,changeOrigin,coordinate,FirstFromDes,NameOfCoor,
-    BusStopLine} =this.state
+    BusStopLine,changeInCheck} =this.state
   
-    if(changeOrigin){
+    if(changeOrigin && this.InUniversity(e.nativeEvent.coordinate)){
       if(coordinate.length === 1 ){
         if(!FirstFromDes){
         coordinate.shift()
@@ -772,7 +797,7 @@ export default class HomeScreen extends React.Component {
       this.setState({TextOrigin:'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'})
       
     }
-    else if(!changeOrigin ){
+    else if(!changeOrigin && this.InUniversity(e.nativeEvent.coordinate)){
       if(coordinate.length === 2){
       
         coordinate.pop()
@@ -805,7 +830,11 @@ export default class HomeScreen extends React.Component {
     else if(BusStopLine !== null){
       this.getBusStop()
     }
+    if(!this.InUniversity(e.nativeEvent.coordinate)){
+      this.setState({modalVisible:true})
+    }
     this.modifyChoiceLine(['เส้นทางที่แนะนำ'])
+
   }
 
   updateTime(times,distances){
@@ -857,11 +886,10 @@ export default class HomeScreen extends React.Component {
     return !isPointInPolygon(coordinate,InLine3)
   }
 
-  MyLocInUni(){
+  InUniversity(coordinate){
     const {TextOrigin,TextDestination,myLocation} = this.state
-    if(TextOrigin === 'ตำแหน่งของตัวเอง' || TextDestination === 'ตำแหน่งของตัวเอง')
-    {
-      const InUni=[
+    
+    const InUni=[
       {latitude:13.855717,longitude:100.565578},
       {latitude:13.847476,longitude:100.561143},
       {latitude:13.839457,longitude:100.575787},
@@ -869,13 +897,17 @@ export default class HomeScreen extends React.Component {
       {latitude:13.856236,longitude:100.579189},
       {latitude:13.856830,longitude:100.575404}
     ]
-    this.setState({modalVisible:true})
-    return isPointInPolygon(myLocation,InUni)
+    // console.log(isPointInPolygon(myLocation,InUni))
+    if(isPointInPolygon(coordinate,InUni)){
+      this.setState({myLocInUni:true})
+    }
+    else{
+      this.setState({myLocInUni:false})
+    }
+    return isPointInPolygon(coordinate,InUni)
   }
-  else{
-    return false
-  }
-  }
+
+  
 
   modifyChoiceLine(array){
     const {coordinate} = this.state
@@ -890,7 +922,12 @@ export default class HomeScreen extends React.Component {
       if(this.InLine5(coordinate[0]) && this.InLine5(coordinate[1])){
         array.push('สาย 5')
       }
+      // if(!this.InUniversity(coordinate[0]) || !this.InUniversity(coordinate[1])){
+
+      //   this.setState({modalVisible:true})
+      // }
       this.setState({choiceLine:array})
+
     }
   }
 
@@ -911,7 +948,7 @@ requestDir2,requestDir3,myLocation,modalVisible} = this.state
 const Arrayline =["เส้นทางที่แนะนำ","สาย 1","สาย 3","สาย 5"]
 
 if(!this.state.change){
-  const{time,coordinate,TextOrigin,TextDestination} = this.state
+  const{time,coordinate,TextOrigin,TextDestination,myLocation} = this.state
   this.setState({change:true})
   this.setState({prevTextOrigin:this.state.TextOrigin})
   this.setState({prevTextDestination:this.state.TextDestination})
@@ -944,7 +981,6 @@ else if(this.state.prevTextOrigin !== this.state.TextOrigin){
   AllBuilding.building.filter((item)=>{
     if(item.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' 
     || this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
-      
       this.setState({countOrigin:0,listItemOri:true})
       boolDeleOrigin = true
     }
@@ -1167,14 +1203,14 @@ selectedValue = {this.state.changeOrigin ? this.state.TextOrigin:this.state.Text
 style ={{height:50}}
 onValueChange={(itemValue,itemIndex) =>{
   if(this.state.changeOrigin){
-this.setState({TextOrigin:itemValue})
+    this.setState({TextOrigin:itemValue})
 }
 else {
   this.setState({TextDestination:itemValue})
 }
 console.log(itemValue)
 }}>
-  {/* <item label='กรุณาเลือกสถานที่' value ='กรุณาเลือกสถานที่'/> */}
+  <item label='กรุณาเลือกสถานที่'/>
   <item label='ตำแหน่งของตัวเอง' value ='ตำแหน่งของตัวเอง'/>
   {this.state.FacultyValue.building.map((building) =>(
     <item label={building.name} value={building.name} key={building.name}/>
@@ -1401,7 +1437,7 @@ console.log(itemValue)
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>ตำแหน่งของท่านไม่ได้อยู่ในเขตมหาวิทยาลัย</Text>
+            <Text style={styles.modalText}>ตำแหน่งที่ท่านเลือกไม่ได้อยู่ในเขตมหาวิทยาลัยเกษตรศาสตร์ เขตบางเขน</Text>
 
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
