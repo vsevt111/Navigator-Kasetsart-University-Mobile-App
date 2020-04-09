@@ -930,12 +930,12 @@ export default class HomeScreen extends React.Component {
       {latitude:13.856830,longitude:100.575404}
     ]
     // console.log(isPointInPolygon(myLocation,InUni))
-    if(isPointInPolygon(coordinate,InUni)){
-      this.setState({myLocInUni:true})
-    }
-    else{
-      this.setState({myLocInUni:false})
-    }
+    // if(isPointInPolygon(coordinate,InUni)){
+    //   this.setState({myLocInUni:true})
+    // }
+    // else{
+    //   this.setState({myLocInUni:false})
+    // }
     return isPointInPolygon(coordinate,InUni)
   }
 
