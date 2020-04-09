@@ -701,7 +701,7 @@ export default class HomeScreen extends React.Component {
         sumDist+=convertDistance(getPreciseDistance(Waypoints[index-1],Waypoints[index]),'km')
       }
     })
-    if((DistFromMyloc+1 < sumDist) && (DistFromMyloc <= 0.65)){
+    if((DistFromMyloc+0.85 < sumDist) && (DistFromMyloc <= 0.50)){
       NameWaypoints.splice(0,NameWaypoints.length)
       this.setState({LineColor:'#05f709'})
       this.setState({BusStopEqual:true})
@@ -962,6 +962,10 @@ export default class HomeScreen extends React.Component {
 
     }
   }
+
+  // onPressPolyLine(){
+  //   return <Callout><Text>test</Text></Callout>
+  // }
 
   render() {
     const KEY_TO_FILTERS = ['name']
@@ -1319,25 +1323,30 @@ console.log(itemValue)
         onPress={(!requestDir1 && !requestDir2 && !requestDir3) ? this.handlePressOnMap:null}
         showsUserLocation={true}
         minZoomLevel={15}
+        
         >
           {this.state.coordinate.map((coor,index)=>(
             <Marker coordinate={coor} key={index} title={coordinate.length === 2 ? NameOfCoor[index]:null} ref={el =>(this.MarkRef=el)}
             >
-              
+              {/* <Callout>
+                <View>
+                  <Text>Test 1 2 3 4</Text>
+                </View>
+              </Callout> */}
             </Marker>
 
           ))}
           
           {Waypoints !== [] ? Waypoints.map((coor,index)=>{
             if(index===0){
-              return(<Marker coordinate={coor} key={index}>
+              return(<Marker coordinate={coor} key={index}  title='ขึ้นที่ป้ายจอดนี้'>
                 <Image source={this.state.symbol} style={{height:20,width:20}}/>
                  </Marker>)
             }
             else if(index === Waypoints.length-1){
               return(
-                <Marker coordinate={coor} key={index}>
-              <Image source={this.state.symbol} style={{height:20,width:20}}/>
+                <Marker coordinate={coor} key={index} title='ลงที่ป้ายจอดนี้'>
+              <Image source={this.state.symbol} style={{height:20,width:20}} />
                </Marker>
               )
             }
@@ -1373,6 +1382,7 @@ console.log(itemValue)
             strokeWidth={4}
             strokeColor={LineColor}
             waypoints = {Waypoints.slice(1,Waypoints.length-1)}
+         
             // mode={'WALKING'}
             // optimizeWaypoints={true}
             // splitWaypoints={true}
