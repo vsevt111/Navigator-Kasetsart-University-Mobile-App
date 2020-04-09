@@ -78,15 +78,15 @@ export default class HomeScreen extends React.Component {
               console.log(position.coords.longitude)
               this.setState({myLocation:{latitude:position.coords.latitude,
                 longitude:position.coords.longitude}})
-              if(this.InUniversity({latitude:position.coords.latitude,longitude:
-              position.coords.longitude})){
-                console.log('condition in componentdidmount 1')
-                this.setState({myLocInUni:true})
-              }
-              else{
-                console.log('condition in componentdidmount 2')
-                this.setState({myLocInUni:false})
-              }
+              // if(this.InUniversity({latitude:position.coords.latitude,longitude:
+              // position.coords.longitude})){
+              //   console.log('condition in componentdidmount 1')
+              //   this.setState({myLocInUni:true})
+              // }
+              // else{
+              //   console.log('condition in componentdidmount 2')
+              //   this.setState({myLocInUni:false})
+              // }
           },
           (error) => {
               // See error code charts below.
@@ -312,11 +312,25 @@ export default class HomeScreen extends React.Component {
             this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
              
               this.setState({deleOri:true})
+              if(this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
+                if(this.InUniversity(this.state.myLocation)){
+                  
+                  this.setState({myLocInUni:true})
+                }
+                else{
+                  this.setState({modalVisible:true})
+                  this.setState({myLocInUni:false})
+                }
+              }
+              else{
+                
+                this.setState({myLocInUni:true})
+              }
             }
           })
-          if(this.state.deleOri && (this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' || 
+          if(this.state.deleOri && (this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' && 
           this.state.TextOrigin !== 'ตำแหน่งของตัวเอง')){
-           
+          
             this.state.NameOfCoor.shift()
             this.state.coordinate.shift()
             this.setState({deleOri:false,line:'เส้นทางที่แนะนำ'})
@@ -328,9 +342,22 @@ export default class HomeScreen extends React.Component {
             if(ele.name === this.state.TextDestination || this.state.TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' ||
             this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
               this.setState({deleDes:true})
+              if(this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
+                if(this.InUniversity(this.state.myLocation)){
+                  this.setState({myLocInUni:true})
+                }
+                else{
+                  this.setState({modalVisible:true})
+                  this.setState({myLocInUni:false})
+                }
+              }
+              else{
+                
+                this.setState({myLocInUni:true})
+              }
             }
           })
-          if(this.state.deleDes && (this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' ||
+          if(this.state.deleDes && (this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' &&
           this.state.TextDestination !== 'ตำแหน่งของตัวเอง')){
             
             this.state.NameOfCoor.pop()
@@ -402,7 +429,7 @@ export default class HomeScreen extends React.Component {
       requestDir3:false,
       modalVisible:false,
       changeInCheck :false,
-      myLocInUni:null
+      myLocInUni:true
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -472,7 +499,7 @@ export default class HomeScreen extends React.Component {
         }
         else{
           if(coordinate.length === 1 ){
-           if(FirstFromClickDes)
+           if(FirstFromClickDes || FirstFromDes)
             {
             coordinate.splice(0,0,myLocation)
             NameOfCoor.splice(0,0,'ตำแหน่งของตัวเอง')
@@ -689,7 +716,7 @@ export default class HomeScreen extends React.Component {
   
   optimalRoute(){
     const {coordinate,line,BusStopLine,BusStopEqual,
-    Waypoints} = this.state
+    Waypoints,choiceLine} = this.state
     var lines = null
     // var arraySum =[]
     var sum = 9999
@@ -741,6 +768,7 @@ export default class HomeScreen extends React.Component {
       this.setState({BusStopLine:busStop1})
       this.setState({LineColor:"#0ce8f7"})
       this.setState({symbol:symbol1})
+      choiceLine.fill('เส้นทางที่แนะนำ-สาย 1',0,1)
     }
     else if(lines === 'สาย 3'){
       // if(distFromMyloc+0.5 < arraySum[1]){
@@ -750,6 +778,7 @@ export default class HomeScreen extends React.Component {
       this.setState({BusStopLine:busStop3})
       this.setState({symbol:symbol3})
       this.setState({LineColor:"#d91fed"})
+      choiceLine.fill('เส้นทางที่แนะนำ-สาย 3',0,1)
     }
     else if(lines === 'สาย 5'){
       // if(distFromMyloc+0.5 < arraySum[2]){
@@ -759,9 +788,14 @@ export default class HomeScreen extends React.Component {
       this.setState({BusStopLine:busStop5})
       this.setState({symbol:symbol5})
       this.setState({LineColor:"#f58f0a"})
+      choiceLine.fill('เส้นทางที่แนะนำ-สาย 5',0,1)
     }
   }
+  
   // console.log(BusStopEqual,lines)
+  if(BusStopEqual){
+    choiceLine.fill('เส้นทางที่แนะนำ-เดิน',0,1)
+  }
   this.getBusStop()
   }
 
@@ -785,10 +819,8 @@ export default class HomeScreen extends React.Component {
       }
       }
       else if(coordinate.length === 2){
-       
         coordinate.fill(e.nativeEvent.coordinate,0,1)
         NameOfCoor.fill('สถานที่ต้นทาง',0,1)
-        
       }
       else if(coordinate.length === 0){
         NameOfCoor.push('สถานที่ต้นทาง')
@@ -1256,7 +1288,7 @@ console.log(itemValue)
       />
       <Button onPress={this.DisplayAll
       } title="ค้นหา" 
-      // disabled={true}
+      disabled={this.state.myLocInUni ? false:true}
       />
         </View>
         <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%',left:'50%'}}>
