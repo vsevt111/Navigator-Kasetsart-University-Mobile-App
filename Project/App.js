@@ -103,7 +103,7 @@ const FirstActivity_StackNavigator = createStackNavigator({
       title: 'KUTravel',
       headerRight: <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
-        height:0,
+        height:60,
         backgroundColor: '#000000',
       },
       headerTintColor: '#fff',

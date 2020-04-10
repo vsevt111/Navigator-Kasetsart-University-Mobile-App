@@ -109,7 +109,6 @@ componentDidMount(){
         })
       })
     }
-      console.log(arrayOfMark)
       this.setState({arrayMark:arrayOfMark})
   }
 
@@ -137,9 +136,9 @@ componentDidMount(){
           this.setState({Value:itemValue})
         }}>
           <item label= 'สาย 1' value='สาย 1' />
-          <item label= 'สาย 2' value='สาย 2' />
+       
           <item label= 'สาย 3' value='สาย 3' />
-          <item label= 'สาย 4' value='สาย 4' />
+     
           <item label= 'สาย 5' value='สาย 5' />
         </Picker>
         <Picker
@@ -175,7 +174,7 @@ componentDidMount(){
               
               <Marker coordinate={marker} Color={'#fae20a'} key={index}>
                 <Image source={this.state.symbol} style={{width:20,height:20}}/>
-                {console.log(marker)}
+                
               </Marker>
             ))} 
 
