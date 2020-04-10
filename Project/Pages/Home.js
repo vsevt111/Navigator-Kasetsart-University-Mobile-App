@@ -322,7 +322,7 @@ export default class HomeScreen extends React.Component {
                 }
               }
              else if(this.state.TextOrigin !== 'ตำแหน่งของตัวเอง' && this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
-               console.log('test condition on text origin mylocaiont')
+             
                this.setState({myLocInUni:true})
              }
             }
@@ -692,15 +692,15 @@ export default class HomeScreen extends React.Component {
     calculateCheckPoint=true
    
   }
-  if(line === "เส้นทางที่แนะนำ" && calculateCheckPoint){
-   
+  if((line === 'เส้นทางที่แนะนำ') && calculateCheckPoint){
+    
     var DistFromMyloc = convertDistance(getPreciseDistance(coordinate[0],coordinate[1]),'km')
     Waypoints.map((ele,index)=>{
       if(index>=1){
         sumDist+=convertDistance(getPreciseDistance(Waypoints[index-1],Waypoints[index]),'km')
       }
     })
-    if((DistFromMyloc+0.85 < sumDist) && (DistFromMyloc <= 0.50)){
+    if((DistFromMyloc+0.85 < sumDist && DistFromMyloc <= 0.50)||(DistFromMyloc <= 0.25)){
       NameWaypoints.splice(0,NameWaypoints.length)
       this.setState({LineColor:'#05f709'})
       this.setState({BusStopEqual:true})
@@ -758,9 +758,10 @@ export default class HomeScreen extends React.Component {
     })
   }
 
-  if(line === 'เส้นทางที่แนะนำ' && !BusStopEqual ){
-    
-    if(lines === 'สาย 1'){
+  if((line === 'เส้นทางที่แนะนำ' || line === 'เส้นทางที่แนะนำ-สาย 1' || line === 'เส้นทางที่แนะนำ-สาย 3' ||
+  line === 'เส้นทางที่แนะนำ-สาย 5' || line === 'เส้นทางที่แนะนำ-เดิน') && !BusStopEqual ){
+   
+    if(lines === 'สาย 1' && line !== 'เส้นทางที่แนะนำ-เดิน'){
       // if(distFromMyloc+0.5 < arraySum[0]){
       //   this.setState({BusStopEqual:true})
       // }
@@ -769,7 +770,7 @@ export default class HomeScreen extends React.Component {
       this.setState({symbol:symbol1})
       choiceLine.fill('เส้นทางที่แนะนำ-สาย 1',0,1)
     }
-    else if(lines === 'สาย 3'){
+    else if(lines === 'สาย 3'&& line !== 'เส้นทางที่แนะนำ-เดิน'){
       // if(distFromMyloc+0.5 < arraySum[1]){
       //   this.setState({BusStopEqual:true})
       // }
@@ -779,7 +780,7 @@ export default class HomeScreen extends React.Component {
       this.setState({LineColor:"#d91fed"})
       choiceLine.fill('เส้นทางที่แนะนำ-สาย 3',0,1)
     }
-    else if(lines === 'สาย 5'){
+    else if(lines === 'สาย 5'&& line !== 'เส้นทางที่แนะนำ-เดิน'){
       // if(distFromMyloc+0.5 < arraySum[2]){
       //   this.setState({BusStopEqual:true})
       // }
@@ -789,11 +790,13 @@ export default class HomeScreen extends React.Component {
       this.setState({LineColor:"#f58f0a"})
       choiceLine.fill('เส้นทางที่แนะนำ-สาย 5',0,1)
     }
+   
   }
   
   // console.log(BusStopEqual,lines)
   if(BusStopEqual){
     choiceLine.fill('เส้นทางที่แนะนำ-เดิน',0,1)
+    
   }
   this.getBusStop()
   }
@@ -1300,9 +1303,14 @@ console.log(itemValue)
     style={{height:50}}
     onValueChange={(itemValue,itemIndex)=>{
       this.setState({line:itemValue,request:false,time:null,distance:null,})
+      if(itemValue === 'เส้นทางที่แนะนำ-เดิน' || itemValue==='เส้นทางที่แนะนำ-สาย 1' || itemValue === 'เส้นทางที่แนะนำ-สาย 3'
+      || itemValue === 'เส้นทางที่แนะนำ-สาย 5'){
+        this.setState({line:'เส้นทางที่แนะนำ'})
+      }
       if(itemValue === 'เส้นทางที่แนะนำ'){
         this.setState({BusStopLine:null})
       }
+     
     }}>
       
       {choiceLine.map((ele)=>(
