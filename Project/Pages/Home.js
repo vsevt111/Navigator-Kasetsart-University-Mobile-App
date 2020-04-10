@@ -310,10 +310,9 @@ export default class HomeScreen extends React.Component {
           AllBuilding.building.filter((ele,index)=>{
             if(ele.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ||
             this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
-             
               this.setState({deleOri:true})
               if(this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
-                if(this.InUniversity(this.state.myLocation)){
+                if(this.InUniversity(this.state.myLocation) && this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
                   
                   this.setState({myLocInUni:true})
                 }
@@ -322,10 +321,10 @@ export default class HomeScreen extends React.Component {
                   this.setState({myLocInUni:false})
                 }
               }
-              else{
-                
-                this.setState({myLocInUni:true})
-              }
+             else if(this.state.TextOrigin !== 'ตำแหน่งของตัวเอง' && this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
+               console.log('test condition on text origin mylocaiont')
+               this.setState({myLocInUni:true})
+             }
             }
           })
           if(this.state.deleOri && (this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' && 
@@ -343,7 +342,8 @@ export default class HomeScreen extends React.Component {
             this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
               this.setState({deleDes:true})
               if(this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
-                if(this.InUniversity(this.state.myLocation)){
+               
+                if(this.InUniversity(this.state.myLocation && this.state.TextOrigin!== 'ตำแหน่งของตัวเอง')){
                   this.setState({myLocInUni:true})
                 }
                 else{
@@ -351,8 +351,7 @@ export default class HomeScreen extends React.Component {
                   this.setState({myLocInUni:false})
                 }
               }
-              else{
-                
+              else if(this.state.TextOrigin !== 'ตำแหน่งของตัวเอง' && this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
                 this.setState({myLocInUni:true})
               }
             }
