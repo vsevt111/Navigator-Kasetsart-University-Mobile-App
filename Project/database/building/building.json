@@ -49,13 +49,13 @@
             "longitude":100.570681}
         },
         {
-            "name":"อาคาร 1",
+            "name":"อาคาร 1 คณะอุตสาหกรรมการเกษตร",
             "description":"",
             "coordinate":{"latitude":13.850936,
             "longitude":100.570857}
         },
         {
-            "name":"อาคาร 2",
+            "name":"อาคาร 2 คณะอุตสาหกรรมการเกษตร",
             "description":"",
             "coordinate":{"latitude":13.851540,
             "longitude":100.570873}
@@ -145,7 +145,7 @@
             "longitude":100.569752} 
         },
         {
-            "name":"อาคาร 1",
+            "name":"อาคาร 1 คณะศึกษาศาสตร์",
             "description":"",
             "coordinate":{"latitude":13.850973,
             "longitude":100.569974}
@@ -409,7 +409,7 @@
             "longitude":100.569682}
         },
         {
-            "name":"SCL",
+            "name":"อาคารทวี ญานสุคนธ์(SCL)",
             "description":"ไว้เรียนวิชาที่ทำการทดลอง",
             "coordinate":{"latitude":13.844928,
             "longitude":100.572280}
@@ -427,7 +427,7 @@
             "longitude":100.571664}
         },
         {
-            "name":"SC45",
+            "name":"อาคารวิทยาศาสตร์ 45 ปี(SC45)",
             "description":"",
             "coordinate":{"latitude":13.845850,
             "longitude":100.571260}
@@ -463,19 +463,19 @@
             "longitude":100.571320}
         },
         {
-            "name":"อาคาร 1",
+            "name":"อาคาร 1 คณะสังคมศาสตร์",
             "description":"",
             "coordinate":{"latitude":13.849710,
             "longitude":100.570125}
         },
         {
-            "name":"อาคาร 2",
+            "name":"อาคาร 2 คณะสังคมศาสตร์",
             "description":"",
             "coordinate":{"latitude":13.850102,
             "longitude":100.570109}
         },
         {
-            "name":"อาคาร 3",
+            "name":"อาคาร 3 คณะสังคมศาสตร์",
             "description":"",
             "coordinate":{"latitude":13.849891,
             "longitude":100.569932}
