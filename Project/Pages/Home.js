@@ -306,10 +306,12 @@ export default class HomeScreen extends React.Component {
           }
         }
         if(prevState.TextOrigin !== this.state.TextOrigin){
+        
           const {modalVisible,coordinate} = this.state
           AllBuilding.building.filter((ele,index)=>{
             if(ele.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ||
             this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
+             
               this.setState({deleOri:true})
               if(this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
                 if(this.InUniversity(this.state.myLocation) && this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
@@ -329,17 +331,18 @@ export default class HomeScreen extends React.Component {
           })
           if(this.state.deleOri && (this.state.TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' && 
           this.state.TextOrigin !== 'ตำแหน่งของตัวเอง')){
-          
+           
             this.state.NameOfCoor.shift()
             this.state.coordinate.shift()
             this.setState({deleOri:false,line:'เส้นทางที่แนะนำ'})
           }
         }
         if(prevState.TextDestination !== this.state.TextDestination){
-      
+         
           AllBuilding.building.filter(ele =>{
             if(ele.name === this.state.TextDestination || this.state.TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' ||
             this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
+            
               this.setState({deleDes:true})
               if(this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
                
@@ -358,24 +361,22 @@ export default class HomeScreen extends React.Component {
           })
           if(this.state.deleDes && (this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' &&
           this.state.TextDestination !== 'ตำแหน่งของตัวเอง')){
-            
+           
             this.state.NameOfCoor.pop()
             this.state.coordinate.pop()
             this.setState({deleDes:false,line:'เส้นทางที่แนะนำ'})
           }
         }
-        // console.log('requestDir1 : '+prevState.requestDir1,this.state.requestDir1)
-        // console.log('requestDir2 : '+prevState.requestDir2,this.state.requestDir2)
-        // console.log('requestDir3 : '+prevState.requestDir3,this.state.requestDir3)
-      if(this.state.requestDir1){
-          this.setState({requestDir1:false})
-        }
-      if(this.state.requestDir2){
-        this.setState({requestDir2:false})
-      }
-      if(this.state.requestDir3){
-        this.setState({requestDir3:false})
-      }
+    
+      // if(this.state.requestDir1){
+      //     this.setState({requestDir1:false})
+      //   }
+      // if(this.state.requestDir2){
+      //   this.setState({requestDir2:false})
+      // }
+      // if(this.state.requestDir3){
+      //   this.setState({requestDir3:false})
+      // }
       this.setState({change:false})
       }
 }
@@ -423,9 +424,9 @@ export default class HomeScreen extends React.Component {
       symbol:null,
       filterOriLen:null,
       filterDesLen:null,
-      requestDir1:false,
-      requestDir2:false,
-      requestDir3:false,
+      requestDir1:true,
+      requestDir2:true,
+      requestDir3:true,
       modalVisible:false,
       changeInCheck :false,
       myLocInUni:true
@@ -446,7 +447,7 @@ export default class HomeScreen extends React.Component {
 
   DisplayAll(){
     
-    this.setState({time:null,distance:null,request:false,BusStopEqual:false})
+    this.setState({time:null,distance:null,request:false,BusStopEqual:false,line:'เส้นทางที่แนะนำ'})
     const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin,coordinate,modalVisible,
     myLocation,myLocInUni} = this.state
     
@@ -642,14 +643,17 @@ export default class HomeScreen extends React.Component {
       const BusStop = BusStopLine.markers[indexs+1].coordinate
       const distBusForward = convertDistance(getPreciseDistance(coordinate[1],BusStop),'km')
       // console.log('kiloDes : '+kiloDes)
-      if(minDes >= kiloDes || kiloDes <=0.3){
-        if(minDes !== kiloDes && !getIndexDes){
+      if((minDes >= kiloDes || kiloDes <=0.3) && index !== indexOrigin && !getIndexDes){
+        if(minDes !== kiloDes ){
           minDes=kiloDes
           indexDes = index
-          if(kiloDes <= 0.3 && distBusForward > kiloDes && indexDes > indexOrigin){
-         
+          if((kiloDes <= 0.30 && distBusForward > kiloDes && indexDes > indexOrigin) 
+          || (kiloDes<=0.30 && indexDes < indexOrigin && indexOrigin >= BusStopLine.markers.length-3 && BusStopLine === busStop1)){
             getIndexDes = true
           }
+          // if(BusStopLine === busStop1){
+          //   console.log('test busStop1')
+          // }
         }
         else{
           if(indexOrigin < index && !getIndexDes){
@@ -685,10 +689,11 @@ export default class HomeScreen extends React.Component {
         Waypoints.push(ele.coordinate)
       })
     }
-    else if(indexOrigin === indexDes){
-      this.setState({LineColor:'#05f709'})
-      this.setState({BusStopEqual:true})
-    }
+    // else if(indexOrigin === indexDes){
+    //   console.log('indexORigin equal to indexDes')
+    //   this.setState({LineColor:'#05f709'})
+    //   this.setState({BusStopEqual:true})
+    // }
     calculateCheckPoint=true
    
   }
@@ -758,33 +763,21 @@ export default class HomeScreen extends React.Component {
     })
   }
 
-  if((line === 'เส้นทางที่แนะนำ' || line === 'เส้นทางที่แนะนำ-สาย 1' || line === 'เส้นทางที่แนะนำ-สาย 3' ||
-  line === 'เส้นทางที่แนะนำ-สาย 5' || line === 'เส้นทางที่แนะนำ-เดิน') && !BusStopEqual ){
-   
-    if(lines === 'สาย 1' && line !== 'เส้นทางที่แนะนำ-เดิน'){
-      // if(distFromMyloc+0.5 < arraySum[0]){
-      //   this.setState({BusStopEqual:true})
-      // }
+  if((line === 'เส้นทางที่แนะนำ') && !BusStopEqual ){
+    
+    if(lines === 'สาย 1'){
       this.setState({BusStopLine:busStop1})
       this.setState({LineColor:"#0ce8f7"})
       this.setState({symbol:symbol1})
       choiceLine.fill('เส้นทางที่แนะนำ-สาย 1',0,1)
     }
-    else if(lines === 'สาย 3'&& line !== 'เส้นทางที่แนะนำ-เดิน'){
-      // if(distFromMyloc+0.5 < arraySum[1]){
-      //   this.setState({BusStopEqual:true})
-      // }
-     
+    else if(lines === 'สาย 3'){
       this.setState({BusStopLine:busStop3})
       this.setState({symbol:symbol3})
       this.setState({LineColor:"#d91fed"})
       choiceLine.fill('เส้นทางที่แนะนำ-สาย 3',0,1)
     }
-    else if(lines === 'สาย 5'&& line !== 'เส้นทางที่แนะนำ-เดิน'){
-      // if(distFromMyloc+0.5 < arraySum[2]){
-      //   this.setState({BusStopEqual:true})
-      // }
-      
+    else if(lines === 'สาย 5'){
       this.setState({BusStopLine:busStop5})
       this.setState({symbol:symbol5})
       this.setState({LineColor:"#f58f0a"})
@@ -795,6 +788,7 @@ export default class HomeScreen extends React.Component {
   
   // console.log(BusStopEqual,lines)
   if(BusStopEqual){
+    
     choiceLine.fill('เส้นทางที่แนะนำ-เดิน',0,1)
     
   }
@@ -804,9 +798,10 @@ export default class HomeScreen extends React.Component {
   handlePressOnMap(e){
     this.setState({time:null,distance:null,request:false,BusStopEqual:false,line:'เส้นทางที่แนะนำ'})
     const {TextOrigin,TextDestination,changeOrigin,coordinate,FirstFromDes,NameOfCoor,
-    BusStopLine,changeInCheck} =this.state
+    BusStopLine,changeInCheck,requestDir1,requestDir2,requestDir3} =this.state
   
-    if(changeOrigin && this.InUniversity(e.nativeEvent.coordinate)){
+    if(changeOrigin && this.InUniversity(e.nativeEvent.coordinate) && requestDir1
+    && requestDir2 && requestDir3){
       if(coordinate.length === 1 ){
         if(!FirstFromDes){
         coordinate.shift()
@@ -831,7 +826,8 @@ export default class HomeScreen extends React.Component {
       this.setState({TextOrigin:'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'})
       
     }
-    else if(!changeOrigin && this.InUniversity(e.nativeEvent.coordinate)){
+    else if(!changeOrigin && this.InUniversity(e.nativeEvent.coordinate)&& requestDir1
+    && requestDir2 && requestDir3){
       if(coordinate.length === 2){
       
         coordinate.pop()
@@ -1301,8 +1297,10 @@ console.log(itemValue)
               <Picker
     selectedValue={line}
     style={{height:50}}
+    enabled ={requestDir1 && requestDir2 && requestDir3}
     onValueChange={(itemValue,itemIndex)=>{
-      this.setState({line:itemValue,request:false,time:null,distance:null,})
+    
+      this.setState({line:itemValue,request:false,time:null,distance:null})
       if(itemValue === 'เส้นทางที่แนะนำ-เดิน' || itemValue==='เส้นทางที่แนะนำ-สาย 1' || itemValue === 'เส้นทางที่แนะนำ-สาย 3'
       || itemValue === 'เส้นทางที่แนะนำ-สาย 5'){
         this.setState({line:'เส้นทางที่แนะนำ'})
@@ -1327,7 +1325,7 @@ console.log(itemValue)
           longitudeDelta: 0.0021
         }}
         toolbarEnabled={false}
-        onPress={(!requestDir1 && !requestDir2 && !requestDir3) ? this.handlePressOnMap:null}
+        onPress={(requestDir1 && requestDir2 && requestDir3) ? this.handlePressOnMap:null}
         showsUserLocation={true}
         minZoomLevel={15}
         
@@ -1369,6 +1367,7 @@ console.log(itemValue)
             // splitWaypoints={true}
             // resetOnChange={true}
             onStart={(params) => {
+              this.setState({requestDir1:false})
               console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
             }}
             onReady ={result =>{
@@ -1395,6 +1394,7 @@ console.log(itemValue)
             // splitWaypoints={true}
             // resetOnChange={true}
             onStart={(params) => {
+              this.setState({requestDir2:false})
               console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
             }}
             onReady ={result =>{
@@ -1420,6 +1420,7 @@ console.log(itemValue)
             // splitWaypoints={true}
             // resetOnChange={true}
             onStart={(params) => {
+              this.setState({requestDir3:false})
               console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
             }}
             onReady ={result =>{
