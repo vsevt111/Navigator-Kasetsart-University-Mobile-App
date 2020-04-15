@@ -39,11 +39,7 @@ import symbol3 from '../image/busstopLine3.png';
 import symbol4 from '../image/busstopLine4.png';
 import symbol5 from '../image/busstopLine5.png';
 
-const AppNavigator = StackNavigator(
-  {
-    Page: { screen: Page },
-  }
-);
+
 
 async function requestLocationPermission() {
   try {
