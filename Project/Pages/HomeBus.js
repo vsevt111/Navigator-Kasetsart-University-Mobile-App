@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { TouchableOpacity, View, Text,TextInput,StyleSheet,Picker,Dropdown,Image} from 'react-native';
-
+import { TouchableOpacity, View,TextInput,StyleSheet,Picker,Dropdown,Image} from 'react-native';
+import { Container, Header, Content, Card, CardItem, Text, Body,Fab,Icon,Button } from "native-base";
 import MapView,{Polyline, PROVIDER_GOOGLE,Marker,Callout} from 'react-native-maps';
 import Bus1 from '../database/bus/bus1.json';
 import Bus2 from '../database/bus/bus2.json';
@@ -129,30 +129,57 @@ componentDidMount(){
   }
     return (
       <View style={{ flex: 1}}>
- 
-        <Picker selectedValue={this.state.Value}
-        style={{height:25,width:'50%' ,zIndex:1,position:'absolute',flex:1}}
-        onValueChange={(itemValue,itemIndex) =>{
-          this.setState({Value:itemValue})
-        }}>
-          <item label= 'สาย 1' value='สาย 1' />
-       
-          <item label= 'สาย 3' value='สาย 3' />
-     
-          <item label= 'สาย 5' value='สาย 5' />
-        </Picker>
-        <Picker
-        selectedValue={this.state.Faculty}
-        style={{left:'50%',zIndex:1,position:'absolute',height:25,flex:1,width:'50%'}}
-        onValueChange={(itemValue,itemIndex)=>{
-          this.setState({Faculty:itemValue})
-          // this.Search(this.state.Faculty)
-        }}>
+          <Fab
+            active={this.state.active}
+            direction="up"
+            containerStyle={{ }}
+            style={{ backgroundColor: '#5067FF' }}
+            position="bottomRight"
+            onPress={() => this.setState({ active: !this.state.active })}>
+            <Icon name="bus" />
+            <Button style={{ backgroundColor: '#0ce8f7' }} onPress={() => this.setState({ Value: 'สาย 1' })} >
+              <Text>1</Text>
+            </Button>
+            <Button style={{ backgroundColor: '#d91fed' }} onPress={() => this.setState({ Value: 'สาย 3' })} >
+              <Text>3</Text>
+            </Button>
+            <Button style={{ backgroundColor: '#f58f0a' }} onPress={() => this.setState({ Value: 'สาย 5' })}>
+              <Text>5</Text>
+            </Button>
+          </Fab>
+        <Card style={{
+          top: 20,
+          height: 50,
+          justifyContent: 'center', 
           
-          {faculty.map(element =>(
-            <item label={element} value={element} key={element}/>
-          ))}
+        }}>
+          <CardItem header  style={{
+            alignItems: 'center' 
+          }}>
+
+            {/* <Picker selectedValue={this.state.Value}
+              style={{height:25,width:'50%' ,zIndex:1,position:'absolute',flex:1}}
+              onValueChange={(itemValue,itemIndex) =>{
+                this.setState({Value:itemValue})
+                }}>
+                <item label= 'สาย 1' value='สาย 1' />
+                <item label= 'สาย 3' value='สาย 3' />
+                <item label= 'สาย 5' value='สาย 5' />
+            </Picker>      */}
+        <Picker
+          selectedValue={this.state.Faculty}
+          style={{zIndex:1,position:'absolute',height:25,flex:1,width:'50%',justifyContent: 'space-between'}}
+          onValueChange={(itemValue,itemIndex)=>{
+            this.setState({Faculty:itemValue})
+            // this.Search(this.state.Faculty)
+          }}>
+            {faculty.map(element =>(
+              <item label={element} value={element} key={element}/>
+            ))}
         </Picker>
+        </CardItem>
+        </Card> 
+
         {/* </View> */}
         <MapView style={{flex : 1,zIndex:-1}}
         initialRegion={{
@@ -171,10 +198,8 @@ componentDidMount(){
                  
             </Polyline>
             {this.state.arrayMark.map((marker,index) => (
-              
               <Marker coordinate={marker} Color={'#fae20a'} key={index}>
                 <Image source={this.state.symbol} style={{width:20,height:20}}/>
-                
               </Marker>
             ))} 
 

@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Button, View, Text,TextInput,StyleSheet,
-  PermissionsAndroid, TouchableHighlightBase,Picker,Image,SafeAreaView,FlatList,ScrollView,
+import { Button, View, TextInput,StyleSheet,
+  PermissionsAndroid, TouchableHighlightBase,Image,SafeAreaView,FlatList,ScrollView,
 TouchableOpacity,Modal,TouchableHighlight} from 'react-native';
+import { StackNavigator } from "react-navigation";
+import { Container, Header, Content, Card, CardItem, Text, Body,Icon, Fab ,Picker,Root } from "native-base";
 import Geolocation from 'react-native-geolocation-service';
 import MapView,{Polyline, PROVIDER_GOOGLE,Marker,Callout} from 'react-native-maps';
 import Sci from '../database/building/buildingSci.json';
@@ -37,9 +39,13 @@ import symbol3 from '../image/busstopLine3.png';
 import symbol4 from '../image/busstopLine4.png';
 import symbol5 from '../image/busstopLine5.png';
 
+const AppNavigator = StackNavigator(
+  {
+    Page: { screen: Page },
+  }
+);
 
 async function requestLocationPermission() {
-  
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -66,7 +72,6 @@ async function requestLocationPermission() {
 }
 
 export default class HomeScreen extends React.Component {
-  
   componentDidMount(){
     requestLocationPermission()
     this.mapRef.setMapBoundaries({latitude:13.853065,longitude:100.577247},{latitude:13.847937,longitude:100.564641})
@@ -100,6 +105,7 @@ export default class HomeScreen extends React.Component {
   componentWillUnmount(){
     requestLocationPermission();
   }
+
   componentDidUpdate(prevProp,prevState){
     const {TextOrigin,TextDestination} = this.state
       if(prevState.change){
@@ -107,7 +113,6 @@ export default class HomeScreen extends React.Component {
           if(this.state.FacultyOrigin === "คณะเกษตร"){
             //this.setState({FacultyValueOrigin:Agr})
             this.setState({FacultyValue:Agr})
-        
             console.log('คณะเกษตร')
           }
           
@@ -306,12 +311,10 @@ export default class HomeScreen extends React.Component {
           }
         }
         if(prevState.TextOrigin !== this.state.TextOrigin){
-        
           const {modalVisible,coordinate} = this.state
           AllBuilding.building.filter((ele,index)=>{
             if(ele.name === this.state.TextOrigin || this.state.TextOrigin === 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ||
             this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
-             
               this.setState({deleOri:true})
               if(this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
                 if(this.InUniversity(this.state.myLocation) && this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
@@ -480,7 +483,6 @@ export default class HomeScreen extends React.Component {
     }
     this.mapRef.animateToRegion(region,250)
     this.modifyChoiceLine(['เส้นทางที่แนะนำ'])
-   
   }
  
   Search(text,bool){
@@ -824,7 +826,6 @@ export default class HomeScreen extends React.Component {
         coordinate.push(e.nativeEvent.coordinate)
       }
       this.setState({TextOrigin:'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'})
-      
     }
     else if(!changeOrigin && this.InUniversity(e.nativeEvent.coordinate)&& requestDir1
     && requestDir2 && requestDir3){
@@ -887,7 +888,6 @@ export default class HomeScreen extends React.Component {
       {latitude:13.854180,longitude:100.581281}]
     return isPointInPolygon(coordinate,InLine5)
   }
-
   InLine1(coordinate){
     const InLine1=[
       {latitude:13.852834,longitude:100.565124},
@@ -1209,51 +1209,46 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
     console.log('คณะเทคนิคการสัตวแพทย์รปลายทาง')
   }
 }
-
-
     return (
       <View style={{ flex: 1}}>
         <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%'}}>
-        <Picker
-        selectedValue={this.state.FacultyValue.Faculty}
-        style={{height: 50}}
-        onValueChange={(itemValue, itemIndex) =>{
-          if(this.state.changeOrigin){
-          this.setState({FacultyOrigin:itemValue})
-        }
-          else{
-            this.setState({FacultyDestination:itemValue})
-     
-          }
-        }
-        }>
-        {faculty.map(fac =>(
-          <item label={fac} value={fac} key={fac}/>
-        ))}
-        
-</Picker>
-<Picker 
-selectedValue = {this.state.changeOrigin ? this.state.TextOrigin:this.state.TextDestination}
-style ={{height:50}}
-onValueChange={(itemValue,itemIndex) =>{
-  if(this.state.changeOrigin){
-    this.setState({TextOrigin:itemValue})
-}
-else {
-  this.setState({TextDestination:itemValue})
-}
-console.log(itemValue)
-}}>
-  <item label='กรุณาเลือกสถานที่'/>
-  <item label='ตำแหน่งของตัวเอง' value ='ตำแหน่งของตัวเอง'/>
-  {this.state.FacultyValue.building.map((building) =>(
-    <item label={building.name} value={building.name} key={building.name}/>
-  ))}
-</Picker> 
+          <Picker
+            selectedValue={this.state.FacultyValue.Faculty}
+            style={{height: 50,borderRadius: 150}}
+            onValueChange={(itemValue) =>{
+              if(this.state.changeOrigin){
+              this.setState({FacultyOrigin:itemValue})
+            }
+              else{
+                this.setState({FacultyDestination:itemValue})
+              }
+            }
+            }>
+            {faculty.map(fac =>(
+              <item label={fac} value={fac} key={fac}/>
+            ))}
+          </Picker>
+          <Picker 
+            selectedValue = {this.state.changeOrigin ? this.state.TextOrigin:this.state.TextDestination}
+            style ={{height:50}}
+            onValueChange={(itemValue,itemIndex) =>{
+              if(this.state.changeOrigin){
+                this.setState({TextOrigin:itemValue})
+            }
+            else {
+              this.setState({TextDestination:itemValue})
+            }
+            console.log(itemValue)
+          }}>
+            <item label='กรุณาเลือกสถานที่'/>
+            <item label='ตำแหน่งของตัวเอง' value ='ตำแหน่งของตัวเอง'/>
+            {this.state.FacultyValue.building.map((building) =>(
+              <item label={building.name} value={building.name} key={building.name}/>
+            ))}
+        </Picker> 
         <TextInput
         onChangeText={(TextOrigin) => { 
           this.setState({TextOrigin})
-          
         }}
         onFocus={(focus)=>{
           if(focus){
@@ -1271,7 +1266,6 @@ console.log(itemValue)
       <TextInput
         onChangeText={TextDestination => {
           this.setState({TextDestination})
-      
         }}
         onFocus={(focus)=>
         {
@@ -1283,40 +1277,37 @@ console.log(itemValue)
           }
         }}
         value={this.state.TextDestination}
-        
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         placeholder="Type Destination or click on the map"
         // editable={TextOrigin!=="" ? true:false}
       />
-      <Button onPress={this.DisplayAll
-      } title="ค้นหา" 
-      disabled={this.state.myLocInUni ? false:true}
+      <Button 
+        onPress={this.DisplayAll}
+        title="ค้นหา" 
+        disabled={this.state.myLocInUni ? false:true}
       />
         </View>
         <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%',left:'50%'}}>
-              <Picker
-    selectedValue={line}
-    style={{height:50}}
-    enabled ={requestDir1 && requestDir2 && requestDir3}
-    onValueChange={(itemValue,itemIndex)=>{
-    
-      this.setState({line:itemValue,request:false,time:null,distance:null})
-      if(itemValue === 'เส้นทางที่แนะนำ-เดิน' || itemValue==='เส้นทางที่แนะนำ-สาย 1' || itemValue === 'เส้นทางที่แนะนำ-สาย 3'
-      || itemValue === 'เส้นทางที่แนะนำ-สาย 5'){
-        this.setState({line:'เส้นทางที่แนะนำ'})
-      }
-      if(itemValue === 'เส้นทางที่แนะนำ'){
-        this.setState({BusStopLine:null})
-      }
-     
-    }}>
-      
-      {choiceLine.map((ele)=>(
-        <item label={ele} value={ele} key={ele}/>
-      ))}
-    </Picker>
+          <Picker
+            selectedValue={line}
+            enabled ={requestDir1 && requestDir2 && requestDir3}
+            style={{height:50}}
+            onValueChange={(itemValue,itemIndex)=>{  
+            this.setState({line:itemValue,request:false,time:null,distance:null})
+            if(itemValue === 'เส้นทางที่แนะนำ-เดิน' || itemValue==='เส้นทางที่แนะนำ-สาย 1' || itemValue === 'เส้นทางที่แนะนำ-สาย 3'|| itemValue === 'เส้นทางที่แนะนำ-สาย 5')
+            {
+              this.setState({line:'เส้นทางที่แนะนำ'})
+            }
+            if(itemValue === 'เส้นทางที่แนะนำ'){
+              this.setState({BusStopLine:null})
+            }
+          }}>
+            {choiceLine.map((ele)=>(
+              <item label={ele} value={ele} key={ele}/>
+            ))}
+          </Picker>
         </View>
-        <MapView style={{flex : 1,zIndex:-1}}
+      <MapView style={{flex : 1,zIndex:-1}}
         ref = {el =>(this.mapRef=el)}
         initialRegion={{
           latitude: 13.847639,
@@ -1328,7 +1319,6 @@ console.log(itemValue)
         onPress={(requestDir1 && requestDir2 && requestDir3) ? this.handlePressOnMap:null}
         showsUserLocation={true}
         minZoomLevel={15}
-        
         >
           {this.state.coordinate.map((coor,index)=>(
             <Marker coordinate={coor} key={index} title={coordinate.length === 2 ? NameOfCoor[index]:null} ref={el =>(this.MarkRef=el)}
@@ -1424,7 +1414,6 @@ console.log(itemValue)
               console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
             }}
             onReady ={result =>{
-           
               console.log('direction 3')
               this.updateTime(result.duration,result.distance)
               this.setState({requestDir3:true})
@@ -1434,20 +1423,22 @@ console.log(itemValue)
             }}
             >
             </Direction>}
-        
-
         </MapView>
-          <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Number.isNaN(Number.parseFloat(distance))? 0:Number.parseFloat(distance).toFixed(2)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
-          <View style={NameWaypoints.length === 0 ? {height:'0%'}:{height:'12%'}}>
+
+        <Card style={{ width: "100%"}}>
+          <CardItem header bordered >
+            <Text>ระยะทาง: {Number.isNaN(Number.parseFloat(distance))? 0:Number.parseFloat(distance).toFixed(2)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
+          </CardItem>
+        </Card>
+          <View style={NameWaypoints.length === 0 ? {height:'0%'}:{height:'20%'}}>
             <ScrollView>
-          {NameWaypoints.map((ele ,index)=>(
-            <Text key={index}>{index === 0 && index !== NameWaypoints.length-1 ? `ขึ้นที่ป้ายจอด : ${ele}`:null}
-            {index!== 0 && index !== NameWaypoints.length-1 ? `ผ่านป้ายจอด : ${ele}`:null}
-            {index === NameWaypoints.length-1 ? `ลงที่ป้ายจอด : ${ele}`:null}
-            </Text>
-            
-          ))}
-          </ScrollView>
+              {NameWaypoints.map((ele ,index)=>(
+              <CardItem bordered>
+                <Text key={index}>{index === 0 && index !== NameWaypoints.length-1 ? `ขึ้นที่ป้ายจอด : ${ele}`:null}{index!== 0 && index !== NameWaypoints.length-1 ? `ผ่านป้ายจอด : ${ele}`:null}{index === NameWaypoints.length-1 ? `ลงที่ป้ายจอด : ${ele}`:null}
+                </Text>
+              </CardItem>
+              ))}
+            </ScrollView>
           </View>
           {TextOrigin !== "" && !listItemOri && changeOrigin?
         <ScrollView style={{position:'absolute',top:140,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:filterOriLen}}>
