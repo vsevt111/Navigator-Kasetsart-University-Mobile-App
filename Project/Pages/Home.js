@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Button, View, TextInput,StyleSheet,
+import {  View, TextInput,StyleSheet,
   PermissionsAndroid, TouchableHighlightBase,Image,SafeAreaView,FlatList,ScrollView,
 TouchableOpacity,Modal,TouchableHighlight} from 'react-native';
-import { StackNavigator } from "react-navigation";
-import { Container, Header, Content, Card, CardItem, Text, Body,Icon, Fab ,Picker,Root } from "native-base";
+
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Container, Header, Content, Card, CardItem, Text, Body, Fab ,Picker,Root,Button } from "native-base";
 import Geolocation from 'react-native-geolocation-service';
 import MapView,{Polyline, PROVIDER_GOOGLE,Marker,Callout} from 'react-native-maps';
 import Sci from '../database/building/buildingSci.json';
@@ -25,7 +26,7 @@ import All from '../database/building/buildingAll';
 import AllBuilding from '../database/building/building.json';
 import locPress from '../image/PressMark.png';
 import Direction from 'react-native-maps-directions';
-import busStop1 from '../database/busPark/busPark1.json';
+import busStop1 from '../database/busPark/busPark1.json';0
 import busStop2 from '../database/busPark/busPark2.json';
 import busStop3 from '../database/busPark/busPark3.json';
 import busStop4 from '../database/busPark/busPark4.json';
@@ -382,6 +383,7 @@ export default class HomeScreen extends React.Component {
   constructor(props){
     super(props);
     this.state={
+      show: true,
       TextOrigin:"",
       TextDestination:"",
       coordinate:[],
@@ -443,21 +445,23 @@ export default class HomeScreen extends React.Component {
     this.InUniversity = this.InUniversity.bind(this);
     // this.checkMyLocInUni = this.checkMyLocInUni.bind(this);
   }
-
+  ShowHideComponent = () => {
+    if (this.state.show == true) {
+      this.setState({ show: false });
+    } else {
+      this.setState({ show: true });
+    }
+  };
   DisplayAll(){
-    
     this.setState({time:null,distance:null,request:false,BusStopEqual:false,line:'เส้นทางที่แนะนำ'})
     const {TextOrigin,TextDestination,FacultyValueDestination,FacultyValueOrigin,coordinate,modalVisible,
     myLocation,myLocInUni} = this.state
-    
     if(TextOrigin !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'){
       this.Search(TextOrigin,true)
     }
     if(TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
       this.Search(TextDestination,false)
     }
-    // console.log(this.InLine5(coordinate[0]))
-    // this.getBusStop()
     var latitudeDelta
     var longitudeDelta
     if(coordinate.length === 2){
@@ -480,7 +484,9 @@ export default class HomeScreen extends React.Component {
     this.mapRef.animateToRegion(region,250)
     this.modifyChoiceLine(['เส้นทางที่แนะนำ'])
   }
- 
+
+
+  
   Search(text,bool){
     const texts = text.toUpperCase()
     const {coordinate,TextOrigin,TextDestination,myLocation,FirstFromDes,NameOfCoor,
@@ -762,7 +768,6 @@ export default class HomeScreen extends React.Component {
   }
 
   if((line === 'เส้นทางที่แนะนำ') && !BusStopEqual ){
-    
     if(lines === 'สาย 1'){
       this.setState({BusStopLine:busStop1})
       this.setState({LineColor:"#0ce8f7"})
@@ -781,14 +786,10 @@ export default class HomeScreen extends React.Component {
       this.setState({LineColor:"#f58f0a"})
       choiceLine.fill('เส้นทางที่แนะนำ-สาย 5',0,1)
     }
-   
   }
-  
   // console.log(BusStopEqual,lines)
   if(BusStopEqual){
-    
     choiceLine.fill('เส้นทางที่แนะนำ-เดิน',0,1)
-    
   }
   this.getBusStop()
   }
@@ -1206,8 +1207,97 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
   }
 }
     return (
-      <View style={{ flex: 1}}>
-        <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%'}}>
+      <View style={{ flex: 1,justifyContent:'space-between'}}>
+        <View>
+          <View style={{backgroundColor:"#aaa555",position:'absolute',right:0,top:50}}>
+            <View style={{right:0, backgroundColor:'$gfdsdf'}}>
+              <Button onPress={this.ShowHideComponent} style={{right:0}} >
+                <Icon name="ios-arrow-dropleft"size={30}color={'#ffffff'} style={{marginRight:10,marginLeft:10}}/>
+              </Button>
+            </View>
+            <View>
+            {this.state.show ? (
+              <View style={{backgroundColor:'#ffffff',top: 0,right:0}}>
+                  <Picker
+                    selectedValue={this.state.FacultyValue.Faculty}
+                    style={{height: 50,borderRadius: 150}}
+                    onValueChange={(itemValue) =>{
+                      if(this.state.changeOrigin){
+                      this.setState({FacultyOrigin:itemValue})
+                    }
+                      else{
+                        this.setState({FacultyDestination:itemValue})
+                      }
+                    }
+                    }>
+                    {faculty.map(fac =>(
+                      <item label={fac} value={fac} key={fac}/>
+                    ))}
+                  </Picker>
+                  <Picker 
+                    selectedValue = {this.state.changeOrigin ? this.state.TextOrigin:this.state.TextDestination}
+                    style ={{height:50}}
+                    onValueChange={(itemValue,itemIndex) =>{
+                      if(this.state.changeOrigin){
+                        this.setState({TextOrigin:itemValue})
+                    }
+                    else {
+                      this.setState({TextDestination:itemValue})
+                    }
+                    console.log(itemValue)
+                  }}>
+                    <item label='กรุณาเลือกสถานที่'/>
+                    <item label='ตำแหน่งของตัวเอง' value ='ตำแหน่งของตัวเอง'/>
+                    {this.state.FacultyValue.building.map((building) =>(
+                      <item label={building.name} value={building.name} key={building.name}/>
+                    ))}
+                </Picker> 
+                <TextInput
+                  onChangeText={(TextOrigin) => { 
+                    this.setState({TextOrigin})
+                  }}
+                  onFocus={(focus)=>{
+                    if(focus){
+                      this.setState({changeOrigin:true})
+                    }
+                    else{
+                      this.setState({changeOrigin:false})
+                    }
+                  }}
+                  value={this.state.TextOrigin}
+                  style={{ height: 40, borderColor: 'gray', borderWidth: 1
+                  }}
+                  placeholder="Type Origin or click on the map"
+                />
+                <TextInput
+                  onChangeText={TextDestination => {
+                    this.setState({TextDestination})
+                  }}
+                  onFocus={(focus)=>
+                  {
+                    if(focus){
+                      this.setState({changeOrigin:false})
+                    }
+                    else{
+                      this.setState({changeOrigin:true})
+                    }
+                  }}
+                  value={this.state.TextDestination}
+                  style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                  placeholder="Type Destination or click on the map"
+                  // editable={TextOrigin!=="" ? true:false}
+                />
+                <Button 
+                  onPress={this.DisplayAll}
+                  title="ค้นหา" 
+                  disabled={this.state.myLocInUni ? false:true}
+                ><Text>Search</Text></Button>
+            </View>
+            ) : null}
+            </View> 
+          </View>
+        </View>
+        {/* <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%'}}>
           <Picker
             selectedValue={this.state.FacultyValue.Faculty}
             style={{height: 50,borderRadius: 150}}
@@ -1282,8 +1372,8 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
         title="ค้นหา" 
         disabled={this.state.myLocInUni ? false:true}
       />
-        </View>
-        <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%',left:'50%'}}>
+        </View> */}
+        <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:0 ,top:0,left:0,width:'60%'}}>
           <Picker
             selectedValue={line}
             enabled ={requestDir1 && requestDir2 && requestDir3}
@@ -1420,7 +1510,6 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
             >
             </Direction>}
         </MapView>
-
         <Card style={{ width: "100%"}}>
           <CardItem header bordered >
             <Text>ระยะทาง: {Number.isNaN(Number.parseFloat(distance))? 0:Number.parseFloat(distance).toFixed(2)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>

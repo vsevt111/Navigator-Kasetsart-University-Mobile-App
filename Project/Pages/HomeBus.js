@@ -87,8 +87,6 @@ componentDidMount(){
       pressCoor:[]
     };
     this.Search=this.Search.bind(this);
-    
-    
   }
 
   Search(name){
@@ -129,7 +127,57 @@ componentDidMount(){
   }
     return (
       <View style={{ flex: 1}}>
-          <Fab
+        <Card style={{
+          // position:'absolute',
+          bottom:-550,
+          height: 50,
+          width: "50%",
+          justifyContent: 'center', 
+        }}>
+          <CardItem header style={{alignItems:'center'}}>
+            <Picker
+              selectedValue={this.state.Faculty}
+              style={{zIndex:1,position:'absolute',height:25,flex:1,width:' 100%'}}
+              onValueChange={(itemValue,itemIndex)=>{
+                this.setState({Faculty:itemValue})
+                // this.Search(this.state.Faculty)
+              }}>
+                {faculty.map(element =>(
+                  <item label={element} value={element} key={element}/>
+                ))}
+            </Picker>
+          </CardItem>
+        </Card> 
+        {/* </View> */}
+        <MapView style={{flex : 1,zIndex:-1}}
+          initialRegion={{
+            latitude: 13.847639,
+            longitude: 100.569584,
+            latitudeDelta: 0.0202,
+            longitudeDelta: 0.0101
+          }}
+          showsUserLocation={true}
+          onPress={this.pressMap}>
+            <Polyline           
+              coordinates={this.state.Path.path}
+              strokeColor={this.state.Color}
+              strokeColors={COLORS}
+              strokeWidth={4}>        
+            </Polyline>
+              {this.state.arrayMark.map((marker,index) => (
+                <Marker coordinate={marker} Color={'#fae20a'} key={index}>
+                  <Image source={this.state.symbol} style={{width:20,height:20}}/>
+                </Marker>
+              ))} 
+
+              {/* {obj.state.pressCoor.map(ele=>(
+              <Marker {...ele}>
+                <Image source={HomeScreen.locPress} style={{width:40,height:40}}/>
+              </Marker>
+            ))} */}
+        </MapView>
+        {/* <HomeScreen ref ={ ref => (this.HomeScreen = ref)}/> */}
+        <Fab
             active={this.state.active}
             direction="up"
             containerStyle={{ }}
@@ -147,69 +195,6 @@ componentDidMount(){
               <Text>5</Text>
             </Button>
           </Fab>
-        <Card style={{
-          top: 20,
-          height: 50,
-          justifyContent: 'center', 
-          
-        }}>
-          <CardItem header  style={{
-            alignItems: 'center' 
-          }}>
-
-            {/* <Picker selectedValue={this.state.Value}
-              style={{height:25,width:'50%' ,zIndex:1,position:'absolute',flex:1}}
-              onValueChange={(itemValue,itemIndex) =>{
-                this.setState({Value:itemValue})
-                }}>
-                <item label= 'สาย 1' value='สาย 1' />
-                <item label= 'สาย 3' value='สาย 3' />
-                <item label= 'สาย 5' value='สาย 5' />
-            </Picker>      */}
-        <Picker
-          selectedValue={this.state.Faculty}
-          style={{zIndex:1,position:'absolute',height:25,flex:1,width:'50%',justifyContent: 'space-between'}}
-          onValueChange={(itemValue,itemIndex)=>{
-            this.setState({Faculty:itemValue})
-            // this.Search(this.state.Faculty)
-          }}>
-            {faculty.map(element =>(
-              <item label={element} value={element} key={element}/>
-            ))}
-        </Picker>
-        </CardItem>
-        </Card> 
-
-        {/* </View> */}
-        <MapView style={{flex : 1,zIndex:-1}}
-        initialRegion={{
-          latitude: 13.847639,
-          longitude: 100.569584,
-          latitudeDelta: 0.0202,
-          longitudeDelta: 0.0101
-        }}
-        showsUserLocation={true}
-        onPress={this.pressMap}>
-          <Polyline           
-            coordinates={this.state.Path.path}
-            strokeColor={this.state.Color}
-            strokeColors={COLORS}
-            strokeWidth={4}>
-                 
-            </Polyline>
-            {this.state.arrayMark.map((marker,index) => (
-              <Marker coordinate={marker} Color={'#fae20a'} key={index}>
-                <Image source={this.state.symbol} style={{width:20,height:20}}/>
-              </Marker>
-            ))} 
-
-            {/* {obj.state.pressCoor.map(ele=>(
-            <Marker {...ele}>
-              <Image source={HomeScreen.locPress} style={{width:40,height:40}}/>
-            </Marker>
-          ))} */}
-        </MapView>
-        {/* <HomeScreen ref ={ ref => (this.HomeScreen = ref)}/> */}
       </View>
     );
   }
