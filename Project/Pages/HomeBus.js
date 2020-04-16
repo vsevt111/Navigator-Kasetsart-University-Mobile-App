@@ -15,9 +15,9 @@ import BusStop5 from '../database/busPark/busPark5.json';
 import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
 import {MenuProvider,Menu,MenuOption,MenuOptions,MenuTrigger} from 'react-native-popup-menu';
 import symbol1 from '../image/busstopLine1.png';
-import symbol2 from '../image/busstopLine2.png';
+
 import symbol3 from '../image/busstopLine3.png';
-import symbol4 from '../image/busstopLine4.png';
+
 import symbol5 from '../image/busstopLine5.png';
 import HomeScreen,{handlePressOnMap} from './Home.js';
 

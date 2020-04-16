@@ -24,24 +24,24 @@ import VetTech from '../database/building/buildingVetTech.json';
 import Agr from '../database/building/buildingAgr';
 import All from '../database/building/buildingAll';
 import AllBuilding from '../database/building/building.json';
-import locPress from '../image/PressMark.png';
 import Direction from 'react-native-maps-directions';
 import busStop1 from '../database/busPark/busPark1.json';0
-import busStop2 from '../database/busPark/busPark2.json';
 import busStop3 from '../database/busPark/busPark3.json';
-import busStop4 from '../database/busPark/busPark4.json';
 import busStop5 from '../database/busPark/busPark5.json';
 import geolib,{getPreciseDistance,getDistance,convertDistance,getCenter,isPointInPolygon} from 'geolib';
 import SearchInput ,{createFilter} from 'react-native-search-filter';
 import busStopAll from '../database/busPark/busParkAll.json';
 import symbol1 from '../image/busstopLine1.png';
-import symbol2 from '../image/busstopLine2.png';
 import symbol3 from '../image/busstopLine3.png';
-import symbol4 from '../image/busstopLine4.png';
 import symbol5 from '../image/busstopLine5.png';
-
-
-
+import symbolUp1 from '../image/busstopup1.png';
+import symbolUp3 from '../image/busstopup3.png';
+import symbolUp5 from '../image/busstopup5.png';
+import symbolDown1 from '../image/busstopdown1.png';
+import symbolDown3 from '../image/busstopdown3.png';
+import symbolDown5 from '../image/busstopdown5.png';
+import startSymbol from '../image/start.png';
+import destinationSymbol from '../image/destination.png'
 async function requestLocationPermission() {
   try {
     const granted = await PermissionsAndroid.request(
@@ -103,6 +103,8 @@ export default class HomeScreen extends React.Component {
     requestLocationPermission();
   }
 
+
+
   componentDidUpdate(prevProp,prevState){
     const {TextOrigin,TextDestination} = this.state
       if(prevState.change){
@@ -112,7 +114,6 @@ export default class HomeScreen extends React.Component {
             this.setState({FacultyValue:Agr})
             console.log('คณะเกษตร')
           }
-          
           else if(this.state.FacultyOrigin === "คณะอุตสาหกรรมเกษตร"){
             //this.setState({FacultyValueOrigin:Agro})
             this.setState({FacultyValue:Agro})
@@ -292,16 +293,22 @@ export default class HomeScreen extends React.Component {
             this.setState({BusStopLine:busStop1})
             this.setState({LineColor:"#0ce8f7"})
             this.setState({symbol:symbol1})
+            this.setState({symbolUp:symbolUp1})
+            this.setState({symbolDown:symbolDown1})
           }
           else if(this.state.line === "สาย 3"){
             this.setState({BusStopLine:busStop3})
-            this.setState({symbol:symbol3})
             this.setState({LineColor:"#d91fed"})
+            this.setState({symbol:symbol3})
+            this.setState({symbolUp:symbolUp3})
+            this.setState({symbolDown:symbolDown3})
           }
           else if(this.state.line === "สาย 5"){
             this.setState({BusStopLine:busStop5})
             this.setState({symbol:symbol5})
             this.setState({LineColor:"#f58f0a"})
+            this.setState({symbolUp:symbolUp5})
+            this.setState({symbolDown:symbolDown5})
           }
           else {
             this.setState({BusStopLine:null})
@@ -315,7 +322,6 @@ export default class HomeScreen extends React.Component {
               this.setState({deleOri:true})
               if(this.state.TextOrigin === 'ตำแหน่งของตัวเอง'){
                 if(this.InUniversity(this.state.myLocation) && this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
-                  
                   this.setState({myLocInUni:true})
                 }
                 else{
@@ -324,7 +330,6 @@ export default class HomeScreen extends React.Component {
                 }
               }
              else if(this.state.TextOrigin !== 'ตำแหน่งของตัวเอง' && this.state.TextDestination !== 'ตำแหน่งของตัวเอง'){
-             
                this.setState({myLocInUni:true})
              }
             }
@@ -338,7 +343,6 @@ export default class HomeScreen extends React.Component {
           }
         }
         if(prevState.TextDestination !== this.state.TextDestination){
-         
           AllBuilding.building.filter(ele =>{
             if(ele.name === this.state.TextDestination || this.state.TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' ||
             this.state.TextDestination === 'ตำแหน่งของตัวเอง'){
@@ -361,22 +365,11 @@ export default class HomeScreen extends React.Component {
           })
           if(this.state.deleDes && (this.state.TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว' &&
           this.state.TextDestination !== 'ตำแหน่งของตัวเอง')){
-           
             this.state.NameOfCoor.pop()
             this.state.coordinate.pop()
             this.setState({deleDes:false,line:'เส้นทางที่แนะนำ'})
           }
         }
-    
-      // if(this.state.requestDir1){
-      //     this.setState({requestDir1:false})
-      //   }
-      // if(this.state.requestDir2){
-      //   this.setState({requestDir2:false})
-      // }
-      // if(this.state.requestDir3){
-      //   this.setState({requestDir3:false})
-      // }
       this.setState({change:false})
       }
 }
@@ -423,6 +416,8 @@ export default class HomeScreen extends React.Component {
       InLine5:false,
       choiceLine:['เส้นทางที่แนะนำ'],
       symbol:null,
+      symbolUp:null,
+      symbolDown:null,
       filterOriLen:null,
       filterDesLen:null,
       requestDir1:true,
@@ -438,6 +433,8 @@ export default class HomeScreen extends React.Component {
     this.getBusStop = this.getBusStop.bind(this);
     this.updateTime= this.updateTime.bind(this);
     this.optimalRoute = this.optimalRoute.bind(this);
+    this.ShowHideComponent = this.ShowHideComponent.bind(this);
+    this.toggleAfterSearch = this.toggleAfterSearch.bind(this);
     this.InLine5 = this.InLine5.bind(this);
     this.InLine1 = this.InLine1.bind(this);
     this.InLine3 = this.InLine3.bind(this);
@@ -485,7 +482,10 @@ export default class HomeScreen extends React.Component {
     this.modifyChoiceLine(['เส้นทางที่แนะนำ'])
   }
 
-
+  toggleAfterSearch(){
+    this.DisplayAll();
+    this.ShowHideComponent();
+  }
   
   Search(text,bool){
     const texts = text.toUpperCase()
@@ -600,8 +600,6 @@ export default class HomeScreen extends React.Component {
     }
   }
   getBusStop(lines=null){
-    // console.log('getBusStop() method',this.state.BusStopLine)
-    
     const {coordinate,Waypoints,NameWaypoints,BusStopLine,line,BusStopEqual} = this.state
     this.setState({BusStopEqual:false})
     Waypoints.splice(0,Waypoints.length)
@@ -667,11 +665,8 @@ export default class HomeScreen extends React.Component {
         } 
       }
     })}
-    // console.log('minDes : '+minDes)
     calculateIndex = true
   }
-    // console.log('minimumOrigin: '+minOrigin  +' IndexOrigin: '+indexOrigin)
-    // console.log('minimumDes: '+minDes+' IndexDes: '+indexDes)
     if(coordinate.length===2 && calculateIndex){
       if(indexOrigin < indexDes){
       const busStop = BusStopLine.markers.slice(indexOrigin,indexDes+1)
@@ -693,13 +688,7 @@ export default class HomeScreen extends React.Component {
         Waypoints.push(ele.coordinate)
       })
     }
-    // else if(indexOrigin === indexDes){
-    //   console.log('indexORigin equal to indexDes')
-    //   this.setState({LineColor:'#05f709'})
-    //   this.setState({BusStopEqual:true})
-    // }
     calculateCheckPoint=true
-   
   }
   if((line === 'เส้นทางที่แนะนำ') && calculateCheckPoint){
     
@@ -751,7 +740,6 @@ export default class HomeScreen extends React.Component {
         //   sumDist+=convertDistance(busStopDist,'km')
         // }
       })
-      // arraySum.push(sumDist)
       if(sum > min+max){
         sum=min+max
       
@@ -771,17 +759,23 @@ export default class HomeScreen extends React.Component {
     if(lines === 'สาย 1'){
       this.setState({BusStopLine:busStop1})
       this.setState({LineColor:"#0ce8f7"})
+      this.setState({symbolUp:symbolUp1})
+      this.setState({symbolDown:symbolDown1})
       this.setState({symbol:symbol1})
       choiceLine.fill('เส้นทางที่แนะนำ-สาย 1',0,1)
     }
     else if(lines === 'สาย 3'){
       this.setState({BusStopLine:busStop3})
+      this.setState({symbolUp:symbolUp3})
+      this.setState({symbolDown:symbolDown3})
       this.setState({symbol:symbol3})
       this.setState({LineColor:"#d91fed"})
       choiceLine.fill('เส้นทางที่แนะนำ-สาย 3',0,1)
     }
     else if(lines === 'สาย 5'){
       this.setState({BusStopLine:busStop5})
+      this.setState({symbolUp:symbolUp5})
+      this.setState({symbolDown:symbolDown5})
       this.setState({symbol:symbol5})
       this.setState({LineColor:"#f58f0a"})
       choiceLine.fill('เส้นทางที่แนะนำ-สาย 5',0,1)
@@ -798,7 +792,6 @@ export default class HomeScreen extends React.Component {
     this.setState({time:null,distance:null,request:false,BusStopEqual:false,line:'เส้นทางที่แนะนำ'})
     const {TextOrigin,TextDestination,changeOrigin,coordinate,FirstFromDes,NameOfCoor,
     BusStopLine,changeInCheck,requestDir1,requestDir2,requestDir3} =this.state
-  
     if(changeOrigin && this.InUniversity(e.nativeEvent.coordinate) && requestDir1
     && requestDir2 && requestDir3){
       if(coordinate.length === 1 ){
@@ -1209,14 +1202,14 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
     return (
       <View style={{ flex: 1,justifyContent:'space-between'}}>
         <View>
-          <View style={{backgroundColor:"#aaa555",position:'absolute',right:0,top:50}}>
+          <View style={{backgroundColor:"#aaa555",position:'absolute',right:0,top:0}}>
             <View style={{right:0, backgroundColor:'$gfdsdf'}}>
               <Button onPress={this.ShowHideComponent} style={{right:0}} >
                 <Icon name="ios-arrow-dropleft"size={30}color={'#ffffff'} style={{marginRight:10,marginLeft:10}}/>
               </Button>
             </View>
             <View>
-            {this.state.show ? (
+            {!(this.state.show) ? (
               <View style={{backgroundColor:'#ffffff',top: 0,right:0}}>
                   <Picker
                     selectedValue={this.state.FacultyValue.Faculty}
@@ -1288,7 +1281,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
                   // editable={TextOrigin!=="" ? true:false}
                 />
                 <Button 
-                  onPress={this.DisplayAll}
+                  onPress={this.toggleAfterSearch}
                   title="ค้นหา" 
                   disabled={this.state.myLocInUni ? false:true}
                 ><Text>Search</Text></Button>
@@ -1374,6 +1367,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
       />
         </View> */}
         <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:0 ,top:0,left:0,width:'60%'}}>
+        {(this.state.show) ? (
           <Picker
             selectedValue={line}
             enabled ={requestDir1 && requestDir2 && requestDir3}
@@ -1392,6 +1386,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
               <item label={ele} value={ele} key={ele}/>
             ))}
           </Picker>
+        ) : null}
         </View>
       <MapView style={{flex : 1,zIndex:-1}}
         ref = {el =>(this.mapRef=el)}
@@ -1407,28 +1402,30 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
         minZoomLevel={15}
         >
           {this.state.coordinate.map((coor,index)=>(
-            <Marker coordinate={coor} key={index} title={coordinate.length === 2 ? NameOfCoor[index]:null} ref={el =>(this.MarkRef=el)}
+            <Marker 
+              coordinate={coor} 
+              key={index} 
+              title={coordinate.length === 2 ? NameOfCoor[index]:null} 
+              ref={el =>(this.MarkRef=el)}
             >
-              {/* <Callout>
-                <View>
-                  <Text>Test 1 2 3 4</Text>
-                </View>
-              </Callout> */}
+              <Image source={coordinate.length === 2 && index == 1 ? destinationSymbol : startSymbol}
+              style={{height:35,width:35}}></Image>
             </Marker>
-
           ))}
           
           {Waypoints !== [] ? Waypoints.map((coor,index)=>{
             if(index===0){
-              return(<Marker coordinate={coor} key={index}  title='ขึ้นที่ป้ายจอดนี้'>
-                <Image source={this.state.symbol} style={{height:20,width:20}}/>
-                 </Marker>)
+              return(
+                <Marker coordinate={coor} key={index}  title='ขึ้นที่ป้ายจอดนี้'>
+                  <Image source={this.state.symbolUp} style={{height:20,width:20}}/>
+                </Marker>
+              )
             }
             else if(index === Waypoints.length-1){
               return(
                 <Marker coordinate={coor} key={index} title='ลงที่ป้ายจอดนี้'>
-              <Image source={this.state.symbol} style={{height:20,width:20}} />
-               </Marker>
+                  <Image source={this.state.symbolDown} style={{height:20,width:20}} />
+                </Marker>
               )
             }
           }):null}
