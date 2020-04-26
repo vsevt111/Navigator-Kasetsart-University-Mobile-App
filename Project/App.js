@@ -5,6 +5,7 @@ import HomeBus from './Pages/HomeBus';
 import { NavigationContainer } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 const Tab = createBottomTabNavigator();
+console.disableYellowBox = true;
 export default function App() {
   return (
     <NavigationContainer>

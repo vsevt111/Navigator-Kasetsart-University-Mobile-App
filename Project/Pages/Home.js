@@ -1434,7 +1434,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
             destination = {BusStopEqual ? coordinate[1]:Waypoints[0]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
-            strokeColor={LineColor}
+            strokeColor={'#05f709'}
             mode={'WALKING'}
             // optimizeWaypoints={true}
             // splitWaypoints={true}
@@ -1487,7 +1487,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
             destination = {coordinate[1]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
-            strokeColor={LineColor}
+            strokeColor={'#05f709'}
             mode={'WALKING'}
             // optimizeWaypoints={true}
             // splitWaypoints={true}
