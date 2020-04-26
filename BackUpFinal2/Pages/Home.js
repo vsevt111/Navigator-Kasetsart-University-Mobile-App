@@ -705,13 +705,19 @@ export default class HomeScreen extends React.Component {
           else{
             var distConnect = convertDistance(getPreciseDistance(busStopLocal.markers[busStopOri].coordinate,Waypoints[Waypoints.length-1][Waypoints[Waypoints.length-1].length-1]),'km')
           }
-          if(this.InLine1(coordinate[1]) || this.InLine5(coordinate[1])){
-            varianceDes = 0.05
-          }
           if(this.InLine1(coordinate[0])|| this.InLine5(coordinate[0])){
-            varianceOri = 0.05
+            if(this.InSpecialArea(coordinate[0]) && this.InSpecialArea(busStopLocal.markers[busStopOri].coordinate)){
+              varianceOri=0.085
+            }
+            else{varianceOri = 0.05}
           }
         indexDesArray.map((busStopDes)=>{
+          if(this.InLine1(coordinate[1]) || this.InLine5(coordinate[1])){
+            if(this.InSpecialArea(coordinate[1]) && this.InSpecialArea(busStopLocal.markers[busStopDes].coordinate)){
+              varianceDes=0.085
+            }
+            else{varianceDes = 0.05}
+          }
           if(busStopDes > busStopOri){
             distRealTime = busStopDes-busStopOri+1
           }
@@ -894,8 +900,8 @@ export default class HomeScreen extends React.Component {
       // console.log(OptimalLine,OptimalLineDes)
       // console.log('busStopLocal !== null')
       do{
-          // console.log(busStopLocal.line,originSect[indexInMethod])
-          // console.log('indexInMethod : '+indexInMethod+' BusStopEqual : '+BusStopEqual)
+          console.log(busStopLocal.line,originSect[indexInMethod])
+          console.log('indexInMethod : '+indexInMethod+' origin leng '+originSect.length)
           // console.log('coordinate[1] : '+coordinate[1])
         if(indexInMethod !== 0){
           if(lineTravel === 'สาย 1'){
@@ -919,7 +925,7 @@ export default class HomeScreen extends React.Component {
         //   originSect=[coordinate[0]]
         // }
         this.getBusStop(busStopLocal,originSect[indexInMethod],indexInMethod)
-        
+     
         // oriDir3.push(Waypoints[indexInMethod][Waypoints[indexInMethod].length-1])
 
         // if(indexInMethod>=1 && Waypoints.length >=2){
@@ -931,6 +937,7 @@ export default class HomeScreen extends React.Component {
         if((getBusStopLine || indexInMethod === 0)){
           if(lineTravel === OptimalLineDes || BusStopEqual || convertDistance(getPreciseDistance(originSect[indexInMethod],coordinate[1]),'km') <= 0.3){
           lineEqual = true
+          
           break
         }
         else{
@@ -957,18 +964,24 @@ export default class HomeScreen extends React.Component {
           })
         }
           // console.log('inside lineequal !== linetravel')
-          originSect.push(coordinateLocal)
+         
+          if(coordinateLocal !== null){
+            originSect.push(coordinateLocal)
+          }
           indexInMethod+=1
         }
         // getMode = true
       }
         
-      }while(!lineEqual || !BusStopEqual)
+      }while((!lineEqual || !BusStopEqual) && indexInMethod < originSect.length)
   
   getWaypoints =true
   }
   if(getWaypoints)
   {
+    if(passLine.length !== Waypoints.length){
+      passLine.pop()
+    }
     desSect.push(coordinate[1])
 
   }
@@ -1211,6 +1224,18 @@ export default class HomeScreen extends React.Component {
       {latitude:13.850455,longitude:100.570497}
     ]
     return !isPointInPolygon(coordinate,InLine3)
+  }
+
+  InSpecialArea(coordinate){
+    const InSpecialArea=[
+      {latitude:13.846868,longitude:100.570247},
+      {latitude:13.846439,longitude:100.572818},
+      {latitude:13.844267,longitude:100.572837},
+      {latitude:13.842550,longitude:100.571916},
+      {latitude:13.843654,longitude:100.569760},
+      {latitude:13.845099,longitude:100.570211}
+    ]
+    return isPointInPolygon(coordinate,InSpecialArea)
   }
 
   InUniversity(coordinate){

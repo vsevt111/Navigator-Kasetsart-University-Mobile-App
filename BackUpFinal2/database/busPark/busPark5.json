@@ -2,6 +2,18 @@
     "line":5,
     "markers":[
         {
+            "name":"จุดหอพักนิสิตหญิงสุพรรณนิการ์",
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
+            "coordinate":{"latitude":13.852376,
+            "longitude":100.580682}
+        },
+        {
+            "name":"จุดหอแสงจันทร์",
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
+            "coordinate":{"latitude":13.852957,
+            "longitude":100.580623}
+        },
+        {
             "name":"จุดหอพักหญิงขจีนุช",
             "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.853321,
@@ -13,6 +25,12 @@
             "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.853559,
             "longitude":100.580230}
+        },
+        {
+            "name":"จุดToo Fast To Sleep@KU",
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
+            "coordinate":{"latitude":13.853506,
+            "longitude":100.578914}
         },
         {
             "name":"จุดอาคารสวัสดิการ มก.",
@@ -83,11 +101,40 @@
             "longitude":100.572461}
         },
         {
+            "name":"จุดคลังยาเกษตร",
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
+            "coordinate":{"latitude":13.852454,
+            "longitude":100.576607}
+        },
+
+        {
+            "name":"จุดอาคารสวัสดิการ มก.",
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
+            "coordinate":{"latitude":13.853085,
+            "longitude":100.578411}
+        },
+
+        {
             "name":"จุดToo Fast To Sleep@KU",
             "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
             "coordinate":{"latitude":13.853506,
             "longitude":100.578914}
         },
+
+        {
+            "name":"จุดหอพักKritsana",
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
+            "coordinate":{"latitude":13.853559,
+            "longitude":100.580230}
+        },
+
+        {
+            "name":"จุดหอพักหญิงขจีนุช",
+            "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
+            "coordinate":{"latitude":13.853321,
+            "longitude":100.580520}
+        },
+
         {
             "name":"จุดหอแสงจันทร์",
             "Faculty":["รวม(ไม่อยู่ใกล้คณะใดๆ)"],
