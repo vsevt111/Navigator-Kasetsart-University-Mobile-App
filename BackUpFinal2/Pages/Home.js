@@ -620,7 +620,7 @@ export default class HomeScreen extends React.Component {
     var WaypointsLocal=[]
     var indexOriginLocal = 0
     var indexDesLocal = 0
-        if(coordinate.length >=1){
+        if(coordinate.length ===2){
       busStopLocal.markers.map((item,index)=>{
         const distOrigin = getPreciseDistance(origin,item.coordinate)
         const kiloOrigin = convertDistance(distOrigin,'km')
@@ -630,11 +630,18 @@ export default class HomeScreen extends React.Component {
           indexOriginLocal = index
         }
         if(index === busStopLocal.markers.length-1){
-        indexOriArray.push(indexOriginLocal)
+    
         busStopLocal.markers.map((ele,index)=>{
-            if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,285)){
+            if(this.InSpecialArea(coordinate[0]) && this.InBTSArea(coordinate[1])){
+              if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,220)){
               indexOriArray.push(index)
             }
+          }
+          else{
+            if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,50)){
+              indexOriArray.push(index)
+            }
+          }
           })
           getIndexOri = true
         }
@@ -676,12 +683,19 @@ export default class HomeScreen extends React.Component {
       // console.log('indexDesArray : '+indexDesArray)
       }
       if(index === busStopLocal.markers.length-1){
-        indexDesArray.push(indexDesLocal)
+      
         busStopLocal.markers.map((ele,indexs)=>{
-          if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexDesLocal].coordinate,300)){
+          if(this.InSpecialArea(coordinate[1]) && this.InBTSArea(coordinate[0])){
+            if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexDesLocal].coordinate,220)){
             // console.log('indexs : '+indexs)
             indexDesArray.push(indexs)
           }
+        }
+        else{
+          if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexDesLocal].coordinate,50)){
+            indexDesArray.push(indexs)
+          }
+        }
         })
         getIndexDes = true
       }
@@ -692,32 +706,31 @@ export default class HomeScreen extends React.Component {
    
       var distBusStop = 50
       var distRealTime = 0
-      var getCheck = false
       var distToDes = 999
       var distToOri = 999
       // var oriToStop = 999
-      var varianceDes = 0
-      var varianceOri = 0
         indexOriArray.map((busStopOri,index)=>{
+          // console.log('indexOriArray : '+indexOriArray)
+          // console.log('indexDesArray : '+indexDesArray)
           if(Waypoints.length === 0){
             var distConnect = convertDistance(getPreciseDistance(busStopLocal.markers[busStopOri].coordinate,coordinate[0]),'km')
           }
           else{
             var distConnect = convertDistance(getPreciseDistance(busStopLocal.markers[busStopOri].coordinate,Waypoints[Waypoints.length-1][Waypoints[Waypoints.length-1].length-1]),'km')
           }
-          if(this.InLine1(coordinate[0])|| this.InLine5(coordinate[0])){
-            if(this.InSpecialArea(coordinate[0]) && this.InSpecialArea(busStopLocal.markers[busStopOri].coordinate)){
-              varianceOri=0.085
-            }
-            else{varianceOri = 0.05}
-          }
+          // if(this.InLine1(coordinate[0])|| this.InLine5(coordinate[0])){
+          //   if(this.InSpecialArea(coordinate[0]) && this.InBTSArea(coordinate[1]  ) ){
+          //     varianceOri=0.182
+          //   }
+          //   else{varianceOri = 0.085}
+          // }
         indexDesArray.map((busStopDes)=>{
-          if(this.InLine1(coordinate[1]) || this.InLine5(coordinate[1])){
-            if(this.InSpecialArea(coordinate[1]) && this.InSpecialArea(busStopLocal.markers[busStopDes].coordinate)){
-              varianceDes=0.085
-            }
-            else{varianceDes = 0.05}
-          }
+          // if(this.InLine1(coordinate[1]) || this.InLine5(coordinate[1])){
+          //   if(this.InSpecialArea(coordinate[1]) && this.InBTSArea(coordinate[0])){
+          //     varianceDes=0.182
+          //   }
+          //   else{varianceDes = 0.085}
+          // }
           if(busStopDes > busStopOri){
             distRealTime = busStopDes-busStopOri+1
           }
@@ -727,14 +740,17 @@ export default class HomeScreen extends React.Component {
           else{
             distRealTime=0
           }
-          if(((distBusStop > distRealTime) && (convertDistance(getPreciseDistance(busStopLocal.markers[busStopDes].coordinate,coordinate[1]),'km') <= distToDes+varianceDes)&&
-          (distConnect <= distToOri+varianceOri)) ){
+          if(((distBusStop > distRealTime) 
+          // && (convertDistance(getPreciseDistance(busStopLocal.markers[busStopDes].coordinate,coordinate[1]),'km') <= distToDes)&&
+          // (distConnect <= distToOri)
+          )){
           
             indexDes = busStopDes
             distToDes = convertDistance(getPreciseDistance(busStopLocal.markers[busStopDes].coordinate,coordinate[1]),'km')
             indexOrigin = busStopOri
             distToOri = distConnect
             distBusStop=distRealTime
+           
             // oriToStop = convertDistance(getPreciseDistance(coordinate[0],busStopLocal.markers[busStopOri].coordinate),'km')
           }
         })
@@ -900,8 +916,8 @@ export default class HomeScreen extends React.Component {
       // console.log(OptimalLine,OptimalLineDes)
       // console.log('busStopLocal !== null')
       do{
-          console.log(busStopLocal.line,originSect[indexInMethod])
-          console.log('indexInMethod : '+indexInMethod+' origin leng '+originSect.length)
+          // console.log(busStopLocal.line,originSect[indexInMethod])
+          // console.log('indexInMethod : '+indexInMethod+' origin leng '+originSect.length)
           // console.log('coordinate[1] : '+coordinate[1])
         if(indexInMethod !== 0){
           if(lineTravel === 'สาย 1'){
@@ -1236,6 +1252,16 @@ export default class HomeScreen extends React.Component {
       {latitude:13.845099,longitude:100.570211}
     ]
     return isPointInPolygon(coordinate,InSpecialArea)
+  }
+
+  InBTSArea(coordinate){
+    const InBTSArea=[
+      {latitude:13.844291,longitude:100.572420},
+      {latitude:13.844026,longitude:100.577887},
+      {latitude:13.840031,longitude:100.575470},
+      {latitude:13.842257,longitude:100.571379}
+    ]
+    return isPointInPolygon(coordinate,InBTSArea)
   }
 
   InUniversity(coordinate){
