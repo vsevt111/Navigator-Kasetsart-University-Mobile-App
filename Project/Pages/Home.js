@@ -28,7 +28,8 @@ import Direction from 'react-native-maps-directions';
 import busStop1 from '../database/busPark/busPark1.json';0
 import busStop3 from '../database/busPark/busPark3.json';
 import busStop5 from '../database/busPark/busPark5.json';
-import geolib,{getPreciseDistance,getDistance,convertDistance,getCenter,isPointInPolygon} from 'geolib';
+import geolib,{getPreciseDistance,getDistance,convertDistance,getCenter,isPointInPolygon,
+  isPointWithinRadius} from 'geolib';
 import SearchInput ,{createFilter} from 'react-native-search-filter';
 import busStopAll from '../database/busPark/busParkAll.json';
 import symbol1 from '../image/busstopLine1.png';
@@ -71,7 +72,7 @@ async function requestLocationPermission() {
 export default class HomeScreen extends React.Component {
   componentDidMount(){
     requestLocationPermission()
-    this.mapRef.setMapBoundaries({latitude:13.853065,longitude:100.577247},{latitude:13.847937,longitude:100.564641})
+    this.mapRef.setMapBoundaries({latitude:13.853065,longitude:100.577247},{latitude:13.843514,longitude:100.561537})
     if (requestLocationPermission()) {
       Geolocation.getCurrentPosition(
           (position) => {
@@ -80,15 +81,6 @@ export default class HomeScreen extends React.Component {
               console.log(position.coords.longitude)
               this.setState({myLocation:{latitude:position.coords.latitude,
                 longitude:position.coords.longitude}})
-              // if(this.InUniversity({latitude:position.coords.latitude,longitude:
-              // position.coords.longitude})){
-              //   console.log('condition in componentdidmount 1')
-              //   this.setState({myLocInUni:true})
-              // }
-              // else{
-              //   console.log('condition in componentdidmount 2')
-              //   this.setState({myLocInUni:false})
-              // }
           },
           (error) => {
               // See error code charts below.
@@ -425,7 +417,15 @@ export default class HomeScreen extends React.Component {
       requestDir3:true,
       modalVisible:false,
       changeInCheck :false,
-      myLocInUni:true
+      myLocInUni:true,
+      calculateCheckPoint:null,
+      getIndexBusStop:false,
+      LineColorArray:[],
+      originSect:[],
+      desSect:[],
+      oriDir3:[],
+      passLine:[],
+      requestDir4:true
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -440,6 +440,7 @@ export default class HomeScreen extends React.Component {
     this.InLine3 = this.InLine3.bind(this);
     this.modifyChoiceLine = this.modifyChoiceLine.bind(this);
     this.InUniversity = this.InUniversity.bind(this);
+    this.connectToLine = this.connectToLine.bind(this);
     // this.checkMyLocInUni = this.checkMyLocInUni.bind(this);
   }
   ShowHideComponent = () => {
@@ -459,6 +460,7 @@ export default class HomeScreen extends React.Component {
     if(TextDestination !== 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
       this.Search(TextDestination,false)
     }
+    // console.log(this.InLine5(coordinate[0]))
     var latitudeDelta
     var longitudeDelta
     if(coordinate.length === 2){
@@ -478,24 +480,26 @@ export default class HomeScreen extends React.Component {
       latitudeDelta: latitudeDelta,
       longitudeDelta: longitudeDelta
     }
-    this.mapRef.animateToRegion(region,250)
+  if(coordinate.length>=1)
+    {this.mapRef.animateToRegion(region,250)}
+  
     this.modifyChoiceLine(['เส้นทางที่แนะนำ'])
+    // this.Compo.TextForCompo('example')
   }
 
   toggleAfterSearch(){
     this.DisplayAll();
     this.ShowHideComponent();
   }
-  
   Search(text,bool){
     const texts = text.toUpperCase()
     const {coordinate,TextOrigin,TextDestination,myLocation,FirstFromDes,NameOfCoor,
     modalVisible,myLocInUni} = this.state
     var FirstFromClickDes = false
+    if(TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
+      FirstFromClickDes = true
+    }
       if(bool && text === 'ตำแหน่งของตัวเอง'){
-        if(TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
-          FirstFromClickDes =true
-        }
         if(coordinate.length === 0 ){
           NameOfCoor.push('ตำแหน่งของตัวเอง')
           coordinate.push(myLocation)
@@ -548,7 +552,7 @@ export default class HomeScreen extends React.Component {
       }
     else if(text !== 'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว' ){
     AllBuilding.building.filter(item => {
-      if(item.name === texts){
+      if(item.name === text){
         if(bool){
           if(coordinate.length === 0){
             coordinate.push(item.coordinate)
@@ -556,13 +560,13 @@ export default class HomeScreen extends React.Component {
           }
           else{
             const {FirstFromDes} = this.state
-            if(FirstFromDes && coordinate.length === 1){
+            if((FirstFromDes || FirstFromClickDes) && coordinate.length === 1){
               coordinate.splice(0,0,item.coordinate)
               NameOfCoor.splice(0,0,item.name)
               this.setState({FirstFromDes:false})
             }
           
-            else if(coordinate.length === 2 || (!FirstFromDes && coordinate.length === 1)){
+            else if(coordinate.length === 2 || ((!FirstFromDes || !FirstFromClickDes) && coordinate.length === 1)){
               coordinate.fill(item.coordinate,0,1)
               NameOfCoor.fill(item.name,0,1)
             }
@@ -592,210 +596,464 @@ export default class HomeScreen extends React.Component {
       }
       this.setState({NameOfCoor})
       this.setState({coordinate})
-     
+      this.setState({getIndexBusStop:true})
         return item
       }
     })
-    
     }
-  }
-  getBusStop(lines=null){
-    const {coordinate,Waypoints,NameWaypoints,BusStopLine,line,BusStopEqual} = this.state
-    this.setState({BusStopEqual:false})
-    Waypoints.splice(0,Waypoints.length)
-    NameWaypoints.splice(0,NameWaypoints.length)
-    
-    if(coordinate.length === 2)
-  {  
+  }  
+
+  getBusStop(busStopLocal,origin,indexFromConnect=0){
+    const {coordinate,Waypoints,NameWaypoints,BusStopLine,line,BusStopEqual,
+    OptimalLine,OptimalLineDes,distLow,originSect,oriDir3,desSect} = this.state
+    this.setState({getIndexBusStop:false})
+    var indexOriArray = []
+    var indexDesArray = []
     var minOrigin  = 999
     var minDes = 999
     var indexOrigin = 0
     var indexDes = 0
     var getIndexDes = false
     var getIndexOri = false
-    var sumDist =0
     var calculateCheckPoint = false
     var calculateIndex = false
-  }
-    if(coordinate.length >=1 && (BusStopLine !== null || lines !== null) ){
-      BusStopLine.markers.map((item,index)=>{
-        const distOrigin = getPreciseDistance(coordinate[0],item.coordinate)
+    var sumDist = 0
+    var NameWaypointsLocal=[]
+    var WaypointsLocal=[]
+    var indexOriginLocal = 0
+    var indexDesLocal = 0
+        if(coordinate.length >=1){
+      busStopLocal.markers.map((item,index)=>{
+        const distOrigin = getPreciseDistance(origin,item.coordinate)
         const kiloOrigin = convertDistance(distOrigin,'km')
         if(minOrigin  >= kiloOrigin){
           minOrigin =kiloOrigin
-          indexOrigin = index
+          indexOriginLocal = index
         }
-        if(index === BusStopLine.markers.length-1){
+        if(index === busStopLocal.markers.length-1){
+        indexOriArray.push(indexOriginLocal)
+        busStopLocal.markers.map((ele,index)=>{
+            if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,285)){
+              indexOriArray.push(index)
+            }
+          })
           getIndexOri = true
         }
     })
     if(coordinate.length === 2 && getIndexOri){
-      BusStopLine.markers.map((item,index)=>
-      {var indexs
-      const {BusStopLine} = this.state
-      const distDes = getPreciseDistance(coordinate[1],item.coordinate)
+      
+      busStopLocal.markers.map((item,index)=>
+      {
+      const distDes = getPreciseDistance(item.coordinate,coordinate[1])
       const kiloDes = convertDistance(distDes,'km')
-     
-      if(index === BusStopLine.markers.length-1){
-        indexs = 0
+      if(minDes >= kiloDes ){
+        minDes=kiloDes
+        indexDesLocal = index
       }
-      else{
-        indexs = index
-      }
-      const BusStop = BusStopLine.markers[indexs+1].coordinate
-      const distBusForward = convertDistance(getPreciseDistance(coordinate[1],BusStop),'km')
-      // console.log('kiloDes : '+kiloDes)
-      if((minDes >= kiloDes || kiloDes <=0.3) && index !== indexOrigin && !getIndexDes){
-        if(minDes !== kiloDes ){
-          minDes=kiloDes
-          indexDes = index
-          if((kiloDes <= 0.30 && distBusForward > kiloDes && indexDes > indexOrigin) 
-          || (kiloDes<=0.30 && indexDes < indexOrigin && indexOrigin >= BusStopLine.markers.length-3 && BusStopLine === busStop1)){
-            getIndexDes = true
+      if(index === busStopLocal.markers.length-1){
+        indexDesArray.push(indexDesLocal)
+        busStopLocal.markers.map((ele,indexs)=>{
+          if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexDesLocal].coordinate,300)){
+            indexDesArray.push(indexs)
           }
-          // if(BusStopLine === busStop1){
-          //   console.log('test busStop1')
-          // }
-        }
-        else{
-          if(indexOrigin < index && !getIndexDes){
-            indexDes=index
-        
-          }
-        } 
+        })
+        getIndexDes = true
       }
-    })}
+    })
+    if(getIndexDes && getIndexOri){
+      var distBusStop = 50
+      var distRealTime = 0
+      var getCheck = false
+      var distToDes = 999
+      var distToOri = 999
+      // var oriToStop = 999
+      var varianceDes = 0
+      var varianceOri = 0
+        indexOriArray.map((busStopOri,index)=>{
+          if(Waypoints.length === 0){
+            var distConnect = convertDistance(getPreciseDistance(busStopLocal.markers[busStopOri].coordinate,coordinate[0]),'km')
+          }
+          else{
+            var distConnect = convertDistance(getPreciseDistance(busStopLocal.markers[busStopOri].coordinate,Waypoints[Waypoints.length-1][Waypoints[Waypoints.length-1].length-1]),'km')
+          }
+          if(this.InLine1(coordinate[0])|| this.InLine5(coordinate[0])){
+            if(this.InSpecialArea(coordinate[0]) && this.InSpecialArea(busStopLocal.markers[busStopOri].coordinate)){
+              varianceOri=0.085
+            }
+            else{varianceOri = 0.05}
+          }
+        indexDesArray.map((busStopDes)=>{
+          if(this.InLine1(coordinate[1]) || this.InLine5(coordinate[1])){
+            if(this.InSpecialArea(coordinate[1]) && this.InSpecialArea(busStopLocal.markers[busStopDes].coordinate)){
+              varianceDes=0.085
+            }
+            else{varianceDes = 0.05}
+          }
+          if(busStopDes > busStopOri){
+            distRealTime = busStopDes-busStopOri+1
+          }
+          else if(busStopDes < busStopOri){
+            distRealTime = (busStopLocal.markers.length-busStopOri)+(busStopDes+1)
+          }
+          else{
+            distRealTime=0
+          }
+          if(((distBusStop > distRealTime) && (convertDistance(getPreciseDistance(busStopLocal.markers[busStopDes].coordinate,coordinate[1]),'km') <= distToDes+varianceDes)&&
+          (distConnect <= distToOri+varianceOri)) ){
+          
+            indexDes = busStopDes
+            distToDes = convertDistance(getPreciseDistance(busStopLocal.markers[busStopDes].coordinate,coordinate[1]),'km')
+            indexOrigin = busStopOri
+            distToOri = distConnect
+            distBusStop=distRealTime
+          }
+        })
+      })
+  
+    }
+  }
     calculateIndex = true
   }
-    if(coordinate.length===2 && calculateIndex){
+    if(coordinate.length===2 && calculateIndex && !calculateCheckPoint){
       if(indexOrigin < indexDes){
-      const busStop = BusStopLine.markers.slice(indexOrigin,indexDes+1)
+      const busStop = busStopLocal.markers.slice(indexOrigin,indexDes+1)
       busStop.map((ele,index) =>{
-        NameWaypoints.push(ele.name)
-        Waypoints.push(ele.coordinate)
+      
+        NameWaypointsLocal.push(ele.name)
+        WaypointsLocal.push(ele.coordinate)
       })
     }
    
     else if(indexOrigin > indexDes){
-      const busStopFirst = BusStopLine.markers.slice(indexOrigin)
-      const busStopLast = BusStopLine.markers.slice(0,indexDes+1)
+  
+      const busStopFirst = busStopLocal.markers.slice(indexOrigin)
+      const busStopLast = busStopLocal.markers.slice(0,indexDes+1)
       busStopFirst.map((ele,index) =>{
-        NameWaypoints.push(ele.name)
-        Waypoints.push(ele.coordinate)
+        NameWaypointsLocal.push(ele.name)
+        WaypointsLocal.push(ele.coordinate)
       })
       busStopLast.map((ele,index)=>{
-        NameWaypoints.push(ele.name)
-        Waypoints.push(ele.coordinate)
+        NameWaypointsLocal.push(ele.name)
+        WaypointsLocal.push(ele.coordinate)
       })
     }
+    // else if(indexOrigin === indexDes){
+    //   console.log('indexORigin equal to indexDes')
+    //   this.setState({LineColor:'#05f709'})
+    //   this.setState({BusStopEqual:true})
+    // }
+    // console.log(WaypointsLocal)
     calculateCheckPoint=true
-  }
-  if((line === 'เส้นทางที่แนะนำ') && calculateCheckPoint){
-    
-    var DistFromMyloc = convertDistance(getPreciseDistance(coordinate[0],coordinate[1]),'km')
-    Waypoints.map((ele,index)=>{
-      if(index>=1){
-        sumDist+=convertDistance(getPreciseDistance(Waypoints[index-1],Waypoints[index]),'km')
-      }
-    })
-    if((DistFromMyloc+0.85 < sumDist && DistFromMyloc <= 0.50)||(DistFromMyloc <= 0.25)){
-      NameWaypoints.splice(0,NameWaypoints.length)
-      this.setState({LineColor:'#05f709'})
-      this.setState({BusStopEqual:true})
-      Waypoints.splice(0,Waypoints.length)
-    }
-   
-  }
-  // console.log('Distance all busStop : '+sumDist+' distance between origin and des : '+DistFromMyloc)
-  this.setState({Waypoints})
-  this.setState({NameWaypoints})
+    this.setState({calculateCheckPoint})
   }
   
-  optimalRoute(){
-    const {coordinate,line,BusStopLine,BusStopEqual,
-    Waypoints,choiceLine} = this.state
-    var lines = null
-    // var arraySum =[]
-    var sum = 9999
-    if(coordinate.length === 2){
-      busStopAll.map((coor)=>{
-        var min =999
-        var max =0
-        // var sumDist= 0
-        // optimizeWaypoints.splice(0,optimizeWaypoints.length)
-      coor.markers.map((ele,index)=>{
-        const distanceFromOri = getPreciseDistance(coordinate[0],ele.coordinate)
-        const convToKm = convertDistance(distanceFromOri,'km')
-        const distanceFromDes = getPreciseDistance(coordinate[1],ele.coordinate)
-        const convToKmDes = convertDistance(distanceFromDes,'km')
-        if(min > convToKm){
-          min = convToKm
-        }
-        if(max < convToKm){
-          max=convToKmDes
-        }
-        // optimizeWaypoints.push(ele.coordinate)
-        // if(index>=1 && optimizeWaypoints.length >=2){
-        //   const busStopDist= getPreciseDistance(optimizeWaypoints[index-1],optimizeWaypoints[index])
-        //   sumDist+=convertDistance(busStopDist,'km')
-        // }
+  if(calculateCheckPoint){
+      var DistFromMyloc = convertDistance(getPreciseDistance(origin,coordinate[1]),'km')
+      WaypointsLocal.map((ele,index)=>{
+          if(index >=1 && index <= WaypointsLocal.length-2 && indexOrigin !== indexDes){
+            sumDist+=convertDistance(getPreciseDistance(WaypointsLocal[index-1],ele),'km')
+          }
       })
-      if(sum > min+max){
-        sum=min+max
-      
-        if(coor.line === 'สาย 1' && (this.InLine1(coordinate[0]) || this.InLine1(coordinate[1])))
-        {lines=coor.line}
-        else if(coor.line === 'สาย 3' && (this.InLine3(coordinate[0]) || this.InLine3(coordinate[1]))){
-          lines=coor.line
-        }
-        else if(coor.line === 'สาย 5' && (this.InLine5(coordinate[0]) && this.InLine5(coordinate[1]))){
-          lines=coor.line
+        // console.log('sumDist '+sumDist+' distance between origin and des : '+DistFromMyloc)
+      if(((DistFromMyloc+0.85 < sumDist && DistFromMyloc <= 0.50)|| DistFromMyloc<=0.3 || indexOrigin === indexDes )){
+   
+        // this.setState({LineColor:'#05f709'})
+        // if(indexFromConnect === 0){
+        if(Waypoints.length === 0){this.setState({BusStopEqual:true})}
+        // console.log('coordinate.length = '+coordinate.length)
+        // console.log('busStopEqual === true')
+        this.setState({originSect:[]})
+
+     
+      }
+      else{
+     
+        Waypoints.push(WaypointsLocal)
+        NameWaypoints.push(NameWaypointsLocal)
+        oriDir3.push(WaypointsLocal[WaypointsLocal.length-1])
+        if(indexFromConnect>0){
+          desSect.push(WaypointsLocal[0])
         }
       }
-    })
+    //   getMode =true
+    //   console.log('sumDist '+sumDist+' distance between origin and des : '+DistFromMyloc)
+    // Waypoints.push(WaypointsLocal)
+    // NameWaypoints.push(NameWaypointsLocal)
+}
   }
+  
+  connectToLine(){
 
-  if((line === 'เส้นทางที่แนะนำ') && !BusStopEqual ){
-    if(lines === 'สาย 1'){
-      this.setState({BusStopLine:busStop1})
-      this.setState({LineColor:"#0ce8f7"})
-      this.setState({symbolUp:symbolUp1})
-      this.setState({symbolDown:symbolDown1})
-      this.setState({symbol:symbol1})
-      choiceLine.fill('เส้นทางที่แนะนำ-สาย 1',0,1)
+    const {OptimalLine,line,calculateCheckPoint,Waypoints,NameWaypoints,coordinate,OptimalLineDes,
+    getIndexBusStop,LineColorArray,distLow,BusStopEqual,
+  requestDir1,requestDir2,requestDir3,changeWaypoints,oriDir3,desSect,passLine} = this.state
+ 
+    const colorLine = ["#05f709","#0ce8f7","#d91fed","#f58f0a"]
+    // this.setState({BusStopEqual:false})
+    Waypoints.splice(0,Waypoints.length)
+    NameWaypoints.splice(0,NameWaypoints.length)
+    LineColorArray.splice(0,LineColorArray.length)
+    oriDir3.splice(0,oriDir3.length)
+    desSect.splice(0,desSect.length)
+    passLine.splice(0,passLine.length)
+    var busStopLocal = null
+    var originSect =[coordinate[0]]
+    // var desSect = []
+    var indexInMethod = 0
+    var lineEqual = false
+    var lineTravel = null
+    var filterBusLine = busStopAll
+
+    var getWaypoints = false
+    var getBusStopLine = false
+   
+    var prevWaypointsLen = 0
+    
+    if((OptimalLine === 'สาย 1' && (line === 'เส้นทางที่แนะนำ' || line ==='เส้นทางที่แนะนำ-สาย 1')) || line === 'สาย 1'){
+    
+      busStopLocal = busStop1
+      lineTravel = 'สาย 1'
+      LineColorArray.push(colorLine[1])
+      passLine.push('สาย 1')
     }
-    else if(lines === 'สาย 3'){
-      this.setState({BusStopLine:busStop3})
-      this.setState({symbolUp:symbolUp3})
-      this.setState({symbolDown:symbolDown3})
-      this.setState({symbol:symbol3})
-      this.setState({LineColor:"#d91fed"})
-      choiceLine.fill('เส้นทางที่แนะนำ-สาย 3',0,1)
+    else if((OptimalLine === 'สาย 3' && (line === 'เส้นทางที่แนะนำ' || line ==='เส้นทางที่แนะนำ-สาย 3')) || line === 'สาย 3' ){
+      busStopLocal = busStop3
+      lineTravel = 'สาย 3'
+      LineColorArray.push(colorLine[2])
+      passLine.push('สาย 3')
+    
     }
-    else if(lines === 'สาย 5'){
-      this.setState({BusStopLine:busStop5})
-      this.setState({symbolUp:symbolUp5})
-      this.setState({symbolDown:symbolDown5})
-      this.setState({symbol:symbol5})
-      this.setState({LineColor:"#f58f0a"})
-      choiceLine.fill('เส้นทางที่แนะนำ-สาย 5',0,1)
+    else if((OptimalLine === 'สาย 5' && (line === 'เส้นทางที่แนะนำ' || line ==='เส้นทางที่แนะนำ-สาย 5')) || line === 'สาย 5'){
+      busStopLocal = busStop5
+      lineTravel = 'สาย 5'
+      LineColorArray.push(colorLine[3])
+      passLine.push('สาย 5')
+   
     }
+    // console.log('indexInMethod outside loop : '+indexInMethod)
+    if(busStopLocal !== null){
+      // console.log(OptimalLine,OptimalLineDes)
+      // console.log('busStopLocal !== null')
+      do{
+          console.log(busStopLocal.line,originSect[indexInMethod])
+          console.log('indexInMethod : '+indexInMethod+' origin leng '+originSect.length)
+          // console.log('coordinate[1] : '+coordinate[1])
+        if(indexInMethod !== 0){
+          if(lineTravel === 'สาย 1'){
+          busStopLocal = busStop1
+          LineColorArray.push(colorLine[1])
+          passLine.push('สาย 1')
+        }
+        else if(lineTravel === 'สาย 3'){
+          busStopLocal = busStop3
+          LineColorArray.push(colorLine[2])
+          passLine.push('สาย 3')
+        }
+        else if(lineTravel === 'สาย 5'){
+          busStopLocal = busStop5
+          LineColorArray.push(colorLine[3])
+          passLine.push('สาย 5')
+        }
+        getBusStopLine = true
+      }
+        // if(originSect[indexInMethod] === null ){
+        //   originSect=[coordinate[0]]
+        // }
+        this.getBusStop(busStopLocal,originSect[indexInMethod],indexInMethod)
+     
+        // oriDir3.push(Waypoints[indexInMethod][Waypoints[indexInMethod].length-1])
+
+        // if(indexInMethod>=1 && Waypoints.length >=2){
+        //   desSect.push(Waypoints[indexInMethod][0])
+        // }
+      
+        // const distWayToDes =convertDistance(getPreciseDistance(Waypoints[indexInMethod][Waypoints[indexInMethod].length-1],coordinate[1]),'km')
+        
+        if((getBusStopLine || indexInMethod === 0)){
+          if(lineTravel === OptimalLineDes || BusStopEqual || convertDistance(getPreciseDistance(originSect[indexInMethod],coordinate[1]),'km') <= 0.3){
+          lineEqual = true
+          
+          break
+        }
+        else{
+          // if(Waypoints.length > 0){
+          //   if(convertDistance(getPreciseDistance(Waypoints[indexInMethod][Waypoints[indexInMethod].length-1],coordinate[1]),'km') <= 0.25){
+          //     this.setState({BusStopEqual:true})
+          //     console.log(requestDir1,requestDir2,requestDir3)
+          //     break
+          //   }
+          // }
+          var minLocal = 999
+          var coordinateLocal = null
+          filterBusLine = filterBusLine.filter((lines) => lineTravel !== lines.line)
+          if(Waypoints[indexInMethod] !== undefined){
+            filterBusLine.map((ele)=>{
+            ele.markers.map((mark)=>{
+              const distLineConn = convertDistance(getPreciseDistance(mark.coordinate,Waypoints[indexInMethod][Waypoints[indexInMethod].length-1]),'km')
+              if(minLocal > distLineConn){
+                minLocal=distLineConn
+                lineTravel=ele.line
+                coordinateLocal = mark.coordinate
+              }
+            })
+          })
+        }
+          // console.log('inside lineequal !== linetravel')
+         
+          if(coordinateLocal !== null){
+            originSect.push(coordinateLocal)
+          }
+          indexInMethod+=1
+        }
+        // getMode = true
+      }
+        
+      }while((!lineEqual || !BusStopEqual) && indexInMethod < originSect.length)
+  
+  getWaypoints =true
   }
-  // console.log(BusStopEqual,lines)
-  if(BusStopEqual){
-    choiceLine.fill('เส้นทางที่แนะนำ-เดิน',0,1)
+  if(getWaypoints)
+  {
+    if(passLine.length !== Waypoints.length){
+      passLine.pop()
+    }
+    desSect.push(coordinate[1])
+
   }
-  this.getBusStop()
+  
+  // console.log(Waypoints.length,NameWaypoints.length,originSect.length,lineTravel)
+  // if((line === 'เส้นทางที่แนะนำ') && calculateCheckPoint && getWaypoints){
+  //   originSect.map((origin,index)=>{
+  //     var sumDist = 0
+  //     var DistFromMyloc = convertDistance(getPreciseDistance(origin,coordinate[1]),'km')
+  //   Waypoints[index].map((ele,indexs)=>{
+    
+  //       if(indexs >=1 && indexs <= Waypoints[index].length-2){
+  //         sumDist+=convertDistance(getPreciseDistance(Waypoints[index][indexs-1],ele),'km')
+  //       }
+
+  //   })
+  //   if((DistFromMyloc+0.85 < sumDist && DistFromMyloc <= 0.50)||(DistFromMyloc <= 0.25)){
+  //     // NameWaypoints.splice(0,NameWaypoints.length)
+  //     this.setState({LineColor:'#05f709'})
+  //     this.setState({BusStopEqual:true})
+  //     // originSect=[coordinate[0]]
+  //     // oriDir3=[]
+  //     // Waypoints.splice(0,Waypoints.length)
+  //   }
+  //   })
+   
+    // console.log('sumDist '+sumDist+' distance between origin and des : '+DistFromMyloc)
+  // }
+  this.setState({originSect,desSect})
+}
+
+optimalRoute(){
+  const {coordinate,line,BusStopLine,BusStopEqual,
+  Waypoints,choiceLine} = this.state
+  var lines = null
+  var linesDes= null
+  // var arraySum =[]
+  var sum = 9999
+  var minDes = 999
+  var min =999
+  if(coordinate.length === 2){
+    busStopAll.map((coor)=>{
+      // var min =999
+      var max =0
+      // var sumDist= 0
+      // optimizeWaypoints.splice(0,optimizeWaypoints.length)
+    coor.markers.map((ele,index)=>{
+      const distanceFromOri = getPreciseDistance(coordinate[0],ele.coordinate)
+      const convToKm = convertDistance(distanceFromOri,'km')
+      const distanceFromDes = getPreciseDistance(coordinate[1],ele.coordinate)
+      const convToKmDes = convertDistance(distanceFromDes,'km') 
+      if(min > convToKm){
+        min = convToKm
+        lines=coor.line
+      }
+      // if(max < convToKmDes){
+      //   max=convToKmDes
+       
+      // }
+      if(minDes>convToKmDes){
+        minDes=convToKmDes
+        linesDes=coor.line
+      }
+      // optimizeWaypoints.push(ele.coordinate)
+      // if(index>=1 && optimizeWaypoints.length >=2){
+      //   const busStopDist= getPreciseDistance(optimizeWaypoints[index-1],optimizeWaypoints[index])
+      //   sumDist+=convertDistance(busStopDist,'km')
+      // }
+    })
+    // arraySum.push(sumDist)
+
+    // if(sum > min+max){
+    //   sum=min+max
+    
+    //   if(coor.line === 'สาย 1' && (this.InLine1(coordinate[0]) || this.InLine1(coordinate[1])))
+    //   {lines=coor.line}
+    //   else if(coor.line === 'สาย 3' && (this.InLine3(coordinate[0]) || this.InLine3(coordinate[1]))){
+    //     lines=coor.line
+    //   }
+    //   else if(coor.line === 'สาย 5' && (this.InLine5(coordinate[0]) || this.InLine5(coordinate[1]))){
+    //     lines=coor.line
+    //   }
+    
+    // }
+  })
+
+  this.setState({OptimalLine:lines,OptimalLineDes:linesDes})
+  
+}
+
+if((line === 'เส้นทางที่แนะนำ') && !BusStopEqual ){
+  if(lines === 'สาย 1'){
+    this.setState({BusStopLine:busStop1})
+    this.setState({LineColor:"#0ce8f7"})
+    this.setState({symbolUp:symbolUp1})
+    this.setState({symbolDown:symbolDown1})
+    this.setState({symbol:symbol1})
+    choiceLine.fill('เส้นทางที่แนะนำ-สาย 1',0,1)
   }
+  else if(lines === 'สาย 3'){
+    this.setState({BusStopLine:busStop3})
+    this.setState({symbolUp:symbolUp3})
+    this.setState({symbolDown:symbolDown3})
+    this.setState({symbol:symbol3})
+    this.setState({LineColor:"#d91fed"})
+    choiceLine.fill('เส้นทางที่แนะนำ-สาย 3',0,1)
+  }
+  else if(lines === 'สาย 5'){
+    this.setState({BusStopLine:busStop5})
+    this.setState({symbolUp:symbolUp5})
+    this.setState({symbolDown:symbolDown5})
+    this.setState({symbol:symbol5})
+    this.setState({LineColor:"#f58f0a"})
+    choiceLine.fill('เส้นทางที่แนะนำ-สาย 5',0,1)
+  }
+} 
+
+// console.log(BusStopEqual,lines)
+if(BusStopEqual){
+  choiceLine.fill('เส้นทางที่แนะนำ-เดิน',0,1)
+}
+if(coordinate.length ===2)
+{this.connectToLine()}
+}
 
   handlePressOnMap(e){
     this.setState({time:null,distance:null,request:false,BusStopEqual:false,line:'เส้นทางที่แนะนำ'})
     const {TextOrigin,TextDestination,changeOrigin,coordinate,FirstFromDes,NameOfCoor,
-    BusStopLine,changeInCheck,requestDir1,requestDir2,requestDir3} =this.state
+    BusStopLine,changeInCheck,requestDir1,requestDir2,requestDir3,line,requestDir4} =this.state
+    var FirstFromClickDes = false
     if(changeOrigin && this.InUniversity(e.nativeEvent.coordinate) && requestDir1
-    && requestDir2 && requestDir3){
+    && requestDir2 && requestDir3 && requestDir4){
       if(coordinate.length === 1 ){
-        if(!FirstFromDes){
+        if(TextDestination === 'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'){
+          FirstFromClickDes = true
+        }
+        if(!FirstFromDes && !FirstFromClickDes){
         coordinate.shift()
         NameOfCoor.shift()
         coordinate.push(e.nativeEvent.coordinate)
@@ -816,9 +1074,10 @@ export default class HomeScreen extends React.Component {
         coordinate.push(e.nativeEvent.coordinate)
       }
       this.setState({TextOrigin:'ท่านได้คลิกสถานที่ต้นทางบนแผนที่แล้ว'})
+      
     }
     else if(!changeOrigin && this.InUniversity(e.nativeEvent.coordinate)&& requestDir1
-    && requestDir2 && requestDir3){
+    && requestDir2 && requestDir3&& requestDir4){
       if(coordinate.length === 2){
       
         coordinate.pop()
@@ -845,11 +1104,11 @@ export default class HomeScreen extends React.Component {
       this.setState({TextDestination:'ท่านได้คลิกสถานที่ปลายทางบนแผนที่แล้ว'})
     }
     
-    if(BusStopLine === null){
+    if(line ==='เส้นทางที่แนะนำ'){
       this.optimalRoute()
     }
-    else if(BusStopLine !== null){
-      this.getBusStop()
+    else if(line !== 'เส้นทางที่แนะนำ'){
+      this.connectToLine()
     }
     if(!this.InUniversity(e.nativeEvent.coordinate)){
       this.setState({modalVisible:true})
@@ -905,6 +1164,17 @@ export default class HomeScreen extends React.Component {
     ]
     return !isPointInPolygon(coordinate,InLine3)
   }
+  InSpecialArea(coordinate){
+    const InSpecialArea=[
+      {latitude:13.846868,longitude:100.570247},
+      {latitude:13.846439,longitude:100.572818},
+      {latitude:13.844267,longitude:100.572837},
+      {latitude:13.842550,longitude:100.571916},
+      {latitude:13.843654,longitude:100.569760},
+      {latitude:13.845099,longitude:100.570211}
+    ]
+    return isPointInPolygon(coordinate,InSpecialArea)
+  }
 
   InUniversity(coordinate){
     const {TextOrigin,TextDestination,myLocation} = this.state
@@ -942,10 +1212,7 @@ export default class HomeScreen extends React.Component {
       if(this.InLine5(coordinate[0]) && this.InLine5(coordinate[1])){
         array.push('สาย 5')
       }
-      // if(!this.InUniversity(coordinate[0]) || !this.InUniversity(coordinate[1])){
 
-      //   this.setState({modalVisible:true})
-      // }
       this.setState({choiceLine:array})
 
     }
@@ -957,26 +1224,25 @@ export default class HomeScreen extends React.Component {
 
   render() {
     const KEY_TO_FILTERS = ['name']
-    
     const {coordinate,time,distOrigin,distance,TextOrigin,
       TextDestination,TextColor,Opacity,Waypoints,NameWaypoints,line,LineColor,countDes,
     countOrigin,changeOrigin,BusStopLine,prevTextOrigin,prevTextDestination
   ,listItemOri,listItemDes,deleOri,deleDes,NameOfCoor,BusStopEqual,
 OptimalLine,request,choiceLine,filterOriLen,filterDesLen,requestDir1,
-requestDir2,requestDir3,myLocation,modalVisible} = this.state
-  const filterNameOrigin= AllBuilding.building.filter(createFilter(TextOrigin,KEY_TO_FILTERS))
-  const filterNameDes = AllBuilding.building.filter(createFilter(TextDestination,KEY_TO_FILTERS))
+requestDir2,requestDir3,myLocation,modalVisible,FacultyValue,originSect,LineColorArray,
+desSect,oriDir3,requestDir4,passLine} = this.state
+  var filterNameOrigin= AllBuilding.building.filter(createFilter(TextOrigin,KEY_TO_FILTERS))
+  var filterNameDes = AllBuilding.building.filter(createFilter(TextDestination,KEY_TO_FILTERS))
     const faculty=["รวม","คณะเกษตร","คณะบริหารธุรกิจ","คณะประมง","คณะมนุษยศาสตร์","คณะวนศาสตร์"
   ,"คณะวิทยาศาสตร์","คณะวิศวกรรมศาสตร์","คณะศึกษาศาสตร์","คณะเศรษฐศาสตร์","คณะสถาปัตยกรรมศาสตร์",
-"คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
-const Arrayline =["เส้นทางที่แนะนำ","สาย 1","สาย 3","สาย 5"]
+"คณะสังคมศาสตร์","คณะสัตวแพทยศาสตร์","คณะอุตสาหกรรมการเกษตร","คณะเทคนิคการสัตวแพทย์","คณะสิ่งแวดล้อม"]
 
 if(!this.state.change){
   const{time,coordinate,TextOrigin,TextDestination,myLocation} = this.state
   this.setState({change:true})
   this.setState({prevTextOrigin:this.state.TextOrigin})
   this.setState({prevTextDestination:this.state.TextDestination})
-  this.getBusStop()
+  // this.getBusStop()
   this.setState({request:true})
   this.optimalRoute()
   // console.log(filterNameOrigin.length,filterNameDes.length)
@@ -1239,7 +1505,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
                     }
                     console.log(itemValue)
                   }}>
-                    <item label='กรุณาเลือกสถานที่'/>
+                     <item label='กรุณาเลือกสถานที่' value=''/>
                     <item label='ตำแหน่งของตัวเอง' value ='ตำแหน่งของตัวเอง'/>
                     {this.state.FacultyValue.building.map((building) =>(
                       <item label={building.name} value={building.name} key={building.name}/>
@@ -1261,6 +1527,8 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
                   style={{ height: 40, borderColor: 'gray', borderWidth: 1
                   }}
                   placeholder="Type Origin or click on the map"
+                  autoFocus={true}
+                  editable={requestDir1 && requestDir2 && requestDir3 && requestDir4 ? true:false }
                 />
                 <TextInput
                   onChangeText={TextDestination => {
@@ -1278,7 +1546,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
                   value={this.state.TextDestination}
                   style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                   placeholder="Type Destination or click on the map"
-                  // editable={TextOrigin!=="" ? true:false}
+                  editable={requestDir1 && requestDir2 && requestDir3 && requestDir4 ? true:false }
                 />
                 <Button 
                   onPress={this.toggleAfterSearch}
@@ -1290,82 +1558,6 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
             </View> 
           </View>
         </View>
-        {/* <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:1,width:'50%'}}>
-          <Picker
-            selectedValue={this.state.FacultyValue.Faculty}
-            style={{height: 50,borderRadius: 150}}
-            onValueChange={(itemValue) =>{
-              if(this.state.changeOrigin){
-              this.setState({FacultyOrigin:itemValue})
-            }
-              else{
-                this.setState({FacultyDestination:itemValue})
-              }
-            }
-            }>
-            {faculty.map(fac =>(
-              <item label={fac} value={fac} key={fac}/>
-            ))}
-          </Picker>
-          <Picker 
-            selectedValue = {this.state.changeOrigin ? this.state.TextOrigin:this.state.TextDestination}
-            style ={{height:50}}
-            onValueChange={(itemValue,itemIndex) =>{
-              if(this.state.changeOrigin){
-                this.setState({TextOrigin:itemValue})
-            }
-            else {
-              this.setState({TextDestination:itemValue})
-            }
-            console.log(itemValue)
-          }}>
-            <item label='กรุณาเลือกสถานที่'/>
-            <item label='ตำแหน่งของตัวเอง' value ='ตำแหน่งของตัวเอง'/>
-            {this.state.FacultyValue.building.map((building) =>(
-              <item label={building.name} value={building.name} key={building.name}/>
-            ))}
-        </Picker> 
-        <TextInput
-        onChangeText={(TextOrigin) => { 
-          this.setState({TextOrigin})
-        }}
-        onFocus={(focus)=>{
-          if(focus){
-            this.setState({changeOrigin:true})
-          }
-          else{
-            this.setState({changeOrigin:false})
-          }
-        }}
-        value={this.state.TextOrigin}
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1
-        }}
-        placeholder="Type Origin or click on the map"
-      />
-      <TextInput
-        onChangeText={TextDestination => {
-          this.setState({TextDestination})
-        }}
-        onFocus={(focus)=>
-        {
-          if(focus){
-            this.setState({changeOrigin:false})
-          }
-          else{
-            this.setState({changeOrigin:true})
-          }
-        }}
-        value={this.state.TextDestination}
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-        placeholder="Type Destination or click on the map"
-        // editable={TextOrigin!=="" ? true:false}
-      />
-      <Button 
-        onPress={this.DisplayAll}
-        title="ค้นหา" 
-        disabled={this.state.myLocInUni ? false:true}
-      />
-        </View> */}
         <View style={{position:'absolute',backgroundColor:'#ffffff',zIndex:0 ,top:0,left:0,width:'60%'}}>
         {(this.state.show) ? (
           <Picker
@@ -1388,7 +1580,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
           </Picker>
         ) : null}
         </View>
-      <MapView style={{flex : 1,zIndex:-1}}
+        <MapView style={{flex : 1,zIndex:-1}}
         ref = {el =>(this.mapRef=el)}
         initialRegion={{
           latitude: 13.847639,
@@ -1397,93 +1589,58 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
           longitudeDelta: 0.0021
         }}
         toolbarEnabled={false}
-        onPress={(requestDir1 && requestDir2 && requestDir3) ? this.handlePressOnMap:null}
+        onPress={(requestDir1 && requestDir2 && requestDir3 && requestDir4) ? this.handlePressOnMap:null}
         showsUserLocation={true}
         minZoomLevel={15}
         >
           {this.state.coordinate.map((coor,index)=>(
-            <Marker 
-              coordinate={coor} 
-              key={index} 
-              title={coordinate.length === 2 ? NameOfCoor[index]:null} 
-              ref={el =>(this.MarkRef=el)}
-            >
-              <Image source={coordinate.length === 2 && index == 1 ? destinationSymbol : startSymbol}
-              style={{height:35,width:35}}></Image>
+            <Marker image={startSymbol} coordinate={coor} key={index} title={coordinate.length === 2 ? NameOfCoor[index]:null} ref={el =>(this.MarkRef=el)}>
+
             </Marker>
+
           ))}
-          
-          {Waypoints !== [] ? Waypoints.map((coor,index)=>{
-            if(index===0){
-              return(
-                <Marker coordinate={coor} key={index}  title='ขึ้นที่ป้ายจอดนี้'>
-                  <Image source={this.state.symbolUp} style={{height:20,width:20}}/>
-                </Marker>
-              )
-            }
-            else if(index === Waypoints.length-1){
-              return(
-                <Marker coordinate={coor} key={index} title='ลงที่ป้ายจอดนี้'>
-                  <Image source={this.state.symbolDown} style={{height:20,width:20}} />
-                </Marker>
-              )
-            }
-          }):null}
-        {request && coordinate.length === 2 && <Direction
-            origin = {coordinate[0]}
-            destination = {BusStopEqual ? coordinate[1]:Waypoints[0]}
-            apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
-            strokeWidth={4}
-            strokeColor={'#05f709'}
-            mode={'WALKING'}
-            // optimizeWaypoints={true}
-            // splitWaypoints={true}
-            // resetOnChange={true}
-            onStart={(params) => {
-              this.setState({requestDir1:false})
-              console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
-            }}
-            onReady ={result =>{
-            
-              console.log('direction 1')
-              this.updateTime(result.duration,result.distance)
-              this.setState({requestDir1:true})
-            }}
-            onError={error=>{
-              console.log(error)
-            }}
-            >
-            </Direction>}
-           {request && coordinate.length === 2 && !BusStopEqual && <Direction
-            origin = {Waypoints[0]}
-            destination = {Waypoints[Waypoints.length-1]}
-            apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
-            strokeWidth={4}
-            strokeColor={LineColor}
-            waypoints = {Waypoints.slice(1,Waypoints.length-1)}
          
-            // mode={'WALKING'}
-            // optimizeWaypoints={true}
-            // splitWaypoints={true}
-            // resetOnChange={true}
-            onStart={(params) => {
-              this.setState({requestDir2:false})
-              console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
-            }}
-            onReady ={result =>{
-              
-              console.log('direction 2')
-              this.updateTime(result.duration,result.distance)
-              // this.setState({request:false})
-              this.setState({requestDir2:true})
-            }}
-            onError={error=>{
-              console.log(error)
-            }}
-            >
-            </Direction>}
-           {request && coordinate.length === 2 && !BusStopEqual && <Direction
-            origin = {Waypoints[Waypoints.length - 1]}
+          {/* <Compo origin={{latitude:13.847339,longitude:100.567634}} destination={{latitude:13.846605,longitude:100.570532}}
+          ref = {el =>(this.Compo=el)} texts='test to comopsitnotn'></Compo> */}
+         
+          {Waypoints.map((ele,index)=>{
+            var sym = null
+            if(this.state.passLine[index] === 'สาย 1'){
+              sym = symbolUp1
+            }
+            else if(this.state.passLine[index]=== 'สาย 3'){
+              sym = symbolUp3
+            }
+            else if(this.state.passLine[index]==='สาย 5'){
+              sym = symbolUp5
+            }
+            return(
+              <Marker coordinate={ele[0]} key={index}>
+                <Image source={sym} style={{height:20,width:20}}/>
+              </Marker>
+            )
+          })}
+
+          {Waypoints.map((ele,index)=>{
+            var sym = null
+            if(this.state.passLine[index] === 'สาย 1'){
+              sym = symbolDown1
+            }
+            else if(this.state.passLine[index]=== 'สาย 3'){
+              sym = symbolDown3
+            }
+            else if(this.state.passLine[index]==='สาย 5'){
+              sym = symbolDown5
+            }
+            return(
+              <Marker coordinate={ele[ele.length-1]} key={index}>
+                <Image  source={sym} style={{height:20,width:20}}/>
+              </Marker>
+            )
+          })}
+
+            {request && coordinate.length === 2 && BusStopEqual && <Direction
+            origin = {coordinate[0]}
             destination = {coordinate[1]}
             apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
             strokeWidth={4}
@@ -1493,19 +1650,118 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
             // splitWaypoints={true}
             // resetOnChange={true}
             onStart={(params) => {
-              this.setState({requestDir3:false})
-              console.log(`Started routing between "${params.origin}" and "${params.destination}"`)
+              this.setState({requestDir4:false})
+              console.log(`Started routing between "${params.origin}" and "${params.destination}" Direction 4`)
             }}
             onReady ={result =>{
-              console.log('direction 3')
+              
+              console.log('direction 4')
               this.updateTime(result.duration,result.distance)
-              this.setState({requestDir3:true})
+              this.setState({requestDir4:true})
             }}
             onError={error=>{
               console.log(error)
             }}
             >
             </Direction>}
+
+        {request && coordinate.length === 2 && !BusStopEqual && Waypoints.map((origin,index)=>{
+          return (
+            <Direction
+            key={index}
+            origin = {originSect[index]}
+            destination = {Waypoints[index] === undefined  ? null:origin[0]}
+            apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+            strokeWidth={4}
+            strokeColor={'#05f709'}
+            mode={'WALKING'}
+            // optimizeWaypoints={true}
+            // splitWaypoints={true}
+            // resetOnChange={true}
+            onStart={(params) => {
+              
+              this.setState({requestDir1:false})
+              console.log(`Started routing between "${params.origin}" and "${params.destination}" Direction 1`)
+            }}
+            onReady ={result =>{
+              
+              console.log('direction 1')
+              this.updateTime(result.duration,result.distance)
+              this.setState({requestDir1:true})
+            }}
+            onError={error=>{
+              console.log(error)
+            }}
+            >
+            </Direction>
+          )
+        })}
+
+           {request && Waypoints.length >=1 && !BusStopEqual && Waypoints.map((origin,index)=>{
+             return (
+              <Direction
+              key={index}
+              origin = {Waypoints[index] !== undefined ? Waypoints[index][0]:null}
+              destination = {Waypoints[index] !== undefined ? Waypoints[index][Waypoints[index].length-1]:null}
+              apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+              strokeWidth={4}
+              strokeColor={LineColorArray[index]}
+              waypoints = {Waypoints[index] !== undefined ? Waypoints[index].slice(1,Waypoints[index].length-1):null}
+           
+              // mode={'WALKING'}
+              // optimizeWaypoints={true}
+              // splitWaypoints={true}
+              // resetOnChange={true}
+              onStart={(params) => {
+       
+                this.setState({requestDir2:false})
+                console.log(`Started routing between "${params.origin}" and "${params.destination}" Direction 2`)
+              }}
+              onReady ={result =>{
+                
+                console.log('direction 2')
+                this.updateTime(result.duration,result.distance)
+                // this.setState({request:false})
+                this.setState({requestDir2:true})
+              }}
+              onError={error=>{
+                console.log(error)
+              }}
+              >
+              </Direction>
+             )
+           })}
+            
+           {request && coordinate.length === 2 && !BusStopEqual && oriDir3.map((des,index)=>{
+             return(
+              <Direction
+              key={index}
+              origin = {des}
+              destination = {desSect[index]}
+              apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+              strokeWidth={4}
+              strokeColor={'#05f709'}
+              mode={'WALKING'}
+              // optimizeWaypoints={true}
+              // splitWaypoints={true}
+              // resetOnChange={true}
+              onStart={(params) => {
+                this.setState({requestDir3:false})
+                console.log(`Started routing between "${params.origin}" and "${params.destination}" Direction 3`)
+              }}
+              onReady ={result =>{
+             
+                console.log('direction 3')
+                this.updateTime(result.duration,result.distance)
+                this.setState({requestDir3:true})
+              }}
+              onError={error=>{
+                console.log(error)
+              }}
+              >
+              </Direction>
+             )
+           })}
         </MapView>
         <Card style={{ width: "100%"}}>
           <CardItem header bordered >
@@ -1513,13 +1769,35 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
           </CardItem>
         </Card>
           <View style={NameWaypoints.length === 0 ? {height:'0%'}:{height:'20%'}}>
+            
             <ScrollView>
-              {NameWaypoints.map((ele ,index)=>(
+              {/* {NameWaypoints.map((ele ,index)=>(
               <CardItem bordered>
                 <Text key={index}>{index === 0 && index !== NameWaypoints.length-1 ? `ขึ้นที่ป้ายจอด : ${ele}`:null}{index!== 0 && index !== NameWaypoints.length-1 ? `ผ่านป้ายจอด : ${ele}`:null}{index === NameWaypoints.length-1 ? `ลงที่ป้ายจอด : ${ele}`:null}
                 </Text>
+              </CardItem> */}
+              <CardItem bordered>
+                {passLine.length > 0 && coordinate.length===2?<Text style={{zIndex:1,alignSelf:'center'}}>{passLine.map((line,index)=>{
+                  if(index === passLine.length-1){
+                    return (line)
+                  }
+                  else{
+                    return line+'----->'
+                  }
+                })}</Text>:null}
               </CardItem>
-              ))}
+              {NameWaypoints.map((ele)=>(
+              ele.map((name,index)=>{
+                return(
+                <CardItem bordered>
+                  <Text key={index}>{index === 0 && index !== ele.length-1 ? `เดินไปยังป้ายจอด : ${name}`:null}
+                    {index!== 0 && index !== ele.length-1 ? `ผ่านป้ายจอด : ${name}`:null}
+                    {index === ele.length-1 ? `ลงที่ป้ายจอด : ${name}`:null}
+                  </Text>
+                </CardItem>
+              )
+            })
+          ))}
             </ScrollView>
           </View>
           {TextOrigin !== "" && !listItemOri && changeOrigin?
