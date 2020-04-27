@@ -1256,10 +1256,11 @@ export default class HomeScreen extends React.Component {
 
   InBTSArea(coordinate){
     const InBTSArea=[
-      {latitude:13.844291,longitude:100.572420},
-      {latitude:13.844026,longitude:100.577887},
-      {latitude:13.840031,longitude:100.575470},
-      {latitude:13.842257,longitude:100.571379}
+      {latitude:13.846668,longitude:100.572560},
+      {latitude:13.846197,longitude:100.579615},
+      {latitude:13.839862,longitude:100.575868},
+      {latitude:13.842234,longitude:100.571392},
+      {latitude:13.843839,longitude:100.572515}
     ]
     return isPointInPolygon(coordinate,InBTSArea)
   }
