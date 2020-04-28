@@ -432,7 +432,9 @@ export default class HomeScreen extends React.Component {
       desSect:[],
       oriDir3:[],
       passLine:[],
-      requestDir4:true
+      requestDir4:true,
+   
+
     };
     this.Search = this.Search.bind(this);
     this.DisplayAll = this.DisplayAll.bind(this);
@@ -603,8 +605,9 @@ export default class HomeScreen extends React.Component {
   }
   getBusStop(busStopLocal,origin,indexFromConnect=0){
     const {coordinate,Waypoints,NameWaypoints,BusStopLine,line,BusStopEqual,
-    OptimalLine,OptimalLineDes,distLow,originSect,oriDir3,desSect} = this.state
+    OptimalLine,OptimalLineDes,distLow,originSect,oriDir3,desSect,optimizeSumArray} = this.state
     this.setState({getIndexBusStop:false})
+    
     var indexOriArray = []
     var indexDesArray = []
     var minOrigin  = 999
@@ -620,7 +623,9 @@ export default class HomeScreen extends React.Component {
     var WaypointsLocal=[]
     var indexOriginLocal = 0
     var indexDesLocal = 0
+
         if(coordinate.length ===2){
+        
       busStopLocal.markers.map((item,index)=>{
         const distOrigin = getPreciseDistance(origin,item.coordinate)
         const kiloOrigin = convertDistance(distOrigin,'km')
@@ -632,105 +637,94 @@ export default class HomeScreen extends React.Component {
         if(index === busStopLocal.markers.length-1){
     
         busStopLocal.markers.map((ele,index)=>{
-            if(this.InSpecialArea(coordinate[0]) && this.InBTSArea(coordinate[1])){
+            if(this.InSpecialArea(origin) && this.InBTSArea(coordinate[1])){
               if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,220)){
               indexOriArray.push(index)
             }
           }
           else{
-            if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,50)){
+            if(this.InSpecialArea(origin) || this.InBTSArea(origin)){
+              if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,280)){
+                indexOriArray.push(index)
+              }
+            }
+            else if(this.InSpecialArea(origin) && busStopLocal === busStop3){
+              if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,350)){
+                indexOriArray.push(index)
+              }
+            }
+            else{
+              if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,75)){
               indexOriArray.push(index)
             }
+          }
           }
           })
           getIndexOri = true
         }
     })
-    // console.log(indexOriArray)
+
     if(coordinate.length === 2 && getIndexOri){
       
       busStopLocal.markers.map((item,index)=>
       {
       const distDes = getPreciseDistance(item.coordinate,coordinate[1])
       const kiloDes = convertDistance(distDes,'km')
-      // if(index === busStopLocal.markers.length-1){
-      //   indexs = 0
-      // }
-      // else{
-      //   indexs = index
-      // }
-      // const BusStop = busStopLocal.markers[indexs+1].coordinate
-      // const distBusForward = convertDistance(getPreciseDistance(BusStop,coordinate[1]),'km')
-      // console.log('kiloDes : '+kiloDes)
+    
       if(minDes >= kiloDes ){
         minDes=kiloDes
-        // indexDes = index
         indexDesLocal = index
-        // if(minDes !== kiloDes ){
-        //   minDes=kiloDes
-        //   indexDes = index
-        //   indexDesLocal = index
-        //   if((kiloDes <= 0.30 && distBusForward > kiloDes && indexDes > indexOrigin) 
-        //   || (kiloDes<=0.30 && indexDes < indexOrigin && indexOrigin >= busStopLocal.markers.length-3 && busStopLocal === busStop1)){
-        //     getIndexDes = true
-        //   }
-        // }
-        // else{
-        //   if(indexOrigin < index && !getIndexDes){
-        //     indexDes=index
-        //   }
-        // } 
-      // console.log('indexDesArray : '+indexDesArray)
+        
       }
       if(index === busStopLocal.markers.length-1){
       
         busStopLocal.markers.map((ele,indexs)=>{
-          if(this.InSpecialArea(coordinate[1]) && this.InBTSArea(coordinate[0])){
+          if(this.InSpecialArea(coordinate[1]) && this.InBTSArea(origin)){
             if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexDesLocal].coordinate,220)){
-            // console.log('indexs : '+indexs)
+       
             indexDesArray.push(indexs)
           }
         }
         else{
-          if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexDesLocal].coordinate,50)){
+          if(this.InSpecialArea(coordinate[1])){
+            if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexDesLocal].coordinate,280)){
+          
+              indexDesArray.push(indexs)
+            }
+          }
+          else if(this.InSpecialArea(coordinate[1]) && busStopLocal === busStop3){
+            if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexOriginLocal].coordinate,350)){
+              indexOriArray.push(indexs)
+            }
+          }
+          else{
+            if(isPointWithinRadius(ele.coordinate,busStopLocal.markers[indexDesLocal].coordinate,75)){
             indexDesArray.push(indexs)
           }
+        }
         }
         })
         getIndexDes = true
       }
     })
     if(getIndexDes && getIndexOri){
-      // console.log('indexOriArray : '+indexOriArray)
-      // console.log('indexDesArray : '+indexDesArray)
-   
+
       var distBusStop = 50
       var distRealTime = 0
       var distToDes = 999
       var distToOri = 999
-      // var oriToStop = 999
+ 
         indexOriArray.map((busStopOri,index)=>{
-          // console.log('indexOriArray : '+indexOriArray)
-          // console.log('indexDesArray : '+indexDesArray)
+    
           if(Waypoints.length === 0){
             var distConnect = convertDistance(getPreciseDistance(busStopLocal.markers[busStopOri].coordinate,coordinate[0]),'km')
           }
           else{
             var distConnect = convertDistance(getPreciseDistance(busStopLocal.markers[busStopOri].coordinate,Waypoints[Waypoints.length-1][Waypoints[Waypoints.length-1].length-1]),'km')
           }
-          // if(this.InLine1(coordinate[0])|| this.InLine5(coordinate[0])){
-          //   if(this.InSpecialArea(coordinate[0]) && this.InBTSArea(coordinate[1]  ) ){
-          //     varianceOri=0.182
-          //   }
-          //   else{varianceOri = 0.085}
-          // }
+        
         indexDesArray.map((busStopDes)=>{
-          // if(this.InLine1(coordinate[1]) || this.InLine5(coordinate[1])){
-          //   if(this.InSpecialArea(coordinate[1]) && this.InBTSArea(coordinate[0])){
-          //     varianceDes=0.182
-          //   }
-          //   else{varianceDes = 0.085}
-          // }
+         
           if(busStopDes > busStopOri){
             distRealTime = busStopDes-busStopOri+1
           }
@@ -741,47 +735,22 @@ export default class HomeScreen extends React.Component {
             distRealTime=0
           }
           if(((distBusStop > distRealTime) 
-          // && (convertDistance(getPreciseDistance(busStopLocal.markers[busStopDes].coordinate,coordinate[1]),'km') <= distToDes)&&
-          // (distConnect <= distToOri)
+        
           )){
-          
             indexDes = busStopDes
             distToDes = convertDistance(getPreciseDistance(busStopLocal.markers[busStopDes].coordinate,coordinate[1]),'km')
             indexOrigin = busStopOri
             distToOri = distConnect
             distBusStop=distRealTime
            
-            // oriToStop = convertDistance(getPreciseDistance(coordinate[0],busStopLocal.markers[busStopOri].coordinate),'km')
-          }
+              }
         })
-        // if(index === indexOriArray.length-1 ){
-        //   var indexDesInLoop = indexDes
-        //   if(indexDesInLoop === busStopLocal.markers.length-1){
-        //     if(getPreciseDistance(busStopLocal.markers[indexDesInLoop].coordinate,coordinate[1])
-        //     > getPreciseDistance(busStopLocal.markers[0].coordinate,coordinate[1])){
-        //       indexDes = 0
-        //     }
-        //   }
-        //   else{
-        //     if(getPreciseDistance(busStopLocal.markers[indexDesInLoop].coordinate,coordinate[1]) 
-        //     > getPreciseDistance(busStopLocal.markers[indexDesInLoop+1].coordinate,coordinate[1])){
-        //       indexDes = indexDes+1
-        //     }
-        //   }
-        // }
       })
-  
     }
-    // if(distRealTime === 0 ){
-    //   this.setState({BusStopEqual:true,originSect:[coordinate[0]]})
-    // }
-    // console.log(indexDesArray) 
   }
-    // console.log('minDes : '+minDes)
     calculateIndex = true
   }
-    // console.log(' IndexOrigin: '+indexOrigin)
-    // console.log(' IndexDes: '+indexDes)
+
     if(coordinate.length===2 && calculateIndex && !calculateCheckPoint){
       if(indexOrigin < indexDes){
       const busStop = busStopLocal.markers.slice(indexOrigin,indexDes+1)
@@ -805,12 +774,7 @@ export default class HomeScreen extends React.Component {
         WaypointsLocal.push(ele.coordinate)
       })
     }
-    // else if(indexOrigin === indexDes){
-    //   console.log('indexORigin equal to indexDes')
-    //   this.setState({LineColor:'#05f709'})
-    //   this.setState({BusStopEqual:true})
-    // }
-    // console.log(WaypointsLocal)
+    
     calculateCheckPoint=true
     this.setState({calculateCheckPoint})
   }
@@ -822,52 +786,31 @@ export default class HomeScreen extends React.Component {
             sumDist+=convertDistance(getPreciseDistance(WaypointsLocal[index-1],ele),'km')
           }
       })
-        // console.log('sumDist '+sumDist+' distance between origin and des : '+DistFromMyloc)
       if(((DistFromMyloc+0.85 < sumDist && DistFromMyloc <= 0.50)|| DistFromMyloc<=0.3 || indexOrigin === indexDes )){
-   
-        // this.setState({LineColor:'#05f709'})
-        // if(indexFromConnect === 0){
         if(Waypoints.length === 0){this.setState({BusStopEqual:true})}
-        // console.log('coordinate.length = '+coordinate.length)
-        // console.log('busStopEqual === true')
         this.setState({originSect:[]})
-        // console.log('originSect from getBusStop : '+originSect[indexFromConnect])
-        // }
-        // if(Waypoints.length > 1){
-        //   originSect.pop()
-        // }
-     
       }
       else{
-     
-        Waypoints.push(WaypointsLocal)
+      
+          Waypoints.push(WaypointsLocal)
         NameWaypoints.push(NameWaypointsLocal)
         oriDir3.push(WaypointsLocal[WaypointsLocal.length-1])
         if(indexFromConnect>0){
           desSect.push(WaypointsLocal[0])
         }
+      
       }
-    //   getMode =true
-    //   console.log('sumDist '+sumDist+' distance between origin and des : '+DistFromMyloc)
-    // Waypoints.push(WaypointsLocal)
-    // NameWaypoints.push(NameWaypointsLocal)
+      
+
 }
-  
-  // this.setState({Waypoints})
-  // this.setState({NameWaypoints})
-  // this.setState({getIndexBusStop:true})
-  // if(calculateCheckPoint && convertDistance(getPreciseDistance(busStopLocal.markers[indexDes].coordinate,coordinate[1]),'km') <= 0.25){
-  //   this.setState({distLow:true})
-  //   console.log('From GetBusStop'+distLow)
-  // }
-  
   }
 
   connectToLine(){
   
     const {OptimalLine,line,calculateCheckPoint,Waypoints,NameWaypoints,coordinate,OptimalLineDes,
     getIndexBusStop,LineColorArray,distLow,BusStopEqual,
-  requestDir1,requestDir2,requestDir3,changeWaypoints,oriDir3,desSect,passLine} = this.state
+  requestDir1,requestDir2,requestDir3,changeWaypoints,oriDir3,desSect,passLine,sumDist,
+} = this.state
  
     const colorLine = ["#05f709","#0ce8f7","#d91fed","#f58f0a"]
     // this.setState({BusStopEqual:false})
@@ -879,46 +822,39 @@ export default class HomeScreen extends React.Component {
     passLine.splice(0,passLine.length)
     var busStopLocal = null
     var originSect =[coordinate[0]]
-    // var desSect = []
     var indexInMethod = 0
     var lineEqual = false
     var lineTravel = null
     var filterBusLine = busStopAll
-
+    
     var getWaypoints = false
     var getBusStopLine = false
-   
     var prevWaypointsLen = 0
-    
-    if((OptimalLine === 'สาย 1' && (line === 'เส้นทางที่แนะนำ' || line ==='เส้นทางที่แนะนำ-สาย 1')) || line === 'สาย 1'){
-    
+ 
+    if((OptimalLine === 'สาย 1' && (line === 'เส้นทางที่แนะนำ' || line ==='เส้นทางที่แนะนำ-สาย 1')) || line === 'สาย 1' ){
+     
       busStopLocal = busStop1
       lineTravel = 'สาย 1'
       LineColorArray.push(colorLine[1])
       passLine.push('สาย 1')
     }
-    else if((OptimalLine === 'สาย 3' && (line === 'เส้นทางที่แนะนำ' || line ==='เส้นทางที่แนะนำ-สาย 3')) || line === 'สาย 3' ){
+    else if((OptimalLine === 'สาย 3' && (line === 'เส้นทางที่แนะนำ' || line ==='เส้นทางที่แนะนำ-สาย 3')) || line === 'สาย 3'){
       busStopLocal = busStop3
       lineTravel = 'สาย 3'
       LineColorArray.push(colorLine[2])
       passLine.push('สาย 3')
-    
+     
     }
     else if((OptimalLine === 'สาย 5' && (line === 'เส้นทางที่แนะนำ' || line ==='เส้นทางที่แนะนำ-สาย 5')) || line === 'สาย 5'){
       busStopLocal = busStop5
       lineTravel = 'สาย 5'
       LineColorArray.push(colorLine[3])
       passLine.push('สาย 5')
-   
     }
-    // console.log('indexInMethod outside loop : '+indexInMethod)
+ 
     if(busStopLocal !== null){
-      // console.log(OptimalLine,OptimalLineDes)
-      // console.log('busStopLocal !== null')
       do{
-          // console.log(busStopLocal.line,originSect[indexInMethod])
-          // console.log('indexInMethod : '+indexInMethod+' origin leng '+originSect.length)
-          // console.log('coordinate[1] : '+coordinate[1])
+        // console.log(originSect[indexInMethod])
         if(indexInMethod !== 0){
           if(lineTravel === 'สาย 1'){
           busStopLocal = busStop1
@@ -926,6 +862,7 @@ export default class HomeScreen extends React.Component {
           passLine.push('สาย 1')
         }
         else if(lineTravel === 'สาย 3'){
+        
           busStopLocal = busStop3
           LineColorArray.push(colorLine[2])
           passLine.push('สาย 3')
@@ -937,33 +874,16 @@ export default class HomeScreen extends React.Component {
         }
         getBusStopLine = true
       }
-        // if(originSect[indexInMethod] === null ){
-        //   originSect=[coordinate[0]]
-        // }
         this.getBusStop(busStopLocal,originSect[indexInMethod],indexInMethod)
-     
-        // oriDir3.push(Waypoints[indexInMethod][Waypoints[indexInMethod].length-1])
-
-        // if(indexInMethod>=1 && Waypoints.length >=2){
-        //   desSect.push(Waypoints[indexInMethod][0])
-        // }
-      
-        // const distWayToDes =convertDistance(getPreciseDistance(Waypoints[indexInMethod][Waypoints[indexInMethod].length-1],coordinate[1]),'km')
-        
+       
         if((getBusStopLine || indexInMethod === 0)){
-          if(lineTravel === OptimalLineDes || BusStopEqual || convertDistance(getPreciseDistance(originSect[indexInMethod],coordinate[1]),'km') <= 0.3){
+          if(lineTravel === OptimalLineDes  || BusStopEqual || convertDistance(getPreciseDistance(originSect[indexInMethod],coordinate[1]),'km') <= 0.3){
           lineEqual = true
           
           break
         }
         else{
-          // if(Waypoints.length > 0){
-          //   if(convertDistance(getPreciseDistance(Waypoints[indexInMethod][Waypoints[indexInMethod].length-1],coordinate[1]),'km') <= 0.25){
-          //     this.setState({BusStopEqual:true})
-          //     console.log(requestDir1,requestDir2,requestDir3)
-          //     break
-          //   }
-          // }
+         
           var minLocal = 999
           var coordinateLocal = null
           filterBusLine = filterBusLine.filter((lines) => lineTravel !== lines.line)
@@ -979,14 +899,13 @@ export default class HomeScreen extends React.Component {
             })
           })
         }
-          // console.log('inside lineequal !== linetravel')
-         
-          if(coordinateLocal !== null){
+      
+          if(coordinateLocal !== null ){
             originSect.push(coordinateLocal)
           }
           indexInMethod+=1
         }
-        // getMode = true
+     
       }
         
       }while((!lineEqual || !BusStopEqual) && indexInMethod < originSect.length)
@@ -999,123 +918,169 @@ export default class HomeScreen extends React.Component {
       passLine.pop()
     }
     desSect.push(coordinate[1])
-
   }
-  
-  // console.log(Waypoints.length,NameWaypoints.length,originSect.length,lineTravel)
-  // if((line === 'เส้นทางที่แนะนำ') && calculateCheckPoint && getWaypoints){
-  //   originSect.map((origin,index)=>{
-  //     var sumDist = 0
-  //     var DistFromMyloc = convertDistance(getPreciseDistance(origin,coordinate[1]),'km')
-  //   Waypoints[index].map((ele,indexs)=>{
-    
-  //       if(indexs >=1 && indexs <= Waypoints[index].length-2){
-  //         sumDist+=convertDistance(getPreciseDistance(Waypoints[index][indexs-1],ele),'km')
-  //       }
-
-  //   })
-  //   if((DistFromMyloc+0.85 < sumDist && DistFromMyloc <= 0.50)||(DistFromMyloc <= 0.25)){
-  //     // NameWaypoints.splice(0,NameWaypoints.length)
-  //     this.setState({LineColor:'#05f709'})
-  //     this.setState({BusStopEqual:true})
-  //     // originSect=[coordinate[0]]
-  //     // oriDir3=[]
-  //     // Waypoints.splice(0,Waypoints.length)
-  //   }
-  //   })
-   
-    // console.log('sumDist '+sumDist+' distance between origin and des : '+DistFromMyloc)
-  // }
   this.setState({originSect,desSect})
 }
   
   optimalRoute(){
     const {coordinate,line,BusStopLine,BusStopEqual,
-    Waypoints,choiceLine} = this.state
+    Waypoints,choiceLine,optimizeSumArray,OptimalLine,OptimalLineDes} = this.state
+    
     var lines = null
     var linesDes= null
-    // var arraySum =[]
-    var sum = 9999
     var minDes = 999
     var min =999
+    var passLineLocal = []
+    var sumDistLocal= 999
+    var getBest = false
+    var sumOpt = 0
+    var getPassLine = false
+    var getLinesDes = false
+    var amountBusStop = 999
+    
     if(coordinate.length === 2){
+      if(!getPassLine){
+        if(this.InLine1(coordinate[0]) || this.InLine1(coordinate[1])){
+        passLineLocal.push('สาย 1')
+      }
+      if(this.InLine3(coordinate[0]) || this.InLine3(coordinate[1])){
+        passLineLocal.push('สาย 3')
+      }
+      if(this.InLine5(coordinate[0]) && this.InLine5(coordinate[1])){
+        passLineLocal.push('สาย 5')
+      }
+      getPassLine=true
+    }    
       busStopAll.map((coor)=>{
-        // var min =999
-        var max =0
-        // var sumDist= 0
-        // optimizeWaypoints.splice(0,optimizeWaypoints.length)
       coor.markers.map((ele,index)=>{
-        const distanceFromOri = getPreciseDistance(coordinate[0],ele.coordinate)
-        const convToKm = convertDistance(distanceFromOri,'km')
         const distanceFromDes = getPreciseDistance(coordinate[1],ele.coordinate)
         const convToKmDes = convertDistance(distanceFromDes,'km') 
-        if(min > convToKm){
-          min = convToKm
-          lines=coor.line
-        }
-        // if(max < convToKmDes){
-        //   max=convToKmDes
-         
-        // }
         if(minDes>convToKmDes){
           minDes=convToKmDes
           linesDes=coor.line
         }
-        // optimizeWaypoints.push(ele.coordinate)
-        // if(index>=1 && optimizeWaypoints.length >=2){
-        //   const busStopDist= getPreciseDistance(optimizeWaypoints[index-1],optimizeWaypoints[index])
-        //   sumDist+=convertDistance(busStopDist,'km')
-        // }
       })
-      // arraySum.push(sumDist)
-
-      // if(sum > min+max){
-      //   sum=min+max
-      
-      //   if(coor.line === 'สาย 1' && (this.InLine1(coordinate[0]) || this.InLine1(coordinate[1])))
-      //   {lines=coor.line}
-      //   else if(coor.line === 'สาย 3' && (this.InLine3(coordinate[0]) || this.InLine3(coordinate[1]))){
-      //     lines=coor.line
-      //   }
-      //   else if(coor.line === 'สาย 5' && (this.InLine5(coordinate[0]) || this.InLine5(coordinate[1]))){
-      //     lines=coor.line
-      //   }
-      
-      // }
+      getLinesDes=true
     })
-
-    this.setState({OptimalLine:lines,OptimalLineDes:linesDes})
-    
-  }
-
-  if((line === 'เส้นทางที่แนะนำ') && !BusStopEqual ){
-    if(lines === 'สาย 1'){
-      // this.setState({BusStopLine:busStop1})
-      // this.setState({LineColor:"#0ce8f7"})
-      this.setState({symbol:symbol1})
-      choiceLine.fill('เส้นทางที่แนะนำ-สาย 1',0,1)
-    }
-    else if(lines === 'สาย 3'){
-      // this.setState({BusStopLine:busStop3})
-      this.setState({symbol:symbol3})
-      // this.setState({LineColor:"#d91fed"})
-      choiceLine.fill('เส้นทางที่แนะนำ-สาย 3',0,1)
-    }
-    else if(lines === 'สาย 5'){
-      // this.setState({BusStopLine:busStop5})
-      this.setState({symbol:symbol5})
-      // this.setState({LineColor:"#f58f0a"})
-      choiceLine.fill('เส้นทางที่แนะนำ-สาย 5',0,1)
-    }
    
+    if(getPassLine && getLinesDes){
+      passLineLocal.map((item)=>{
+        var Bus = null
+        var indexOriOpt = []
+        var indexDesOpt = []
+        if(item === 'สาย 1'){
+          Bus = busStop1
+        }
+        else if(item === 'สาย 3'){
+          Bus = busStop3
+        }
+        else{
+          Bus = busStop5
+        }
+        if(Bus !== null){
+          var amountOriToDes = 999
+          Bus.markers.map((mark,index)=>
+          {
+            if(isPointWithinRadius(mark.coordinate,coordinate[0],280)){
+              indexOriOpt.push(index)
+            }
+            if(isPointWithinRadius(mark.coordinate,coordinate[1],280)){
+              indexDesOpt.push(index)
+            }
+            
+            if(index === Bus.markers.length-1){
+           
+              if(indexDesOpt.length === 0){
+                var minDes = 999
+                var indexDesLocal = null
+                Bus.markers.map((mark,index2)=>{
+                  if(minDes > convertDistance((getPreciseDistance(mark.coordinate,coordinate[1])),'km')){
+                    minDes = convertDistance(getPreciseDistance(mark.coordinate,coordinate[1]),'km')
+                    indexDesLocal = index2
+                  }
+                  if(index2 === Bus.markers.length-1 && indexDesLocal!==null){
+                    indexDesOpt.push(indexDesLocal)
+                  }
+                  
+                })
+              }
+              if(indexOriOpt.length === 0){
+                var minOri = 999
+                var indexOriLocal = null
+                Bus.markers.map((mark,index3)=>{
+                  
+                  if(minOri > convertDistance(getPreciseDistance(coordinate[0],mark.coordinate),'km')){
+                    minOri=convertDistance(getPreciseDistance(coordinate[0],mark.coordinate),'km')
+                    indexOriLocal=index3
+                  }
+                  if(index3 === Bus.markers.length-1 && indexOriLocal!==null){
+                    indexOriOpt.push(indexOriLocal)
+                  }
+                })
+              }
+              var getAmount = false
+              indexOriOpt.map((indexOri,count)=>{
+                indexDesOpt.map((indexDes)=>{
+                  
+                  if(indexOri < indexDes){
+                    amountOriToDes = indexDes-indexOri+1
+                  }
+                  else if(indexDes < indexOri){
+                    amountOriToDes = (Bus.markers.length-indexOri)+(indexDes+1)
+                  }
+                  else {
+                    amountOriToDes = 0
+                  }
+                  if(amountBusStop > amountOriToDes){
+                    
+                    if(linesDes !== item){
+                      if(amountBusStop > (amountOriToDes+(Math.round(getPreciseDistance(Bus.markers[indexDes].coordinate,coordinate[1])/150))))
+                      amountBusStop=amountOriToDes+(Math.round(getPreciseDistance(Bus.markers[indexDes].coordinate,coordinate[1])/150))
+                      lines = item
+                    }
+                    else{
+                      amountBusStop = amountOriToDes
+                      lines = item
+                    }
+                  }
+                })
+              })
+            }
+          })
+        }
+      })
+      getBest=true
+    }
   }
   
-  // console.log(BusStopEqual,lines)
-  if(BusStopEqual){
-    choiceLine.fill('เส้นทางที่แนะนำ-เดิน',0,1)
-  }
-  if(coordinate.length ===2)
-  {this.connectToLine()}
+  if(getBest){this.setState({OptimalLine:lines,OptimalLineDes:linesDes})}
+    if((line === 'เส้นทางที่แนะนำ') && !BusStopEqual ){
+      if(lines === 'สาย 1'){
+        // this.setState({BusStopLine:busStop1})
+        // this.setState({LineColor:"#0ce8f7"})
+        this.setState({symbol:symbol1})
+        choiceLine.fill('เส้นทางที่แนะนำ-สาย 1',0,1)
+      }
+      else if(lines === 'สาย 3'){
+        // this.setState({BusStopLine:busStop3})
+        this.setState({symbol:symbol3})
+        // this.setState({LineColor:"#d91fed"})
+        choiceLine.fill('เส้นทางที่แนะนำ-สาย 3',0,1)
+      }
+      else if(lines === 'สาย 5'){
+        // this.setState({BusStopLine:busStop5})
+        this.setState({symbol:symbol5})
+        // this.setState({LineColor:"#f58f0a"})
+        choiceLine.fill('เส้นทางที่แนะนำ-สาย 5',0,1)
+      }
+    }
+    // console.log(BusStopEqual,lines)
+    if(BusStopEqual){
+      choiceLine.fill('เส้นทางที่แนะนำ-เดิน',0,1)
+    }
+    if(coordinate.length ===2)
+    {this.connectToLine()}
+    
   }
 
   handlePressOnMap(e){

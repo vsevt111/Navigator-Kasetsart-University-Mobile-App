@@ -26,6 +26,8 @@
       <meta-data 
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyC7-D7mEme3RrmM9_I_BZOG0exArqnDpGs"/>
+        <meta-data android:name="com.rollbar.android.ACCESS_TOKEN"
+        android:value="0dbeb9cbcee24dd490a0902ad1dfd99d" />
     </application>
 
 </manifest>

@@ -138,6 +138,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import HomeBus from './Pages/HomeBus';
 import HomeMotor from './Pages/HomeMotorcycle';
 import pinpoint from './image/pinpoint.png'
+import { Client } from 'rollbar-react-native'
+const rollbar = new Client('0dbeb9cbcee24dd490a0902ad1dfd99d');
 
 //Making TabNavigator which will be called in App StackNavigator
 //we can directly export the TabNavigator also but header will not be visible
