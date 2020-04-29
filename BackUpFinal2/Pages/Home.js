@@ -1816,14 +1816,20 @@ else {
           <Text style={{left:'20%',zIndex:1}}>ระยะทาง: {Number.isNaN(Number.parseFloat(distance))? 0:Number.parseFloat(distance).toFixed(2)} กิโลเมตร  ใช้เวลา: {Math.round(time)} นาที</Text>
           <View style={NameWaypoints.length === 0 ? {height:'0%'}:{height:'12%'}}>
             <ScrollView>
-          {NameWaypoints.map((ele)=>(
+        <Text>{NameWaypoints.length > 0 ? `1 เดินไปยังป้ายจอด : ${NameWaypoints[0][0]}`:null}</Text>
+          {NameWaypoints.map((ele,indexs)=>(
             ele.map((name,index)=>{
-            return(<Text key={index}>{index === 0 && index !== ele.length-1 ? `เดินไปยังป้ายจอด : ${name}`:null}
-            {index!== 0 && index !== ele.length-1 ? `ผ่านป้ายจอด : ${name}`:null}
-            {index === ele.length-1 ? `ลงที่ป้ายจอด : ${name}`:null}
+              var amount = 0
+              if(indexs > 0){
+                amount = NameWaypoints[indexs-1].length
+              }
+            return(<Text key={index}>{index === 0 && index !== ele.length-1 ? `${index+2+amount} ขึ้นที่ป้ายจอด : ${name}`:null}
+            {index!== 0 && index !== ele.length-1 ? `${index+2+amount} ผ่านป้ายจอด : ${name}`:null}
+            {index === ele.length-1 ? `${index+2+amount} ลงที่ป้ายจอด : ${name}`:null}
             </Text>)
             })
           ))}
+          <Text>{`สุดท้าย เดินไปยัง : ${TextDestination}`}</Text>
           </ScrollView>
           </View>
           {TextOrigin !== "" && !listItemOri && changeOrigin?
