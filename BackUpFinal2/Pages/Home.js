@@ -946,7 +946,7 @@ export default class HomeScreen extends React.Component {
       if(this.InLine3(coordinate[0]) || this.InLine3(coordinate[1])){
         passLineLocal.push('สาย 3')
       }
-      if(this.InLine5(coordinate[0]) && this.InLine5(coordinate[1])){
+      if(this.InLine5(coordinate[0]) || this.InLine5(coordinate[1])){
         passLineLocal.push('สาย 5')
       }
       getPassLine=true
@@ -1021,18 +1021,13 @@ export default class HomeScreen extends React.Component {
               var getAmount = false
               indexOriOpt.map((indexOri,count)=>{
                 indexDesOpt.map((indexDes)=>{
-                  
                   if(indexOri < indexDes){
                     amountOriToDes = indexDes-indexOri+1
                   }
                   else if(indexDes < indexOri){
                     amountOriToDes = (Bus.markers.length-indexOri)+(indexDes+1)
                   }
-                  else {
-                    amountOriToDes = 0
-                  }
-                  if(amountBusStop > amountOriToDes){
-                    
+                  if(amountBusStop > amountOriToDes){ 
                     if(linesDes !== item){
                       if(amountBusStop > (amountOriToDes+(Math.round(getPreciseDistance(Bus.markers[indexDes].coordinate,coordinate[1])/150))))
                       amountBusStop=amountOriToDes+(Math.round(getPreciseDistance(Bus.markers[indexDes].coordinate,coordinate[1])/150))
