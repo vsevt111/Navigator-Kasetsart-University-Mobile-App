@@ -946,7 +946,7 @@ export default class HomeScreen extends React.Component {
       if(this.InLine3(coordinate[0]) || this.InLine3(coordinate[1])){
         passLineLocal.push('สาย 3')
       }
-      if(this.InLine5(coordinate[0]) || this.InLine5(coordinate[1])){
+      if(this.InLine5(coordinate[0]) && this.InLine5(coordinate[1])){
         passLineLocal.push('สาย 5')
       }
       getPassLine=true
@@ -1161,10 +1161,10 @@ export default class HomeScreen extends React.Component {
 
   InLine5(coordinate){
     const InLine5=[
-      {latitude:13.853424,longitude:100.571250},
-      {latitude:13.845987,longitude:100.571336},
-      {latitude:13.845733,longitude:100.573576},
-      {latitude:13.851622,longitude:100.573594},
+      {latitude:13.853509,longitude:100.570340},
+      {latitude:13.846604,longitude:100.570409},
+      {latitude:13.845818,longitude:100.574279},
+      {latitude:13.851629,longitude:100.574476},
       {latitude:13.851972,longitude:100.578827},
       {latitude:13.852603,longitude:100.578935},
       {latitude:13.852743,longitude:100.579801},
