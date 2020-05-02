@@ -1540,7 +1540,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
                     }
                     console.log(itemValue)
                   }}>
-                     <item label='กรุณาเลือกสถานที่' value=''/>
+                    <item label='กรุณาเลือกสถานที่' value=''/>
                     <item label='ตำแหน่งของตัวเอง' value ='ตำแหน่งของตัวเอง'/>
                     {this.state.FacultyValue.building.map((building) =>(
                       <item label={building.name} value={building.name} key={building.name}/>
@@ -1875,7 +1875,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
             </ScrollView>
           </View>
           {TextOrigin !== "" && !listItemOri && changeOrigin?
-        <ScrollView style={{position:'absolute',top:140,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:filterOriLen}}>
+        <ScrollView style={{position:'absolute',top:180,right:30,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:filterOriLen}}>
        {filterNameOrigin.map((item,index) => {
          return (
            <TouchableOpacity onPress={() => this.setState({TextOrigin:item.name})} key={index}>
@@ -1888,7 +1888,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
        </ScrollView>
        :null}
         {TextDestination !== "" && !listItemDes && !changeOrigin?
-        <ScrollView style={{position:'absolute',top:180,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:filterDesLen}}>
+        <ScrollView style={{position:'absolute',top:220,right:30,backgroundColor:'#ffffff',zIndex:2,width:'50%',height:filterDesLen}}>
        {filterNameDes.map((item,index) => {
          return (
            <TouchableOpacity onPress={() => this.setState({TextDestination:item.name})} key={index}>
