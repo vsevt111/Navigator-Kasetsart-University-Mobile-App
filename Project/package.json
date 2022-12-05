@@ -22,7 +22,7 @@
     "native-base": "^2.13.12",
     "react": "16.9.0",
     "react-icons": "^3.9.0",
-    "react-native": "0.61.5",
+    "react-native": "0.70.6",
     "react-native-geolocation-service": "^4.0.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-ionicons": "^5.0.0-rc",
