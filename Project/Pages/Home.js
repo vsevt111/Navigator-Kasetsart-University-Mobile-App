@@ -1676,7 +1676,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
             {request && coordinate.length === 2 && BusStopEqual && <Direction
             origin = {coordinate[0]}
             destination = {coordinate[1]}
-            apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+            apikey={''}
             strokeWidth={4}
             strokeColor={'#05f709'}
             mode={'WALKING'}
@@ -1705,7 +1705,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
             key={index}
             origin = {originSect[index]}
             destination = {Waypoints[index] === undefined  ? null:origin[0]}
-            apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+            apikey={''}
             strokeWidth={4}
             strokeColor={'#05f709'}
             mode={'WALKING'}
@@ -1737,7 +1737,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
               key={index}
               origin = {Waypoints[index] !== undefined ? Waypoints[index][0]:null}
               destination = {Waypoints[index] !== undefined ? Waypoints[index][Waypoints[index].length-1]:null}
-              apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+              apikey={''}
               strokeWidth={4}
               strokeColor={LineColorArray[index]}
               waypoints = {Waypoints[index] !== undefined ? Waypoints[index].slice(1,Waypoints[index].length-1):null}
@@ -1772,7 +1772,7 @@ else if(this.state.prevTextDestination !== this.state.TextDestination){
               key={index}
               origin = {des}
               destination = {desSect[index]}
-              apikey={'AIzaSyC7dMUMWICLlsoKMsf1c3ljrhiDdNgTl8U'}
+              apikey={''}
               strokeWidth={4}
               strokeColor={'#05f709'}
               mode={'WALKING'}
